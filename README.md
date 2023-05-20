@@ -37,7 +37,7 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License.
 
 ## Developers
 
