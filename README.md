@@ -1,6 +1,19 @@
-# KocmocCc
+# KOCMOC.CC
+
+KOCMOC.CC is a dynamic Angular web application currently under development and maintenance by the KOCMOC Collective team. The application integrates WordPress CMS for content management, SQL database for data storage, and Google Cloud for scalable infrastructure.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
+
+## Core Features
+
+- Angular front-end for a dynamic user experience
+- Data retrieval via WordPress REST API v2
+- SQL Database integration for reliable data management
+- Google Cloud services for scalability and robustness
+
+## Setup & Usage
+
+Ensure you have Node.js, npm, a WordPress environment, and an SQL database installed.
 
 ## Development server
 
@@ -22,6 +35,10 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-## Further help
+## License
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+This project is licensed under the [MIT License](LICENSE).
+
+## Developers
+
+Currently being developed and maintained by the KOCMOC Collective team.
