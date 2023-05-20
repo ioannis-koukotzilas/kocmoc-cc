@@ -1,0 +1,15 @@
+<div *ngIf="isLoading" class="loading">Loading...</div>
+
+<h1>Episodes</h1>
+
+<ul class="episodes">
+    <li *ngFor="let episode of episodes" class="episode">
+        <a [routerLink]="['/episode', episode.id]">
+            <div *ngIf="hasThumbnail(episode)">
+                <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
+              </div>
+            <h2>{{ episode.title.rendered }}</h2>
+            <p [innerHTML]="episode.excerpt.rendered"></p>
+        </a>
+    </li>
+</ul>

@@ -9,6 +9,7 @@ import { WordPressService } from 'src/app/core/services/wordpress/wordpress.serv
 
 export class PostListComponent implements OnInit {
   posts: any[] = [];
+  isLoading = true;
 
   constructor(private wordPressService: WordPressService) { }
 
@@ -16,10 +17,21 @@ export class PostListComponent implements OnInit {
     this.wordPressService.fetchPosts().subscribe({
       next: data => {
         this.posts = data;
+        this.isLoading = false;
       },
       error: error => {
         console.error('There was an error: ', error);
+        this.isLoading = false;
       }
     });
   }
+
+  hasThumbnail(post: any): boolean {
+    return post._embedded && post._embedded['wp:featuredmedia']?.[0]?.media_details?.sizes?.medium;
+  }
+
+  getThumbnailUrl(post: any): string {
+    return post._embedded['wp:featuredmedia'][0].media_details.sizes.medium.source_url;
+  }
+
 }

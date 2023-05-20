@@ -6,4 +6,5 @@ body {
     background-color: #212121;
     color: #fff;
     padding: 1.5rem 24px;
+    min-height: 100vh;
 }

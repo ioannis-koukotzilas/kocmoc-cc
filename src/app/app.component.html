@@ -2,7 +2,11 @@
   <h2>{{ title }}</h2>
 </a>
 
-<a routerLink="/audio-player">Audio Player</a>
+<div class="menu">
+  <a routerLink="/audio-player">Audio Player</a>
+  <a routerLink="/posts">Posts</a>
+  <a routerLink="/episodes">Episodes</a>
+</div>
 
 <!-- <div>
   <audio id="audioPlayer" controls>
@@ -21,6 +25,6 @@
 
 <!-- <app-audio-player></app-audio-player> -->
 
-<app-post-list></app-post-list>
+<!-- <app-post-list></app-post-list> -->
 
 <router-outlet></router-outlet>
