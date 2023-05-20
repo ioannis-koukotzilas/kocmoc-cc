@@ -1,0 +1,6 @@
+<div *ngIf="post">
+    <h2>{{ post.title.rendered }}</h2>
+    <div [innerHTML]="post.content.rendered"></div>
+    <div>Date: {{ post.date | date }}</div>
+    <div>Author: {{ post.author }}</div>
+</div>

@@ -1,0 +1,7 @@
+<div *ngFor="let post of posts">
+    <h2>{{ post.title.rendered }}</h2>
+    <p [innerHTML]="post.excerpt.rendered"></p>
+    
+    <a [routerLink]="['/post', post?.id]">Read More</a>
+    
+</div>

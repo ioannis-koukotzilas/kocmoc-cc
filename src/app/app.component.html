@@ -4,7 +4,7 @@
 
 <a routerLink="/audio-player">Audio Player</a>
 
-<div>
+<!-- <div>
   <audio id="audioPlayer" controls>
     <source [src]="trackUrl" type="audio/mpeg">
     Your browser does not support the audio element.
@@ -17,8 +17,10 @@
   <div [innerHTML]="post.date.rendered"></div>
   <div>Author: {{post.author}}</div>
   <div>Date: {{post.date}}</div>
-</div>
+</div> -->
 
 <!-- <app-audio-player></app-audio-player> -->
+
+<app-post-list></app-post-list>
 
 <router-outlet></router-outlet>
