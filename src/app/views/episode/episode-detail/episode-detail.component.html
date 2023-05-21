@@ -1,1 +1,13 @@
-<p>episode-detail works!</p>
+<!-- <p>episode-detail works!</p> -->
+
+<div *ngIf="episode">
+    <h2>{{ episode.title.rendered }}</h2>
+    <div [innerHTML]="episode.content.rendered"></div>
+    <div>Date: {{ episode.date | date }}</div>
+    <div>Author: {{ episode.author }}</div>
+
+    <div *ngIf="episode._embedded && episode._embedded['wp:featuredmedia']?.[0]?.media_details?.sizes?.large">
+        <img [src]="episode._embedded['wp:featuredmedia'][0].media_details.sizes.large.source_url" alt="Featured Image">
+      </div>
+           
+</div>

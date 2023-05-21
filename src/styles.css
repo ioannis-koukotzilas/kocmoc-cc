@@ -5,16 +5,17 @@
 }
 
 body {
-  background-color: #212121;
-  color: #fff;
+  background-color: #010409;
+  color: #e6edf3;
   padding: 1.5rem 24px;
   line-height: 1.5;
-  max-width: 1440px;
+  max-width: 2560px;
   margin: 0 auto;
+  font-size: 15px;
 }
 
 a {
-  color: #fff;
+  color: #e6edf3;
   text-decoration: none;
 }
 

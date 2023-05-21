@@ -8,6 +8,16 @@
   <a routerLink="/episodes">Episodes</a>
 </div>
 
+
+
+<ul class="genres">
+  <li *ngFor="let genre of genres" class="genre">
+    <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+  </li>
+</ul>
+
+<app-audio-player></app-audio-player>
+
 <!-- <div>
   <audio id="audioPlayer" controls>
     <source [src]="trackUrl" type="audio/mpeg">

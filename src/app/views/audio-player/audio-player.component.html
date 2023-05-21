@@ -1,0 +1,14 @@
+
+
+<div class="controls">
+  <div (click)="play()">Play</div>
+<div (click)="pause()">Pause</div>
+
+</div>
+
+
+
+<div class="progress-bar" (click)="seek($event)">
+  <div class="progress" [style.width.%]="progress"></div>
+</div>
+

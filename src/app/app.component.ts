@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CloudStorageService } from './cloud-storage.service';
+import { CloudStorageService } from './core/services/cloud-storage/cloud-storage.service';
 import { WordPressService } from './core/services/wordpress/wordpress.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
 
   title = 'KOCMOC.CC';
   posts: any[] = [];
+  genres: any[] = [];  // Define the genres property
   trackUrl?: string;
 
   constructor(private wordPressService: WordPressService, private cloudStorageService: CloudStorageService) { }

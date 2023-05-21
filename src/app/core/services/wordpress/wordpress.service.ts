@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Genre } from 'src/app/dtos/genre';
+import { environment } from 'src/app/enviroments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,30 +10,37 @@ import { HttpClient } from '@angular/common/http';
 
 export class WordPressService {
 
+  private baseUrl = environment.baseUrl;
+
   constructor(private http: HttpClient) { }
 
-  // fetchPosts() {
-  //   return this.http.get<any[]>('http://localhost/kocmoc/wp-json/wp/v2/posts');
-  // }
-
-  // fetchPost(id: string) {
-  //   return this.http.get('http://localhost/kocmoc/wp-json/wp/v2/posts/' + id);
-  // }
-
   fetchPosts() {
-    return this.http.get<any[]>('http://localhost/kocmoc/wp-json/wp/v2/posts?_embed');
+    return this.http.get<any[]>(`${this.baseUrl}/posts?_embed`);
   }
 
   fetchPost(id: string) {
-    return this.http.get('http://localhost/kocmoc/wp-json/wp/v2/posts/' + id + '?_embed');
+    return this.http.get(`${this.baseUrl}/posts/${id}?_embed`);
   }
 
   fetchEpisodes() {
-    return this.http.get<any[]>('http://localhost/kocmoc/wp-json/wp/v2/episode?_embed');
+    return this.http.get<any[]>(`${this.baseUrl}/episode?_embed`);
   }
 
   fetchEpisode(id: string) {
-    return this.http.get('http://localhost/kocmoc/wp-json/wp/v2/episode/' + id + '?_embed');
+    return this.http.get(`${this.baseUrl}/episode/${id}?_embed`);
+  }
+
+  fetchGenre(id: string) {
+    return this.http.get<Genre>(`${this.baseUrl}/genre/${id}`);
+  }
+
+  fetchGenres(idsString: string): Observable<Genre[]> {
+    // Include the idsString in the URL to fetch genres with these ids
+    return this.http.get<Genre[]>(`${this.baseUrl}/genre?include=${idsString}`);
+  }
+  
+  fetchEpisodesByGenre(genreId: string) {
+    return this.http.get<any[]>(`${this.baseUrl}/episode?genre=${genreId}&_embed`);
   }
 
 }
