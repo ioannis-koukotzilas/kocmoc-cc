@@ -6,37 +6,60 @@ import { BehaviorSubject } from "rxjs";
 })
 
 export class AudioPlayerService {
-    private audioSubject = new BehaviorSubject<HTMLAudioElement | null>(null);
-    audio$ = this.audioSubject.asObservable();
+    private audio: HTMLAudioElement = new Audio();
+    private liveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
+
+    private currentSource = new BehaviorSubject<string>('');
+    currentSource$ = this.currentSource.asObservable();
+
+    isPlaying: boolean = false;
+    isPlayingLiveStream: boolean = false;
+    isPlayingEpisode: boolean = false;
 
     setTrackUrl(url: string): void {
-        const audio = new Audio(url);
-        this.audioSubject.next(audio);
+        this.audio.src = url;
+        this.isPlayingLiveStream = false;
+        this.currentSource.next(url);
+    }
+
+    setLiveStream(): void {
+        this.audio.src = this.liveStreamUrl;
+        this.isPlayingLiveStream = true;
+        this.isPlayingEpisode = false;
+        this.currentSource.next(this.liveStreamUrl);
     }
 
     play(): void {
-        this.audioSubject.getValue()?.play();
+        this.audio.play();
+        this.isPlaying = true;
     }
 
     pause(): void {
-        this.audioSubject.getValue()?.pause();
+        this.audio.pause();
+        this.isPlaying = false;
     }
 
-    isPlaying(): boolean {
-        const audio = this.audioSubject.getValue();
-        return audio ? !audio.paused : false;
-    }
-
-    stop(): void {
-        const audio = this.audioSubject.getValue();
-        if (audio) {
-            audio.pause();
-            audio.currentTime = 0; // Resets the audio track to the beginning
+    playEpisode(): void {
+        if (!this.isPlayingLiveStream) {
+            this.play();
+            this.isPlayingEpisode = true;
         }
     }
 
-    getCurrentAudio(): HTMLAudioElement | null {
-        return this.audioSubject.getValue();
+    pauseEpisode(): void {
+        if (!this.isPlayingLiveStream) {
+            this.pause();
+            this.isPlayingEpisode = false;
+        }
     }
 
+    stop(): void {
+        this.audio.pause();
+        this.audio.currentTime = 0; // Resets the audio track to the beginning
+        this.isPlaying = false;
+    }
+
+    getCurrentAudio(): HTMLAudioElement {
+        return this.audio;
+    }
 }

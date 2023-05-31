@@ -9,30 +9,45 @@ import { AudioPlayerService } from "src/app/core/services/audio-player/audio-pla
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class AudioPlayerComponent implements OnInit {
+export class AudioPlayerComponent implements OnInit, OnDestroy {
   progress = 0;
-  audio$ = this.audioPlayerService.audio$.pipe(
-    catchError(err => {
-      console.error(err);
-      return [];
-    })
-  );
   currentAudio: HTMLAudioElement | null = null;
 
-  constructor(private audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef) { }
+  private currentAudioSub: Subscription = new Subscription();
+
+  constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.audio$.subscribe((audio: HTMLAudioElement | null) => {
-      if (audio) {
-        audio.ontimeupdate = () => this.updateProgress(audio);
-        this.currentAudio = audio;
-      }
+    this.currentAudio = this.audioPlayerService.getCurrentAudio();
+    this.currentAudioSub = this.audioPlayerService.currentSource$.subscribe(source => {
+      this.currentAudio?.removeEventListener('timeupdate', this.updateProgress);
+      this.currentAudio = this.audioPlayerService.getCurrentAudio();
+      this.currentAudio?.addEventListener('timeupdate', () => this.updateProgress());
     });
   }
 
-  updateProgress(audio: HTMLAudioElement): void {
-    if (audio.currentTime > 0) {
-      this.progress = (audio.currentTime / audio.duration) * 100;
+  ngOnDestroy(): void {
+    this.currentAudio?.removeEventListener('timeupdate', this.updateProgress);
+    this.currentAudioSub.unsubscribe();
+  }
+
+  playLiveStream(): void {
+    this.audioPlayerService.stop();
+    this.audioPlayerService.setLiveStream();
+    this.audioPlayerService.play();
+  }
+
+  toggleLiveStream(): void {
+    if (this.audioPlayerService.isPlayingLiveStream) {
+        this.audioPlayerService.pause();
+    } else {
+        this.playLiveStream();
+    }
+  }
+
+  updateProgress(): void {
+    if (this.currentAudio && this.currentAudio.currentTime > 0) {
+      this.progress = (this.currentAudio.currentTime / this.currentAudio.duration) * 100;
       this.cdr.detectChanges();
     }
   }

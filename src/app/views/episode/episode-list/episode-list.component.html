@@ -24,11 +24,13 @@
             </ul>
 
             <span *ngIf="episode.acf?.mp3" class="play"
-                [class.playing]="currentEpisode === episode && audioPlayerService.isPlaying()"
-                [class.paused]="currentEpisode === episode && !audioPlayerService.isPlaying()"
+                [class.playing]="currentEpisode === episode && audioPlayerService.isPlayingEpisode"
+                [class.paused]="currentEpisode === episode && !audioPlayerService.isPlayingEpisode"
                 (click)="playEpisode(episode)">
-                {{currentEpisode === episode && audioPlayerService.isPlaying() ? 'Pause' : 'Play'}}
+                {{currentEpisode === episode && audioPlayerService.isPlayingEpisode ? 'Pause' : 'Play'}}
             </span>
+
+
 
         </li>
 

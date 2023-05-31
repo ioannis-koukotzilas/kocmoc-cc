@@ -1,14 +1,12 @@
-
-
 <div class="controls">
-  <div (click)="play()">Play</div>
-<div (click)="pause()">Pause</div>
-
+  <button (click)="audioPlayerService.playEpisode()">Play</button>
+  <button (click)="audioPlayerService.pauseEpisode()">Pause</button>
+  <button (click)="toggleLiveStream()">
+    {{audioPlayerService.isPlayingLiveStream ? 'Pause' : 'Play'}} Live Stream
+  </button>
 </div>
-
 
 
 <div class="progress-bar" (click)="seek($event)">
   <div class="progress" [style.width.%]="progress"></div>
 </div>
-

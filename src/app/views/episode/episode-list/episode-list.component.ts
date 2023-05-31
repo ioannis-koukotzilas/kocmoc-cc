@@ -14,7 +14,6 @@ import { Genre } from 'src/app/dtos/genre';
 export class EpisodeListComponent implements OnInit {
     episodes: any[] = [];
     genres: { [id: string]: Genre; } = {};
-    audioPlaying = false;
     isLoading = true;
 
     // Track the currently playing episode.
@@ -60,38 +59,31 @@ export class EpisodeListComponent implements OnInit {
     // Fetch genres for all episodes
     private fetchGenresForEpisodes(): Observable<Genre[]> {
         const genreIds = new Set<string>();
-        for (const episode of this.episodes) {
-            for (const genreId of episode.genre) {
+        this.episodes.forEach(episode => {
+            episode.genre.forEach((genreId: string) => {
                 genreIds.add(genreId);
-            }
-        }
+            });
+        });
 
-        // Join the ids with commas to create a string like '1,2,3'
-        const idsString = Array.from(genreIds).join(',');
-
-        return this.wordPressService.fetchGenres(idsString);
+        const genreObservables = Array.from(genreIds).map(id => this.wordPressService.fetchGenre(id));
+        return forkJoin(genreObservables);
     }
 
-    // Get the genres for a specific episode
+    // Get the genres for a particular episode
     getGenresForEpisode(episode: any): Genre[] {
-        // Map each genre ID of the episode to its genre data
-        return episode.genre.map((id: string) => this.genres[id]);
+        return episode.genre.map((genreId: string) => this.genres[genreId]);
     }
 
+    // Play the audio for a particular episode
     playEpisode(episode: any): void {
-        if (this.currentEpisode !== episode) {
-            const trackUrl = this.cloudStorageService.getTrackUrl(episode.acf.mp3);
-            this.audioPlayerService.stop();
-            this.audioPlayerService.setTrackUrl(trackUrl);
-            this.audioPlayerService.play();
-            this.currentEpisode = episode;
-        } else {
-            if (this.audioPlayerService.isPlaying()) {
-                this.audioPlayerService.pause();
-            } else {
-                this.audioPlayerService.play();
-            }
-        }
+    if (this.currentEpisode !== episode || !this.audioPlayerService.isPlaying) {
+        const trackUrl = this.cloudStorageService.getTrackUrl(episode.acf.mp3);
+        this.audioPlayerService.stop();
+        this.audioPlayerService.setTrackUrl(trackUrl);
+        this.currentEpisode = episode;
+        this.audioPlayerService.play();
+    } else {
+        this.audioPlayerService.pause();
     }
-
+}
 }
