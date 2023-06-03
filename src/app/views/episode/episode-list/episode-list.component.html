@@ -23,14 +23,27 @@
                 </li>
             </ul>
 
-            <span *ngIf="episode.acf?.mp3" class="play"
-                [class.playing]="currentEpisode === episode && audioPlayerService.isPlayingEpisode"
-                [class.paused]="currentEpisode === episode && !audioPlayerService.isPlayingEpisode"
-                (click)="playEpisode(episode)">
-                {{currentEpisode === episode && audioPlayerService.isPlayingEpisode ? 'Pause' : 'Play'}}
-            </span>
+            <div *ngIf="episode.acf?.mp3" class="play"
+     [class.playing]="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying"
+     [class.paused]="audioPlayerService.currentEpisode.value?.id === episode.id && !audioPlayerService.isEpisodePlaying"
+     (click)="playEpisode(episode)">
 
+                <span class="material-symbols-outlined play"
+                    *ngIf="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                    pause
+                </span>
 
+                <span class="material-symbols-outlined play"
+                    *ngIf="(audioPlayerService.currentEpisode.value?.id !== episode.id || !audioPlayerService.isEpisodePlaying) && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                    play_arrow
+                </span>
+
+                <!-- <mat-spinner
+                    *ngIf="(audioPlayerService.episodeLoading.value) && audioPlayerService.currentEpisode.value?.id === episode.id"></mat-spinner> -->
+
+                    <span class="loader" *ngIf="(audioPlayerService.episodeLoading.value) && audioPlayerService.currentEpisode.value?.id === episode.id"></span>
+
+            </div>
 
         </li>
 

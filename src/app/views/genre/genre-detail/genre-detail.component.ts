@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, switchMap } from 'rxjs';
 import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
-import { Genre } from 'src/app/dtos/genre';
+import { Episode } from 'src/app/models/episode';
+import { Genre } from 'src/app/models/genre';
 
 @Component({
   selector: 'app-genre-detail',
@@ -13,7 +14,7 @@ import { Genre } from 'src/app/dtos/genre';
 export class GenreDetailComponent implements OnInit {
   genreId!: string;
   genre: Genre | null = null;
-  episodes: any[] = [];
+  episodes: Episode[] = [];
   isLoading = true;
   subscription: Subscription | undefined;
 

@@ -1,65 +1,103 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { Episode } from 'src/app/models/episode';
+import { CloudStorageService } from '../cloud-storage/cloud-storage.service';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AudioPlayerService {
-    private audio: HTMLAudioElement = new Audio();
-    private liveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
+  private audio: HTMLAudioElement = new Audio();
+  private liveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
 
-    private currentSource = new BehaviorSubject<string>('');
-    currentSource$ = this.currentSource.asObservable();
+  public activeStream: 'none' | 'liveStream' | 'episode' = 'none';
+  public isEpisodeLoaded = false;
+  public currentEpisode = new BehaviorSubject<Episode | null>(null);
+  public currentEpisode$ = this.currentEpisode.asObservable();
 
-    isPlaying: boolean = false;
-    isPlayingLiveStream: boolean = false;
-    isPlayingEpisode: boolean = false;
+  public isLoading = new BehaviorSubject<boolean>(false);
+  public isPlaying = false;
 
-    setTrackUrl(url: string): void {
-        this.audio.src = url;
-        this.isPlayingLiveStream = false;
-        this.currentSource.next(url);
+  public liveStreamLoading = new BehaviorSubject<boolean>(false);
+  public episodeLoading = new BehaviorSubject<boolean>(false);
+
+  constructor(private cloudStorageService: CloudStorageService) {}
+
+  play(): void {
+    this.audio.play();
+    this.isPlaying = true;
+  }
+
+  pause(): void {
+    this.audio.pause();
+    this.isPlaying = false;
+  }
+
+  resume(): void {
+    this.audio.play();
+  }
+
+  stop(): void {
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.isPlaying = false;
+    this.activeStream = 'none';
+    this.audio.removeEventListener(
+      'canplaythrough',
+      this.canPlayThroughListener
+    );
+  }
+
+  private canPlayThroughListener = () => {
+    if (this.activeStream === 'liveStream') {
+      setTimeout(() => {
+        this.liveStreamLoading.next(false);
+        this.play();
+      }, 600); // 1 second delay
+    } else if (this.activeStream === 'episode') {
+      setTimeout(() => {
+        this.episodeLoading.next(false);
+        this.play();
+      }, 600); // 3 seconds delay
     }
+  };
 
-    setLiveStream(): void {
-        this.audio.src = this.liveStreamUrl;
-        this.isPlayingLiveStream = true;
-        this.isPlayingEpisode = false;
-        this.currentSource.next(this.liveStreamUrl);
-    }
+  setLiveStream(): void {
+    this.stop();
+    this.liveStreamLoading.next(true);
 
-    play(): void {
-        this.audio.play();
-        this.isPlaying = true;
-    }
+    this.audio = new Audio();
+    this.audio.src = this.liveStreamUrl + '?nocache=' + new Date().getTime();
 
-    pause(): void {
-        this.audio.pause();
-        this.isPlaying = false;
-    }
+    this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
+    this.activeStream = 'liveStream';
+    this.currentEpisode.next(null); // Reset current episode when playing live stream
+    this.isEpisodeLoaded = false;
+  }
 
-    playEpisode(): void {
-        if (!this.isPlayingLiveStream) {
-            this.play();
-            this.isPlayingEpisode = true;
-        }
-    }
+  setEpisodeStream(episode: Episode): void {
+    this.stop();
+    this.episodeLoading.next(true);
 
-    pauseEpisode(): void {
-        if (!this.isPlayingLiveStream) {
-            this.pause();
-            this.isPlayingEpisode = false;
-        }
-    }
+    const episodeTrackUrl = this.cloudStorageService.getEpisodeTrackUrl(
+      episode.acf.mp3
+    );
+    this.audio.src = episodeTrackUrl;
+    this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
+    this.activeStream = 'episode';
+    this.currentEpisode.next(episode);
+    this.isEpisodeLoaded = true;
+  }
 
-    stop(): void {
-        this.audio.pause();
-        this.audio.currentTime = 0; // Resets the audio track to the beginning
-        this.isPlaying = false;
-    }
+  getCurrentAudio(): HTMLAudioElement {
+    return this.audio;
+  }
 
-    getCurrentAudio(): HTMLAudioElement {
-        return this.audio;
-    }
+  get isLiveStreamPlaying(): boolean {
+    return this.activeStream === 'liveStream' && this.isPlaying;
+  }
+
+  get isEpisodePlaying(): boolean {
+    return this.activeStream === 'episode' && this.isPlaying;
+  }
 }

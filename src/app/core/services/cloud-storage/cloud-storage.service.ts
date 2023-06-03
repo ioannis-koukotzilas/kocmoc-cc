@@ -8,9 +8,7 @@ export class CloudStorageService {
 
   private bucketUrl = 'https://storage.googleapis.com/kocmoc-cc/tracks';
 
-  constructor() { }
-
-  getTrackUrl(fileName: string): string {
+  getEpisodeTrackUrl(fileName: string): string {
     return `${this.bucketUrl}/${fileName}`;
   }
 }

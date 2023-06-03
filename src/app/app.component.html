@@ -8,33 +8,6 @@
   <a routerLink="/episodes">Episodes</a>
 </div>
 
-
-
-<ul class="genres">
-  <li *ngFor="let genre of genres" class="genre">
-    <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
-  </li>
-</ul>
-
 <app-audio-player></app-audio-player>
-
-<!-- <div>
-  <audio id="audioPlayer" controls>
-    <source [src]="trackUrl" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-</div>
-
-<div *ngFor="let post of posts">
-  <h2 [innerHTML]="post.title.rendered"></h2>
-  <div [innerHTML]="post.content.rendered"></div>
-  <div [innerHTML]="post.date.rendered"></div>
-  <div>Author: {{post.author}}</div>
-  <div>Date: {{post.date}}</div>
-</div> -->
-
-<!-- <app-audio-player></app-audio-player> -->
-
-<!-- <app-post-list></app-post-list> -->
 
 <router-outlet></router-outlet>

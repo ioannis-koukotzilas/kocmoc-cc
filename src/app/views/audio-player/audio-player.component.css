@@ -1,13 +1,20 @@
-.controls {
-    display: flex;
-    gap: 0.75rem;
+.audio-player {
+  background-color: #666;
+    color: #fff;
+    padding: 0.25rem 0.5rem;;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
 }
 
-.controls div {
-    display: inline-block;
-    background-color: #fff;
-    color: black;
-    padding: 0.25rem 0.5rem;;
+.audio-player.active {
+  background-color: #fff;
+  color: #000;
+}
+
+.live-stream {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .progress-bar {
@@ -22,3 +29,6 @@
     background-color: aquamarine;
   }
   
+
+
+ 

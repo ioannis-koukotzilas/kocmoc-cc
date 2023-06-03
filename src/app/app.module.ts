@@ -10,6 +10,7 @@ import { PostDetailComponent } from './views/post/post-detail/post-detail.compon
 import { EpisodeDetailComponent } from './views/episode/episode-detail/episode-detail.component';
 import { EpisodeListComponent } from './views/episode/episode-list/episode-list.component';
 import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.co
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

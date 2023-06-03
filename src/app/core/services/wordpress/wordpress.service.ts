@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Genre } from 'src/app/dtos/genre';
+import { Genre } from 'src/app/models/genre';
 import { environment } from 'src/app/enviroments/environment';
 import { Observable } from 'rxjs';
+import { Episode } from 'src/app/models/episode';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class WordPressService {
   }
 
   fetchEpisodes() {
-    return this.http.get<any[]>(`${this.baseUrl}/episode?_embed`);
+    return this.http.get<Episode[]>(`${this.baseUrl}/episode?_embed`);
   }
 
   fetchEpisode(id: string) {
@@ -40,7 +41,7 @@ export class WordPressService {
   }
   
   fetchEpisodesByGenre(genreId: string) {
-    return this.http.get<any[]>(`${this.baseUrl}/episode?genre=${genreId}&_embed`);
+    return this.http.get<Episode[]>(`${this.baseUrl}/episode?genre=${genreId}&_embed`);
   }
 
 }
