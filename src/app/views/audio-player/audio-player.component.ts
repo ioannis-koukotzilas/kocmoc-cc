@@ -5,8 +5,9 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
 import { AudioPlayerService } from 'src/app/core/services/audio-player/audio-player.service';
+import { ScriptLoaderService } from 'src/app/core/services/script-loader.service';
 
 @Component({
   selector: 'app-audio-player',
@@ -15,69 +16,89 @@ import { AudioPlayerService } from 'src/app/core/services/audio-player/audio-pla
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioPlayerComponent implements OnInit, OnDestroy {
-  progress = 0;
-  currentAudio: HTMLAudioElement | null = null;
-
   private subscriptions: Subscription = new Subscription();
   public currentEpisodeTitle = '';
 
+  private _currentAudio: HTMLAudioElement | null = null;
+
+  get currentAudio(): HTMLAudioElement | null {
+    return this._currentAudio;
+  }
+
+  set currentAudio(value: HTMLAudioElement | null) {
+    this._currentAudio = value;
+  }
+
   constructor(
     public audioPlayerService: AudioPlayerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private scriptLoader: ScriptLoaderService
   ) {}
 
   ngOnInit(): void {
-    this.currentAudio = this.audioPlayerService.getCurrentAudio();
     this.subscriptions.add(
-      this.audioPlayerService.currentEpisode$.subscribe(
-        (episode) => {
-          if (episode) {
-            console.log(episode); // Log the episode object here
-            this.currentEpisodeTitle = episode.title.rendered;
-          } else {
-            this.currentEpisodeTitle = '';
-          }
-          this.currentAudio?.removeEventListener(
-            'timeupdate',
-            this.updateProgress
-          );
+      this.audioPlayerService.currentEpisode$.subscribe((episode) => {
+        if (episode) {
+          this.currentEpisodeTitle = episode.title.rendered;
           this.currentAudio = this.audioPlayerService.getCurrentAudio();
-          this.currentAudio?.addEventListener('timeupdate', () =>
-            this.updateProgress()
-          );
+        } else {
+          this.currentEpisodeTitle = '';
+          this.currentAudio = null;
         }
-      )
+        this.cdr.markForCheck();
+      })
+    );
+
+    this.subscriptions.add(
+      this.audioPlayerService.isPlaying.subscribe(() => {
+        this.cdr.markForCheck();
+      })
     );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-    this.currentAudio?.removeEventListener('timeupdate', this.updateProgress);
   }
 
   toggleLiveStream(): void {
     if (this.audioPlayerService.activeStream === 'liveStream') {
-      if (this.audioPlayerService.isPlaying) {
+      if (this.audioPlayerService.isPlaying.getValue()) {
         this.audioPlayerService.pause();
       } else {
-        // If it's not playing, set the stream again to bypass the browser cache and then play
-        this.audioPlayerService.setLiveStream();
+        this.audioPlayerService.play();
       }
     } else {
       this.audioPlayerService.setLiveStream();
     }
-  }
+}
 
-  toggleEpisode(): void {
-    if (this.audioPlayerService.activeStream === 'episode' && this.audioPlayerService.isPlaying) {
+toggleEpisode(): void {
+    if (
+      this.audioPlayerService.activeStream === 'episode' &&
+      this.audioPlayerService.isPlaying.getValue()
+    ) {
       this.audioPlayerService.pause();
-    } else if (!this.audioPlayerService.isPlaying && this.audioPlayerService.activeStream === 'episode') {
+    } else if (
+      this.audioPlayerService.isEpisodeLoaded
+    ) {
       this.audioPlayerService.play();
     }
-  }
+}
+
 
   backToLiveStream(): void {
     this.audioPlayerService.setLiveStream();
+    this.scriptLoader
+      .loadScript(
+        'https://falcon.shoutca.st/system/streaminfo.js',
+        'streaminfo-script'
+      )
+      .then(() => {
+        console.log('Script loaded successfully');
+      })
+      .catch((err) => {
+        console.error('Failed to load script', err);
+      });
   }
 
   playCurrentStream(): void {
@@ -89,24 +110,6 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   pauseCurrentStream(): void {
     if (this.audioPlayerService.isPlaying) {
       this.audioPlayerService.pause();
-    }
-  }
-
-  updateProgress(): void {
-    if (this.currentAudio && this.currentAudio.currentTime > 0) {
-      this.progress =
-        (this.currentAudio.currentTime / this.currentAudio.duration) * 100;
-      this.cdr.detectChanges();
-    }
-  }
-
-  seek(event: MouseEvent): void {
-    if (this.currentAudio) {
-      const progressBar: HTMLElement = event.currentTarget as HTMLElement;
-      const { offsetX } = event;
-      const newTime =
-        (offsetX / progressBar.offsetWidth) * this.currentAudio.duration;
-      this.currentAudio.currentTime = newTime;
     }
   }
 }

@@ -5,7 +5,7 @@ export class Episode {
     excerpt: { rendered: string };
     genre: string[];
     acf: {
-        mp3: string;
+        track_file_name: string;
     };
 
     constructor(
@@ -14,7 +14,7 @@ export class Episode {
         title: { rendered: string },
         excerpt: { rendered: string },
         genre: string[],
-        acf: { mp3: string }
+        acf: { track_file_name: string }
     ) {
         this.id = id;
         this.date = date;

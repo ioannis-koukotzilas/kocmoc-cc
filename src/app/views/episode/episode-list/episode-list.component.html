@@ -1,52 +1,62 @@
-<div *ngIf="isLoading" class="loading">Loading...</div>
+<div class="container">
 
-<div *ngIf="!isLoading">
+    <div *ngIf="isLoading" class="loading">Loading...</div>
 
-    <h1>Episodes</h1>
+    <div *ngIf="!isLoading">
 
-    <ul class="episodes">
+        <h1>Episodes</h1>
 
-        <li *ngFor="let episode of episodes" class="episode">
+        <ul class="episodes">
 
-            <a [routerLink]="['/episode', episode.id]">
-                <div *ngIf="hasThumbnail(episode)">
-                    <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
-                </div>
-                <p>{{ episode.date | date }}</p>
-                <h2>{{ episode.title.rendered }}</h2>
-                <p [innerHTML]="episode.excerpt.rendered"></p>
-            </a>
+            <li *ngFor="let episode of episodes" class="episode">
 
-            <ul class="genres" *ngIf="getGenresForEpisode(episode).length > 0">
-                <li *ngFor="let genre of getGenresForEpisode(episode)">
-                    <a [routerLink]="['/genre', genre?.id]">{{ genre?.name }}</a>
-                </li>
-            </ul>
+                <div class="play-container">
 
-            <div *ngIf="episode.acf?.mp3" class="play"
-     [class.playing]="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying"
-     [class.paused]="audioPlayerService.currentEpisode.value?.id === episode.id && !audioPlayerService.isEpisodePlaying"
-     (click)="playEpisode(episode)">
+                    <div *ngIf="hasThumbnail(episode)">
+                        <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
+                    </div>
 
-                <span class="material-symbols-outlined play"
-                    *ngIf="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
-                    pause
-                </span>
+                    <div *ngIf="episode.acf?.track_file_name" class="play-controls"
+                    [class.playing]="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying"
+                    [class.paused]="audioPlayerService.currentEpisode.value?.id === episode.id && !audioPlayerService.isEpisodePlaying"
+                    (click)="playEpisode(episode)">
 
-                <span class="material-symbols-outlined play"
-                    *ngIf="(audioPlayerService.currentEpisode.value?.id !== episode.id || !audioPlayerService.isEpisodePlaying) && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
-                    play_arrow
-                </span>
+                    <span class="material-symbols-outlined symbol"
+                        *ngIf="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                        pause
+                    </span>
 
-                <!-- <mat-spinner
-                    *ngIf="(audioPlayerService.episodeLoading.value) && audioPlayerService.currentEpisode.value?.id === episode.id"></mat-spinner> -->
+                    <span class="material-symbols-outlined symbol"
+                        *ngIf="(audioPlayerService.currentEpisode.value?.id !== episode.id || !audioPlayerService.isEpisodePlaying) && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                        play_arrow
+                    </span>
 
                     <span class="loader" *ngIf="(audioPlayerService.episodeLoading.value) && audioPlayerService.currentEpisode.value?.id === episode.id"></span>
 
-            </div>
+                </div>
 
-        </li>
+                </div>
 
-    </ul>
+                
+
+                <a [routerLink]="['/episode', episode.id]">
+                    <p>{{ episode.date | date }}</p>
+                    <h2>{{ episode.title.rendered }}</h2>
+                    <p [innerHTML]="episode.excerpt.rendered"></p>
+                </a>
+
+                <ul class="genres" *ngIf="getGenresForEpisode(episode).length > 0">
+                    <li *ngFor="let genre of getGenresForEpisode(episode)">
+                        <a [routerLink]="['/genre', genre?.id]">{{ genre?.name }}</a>
+                    </li>
+                </ul>
+
+                
+
+            </li>
+
+        </ul>
+
+    </div>
 
 </div>

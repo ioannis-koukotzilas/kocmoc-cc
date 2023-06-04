@@ -82,12 +82,19 @@ export class EpisodeListComponent implements OnInit {
   }
 
   playEpisode(episode: Episode) {
-    if (this.audioPlayerService.currentEpisode.value?.id === episode.id && !this.audioPlayerService.isEpisodePlaying) {
-      this.audioPlayerService.resume();
+    if (this.audioPlayerService.currentEpisode.value?.id === episode.id) {
+      // If this is the currently loaded episode, just pause/resume it
+      if (this.audioPlayerService.isEpisodePlaying) {
+        this.audioPlayerService.pause();
+      } else {
+        this.audioPlayerService.play();
+      }
     } else {
+      // If this is a new episode, load and start it
       this.audioPlayerService.setEpisodeStream(episode);
     }
   }
+  
   
 
 }

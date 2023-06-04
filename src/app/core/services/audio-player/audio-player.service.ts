@@ -16,7 +16,8 @@ export class AudioPlayerService {
   public currentEpisode$ = this.currentEpisode.asObservable();
 
   public isLoading = new BehaviorSubject<boolean>(false);
-  public isPlaying = false;
+  public isPlaying = new BehaviorSubject<boolean>(false);
+  public isPaused = false;
 
   public liveStreamLoading = new BehaviorSubject<boolean>(false);
   public episodeLoading = new BehaviorSubject<boolean>(false);
@@ -25,23 +26,23 @@ export class AudioPlayerService {
 
   play(): void {
     this.audio.play();
-    this.isPlaying = true;
+    this.isPlaying.next(true);
   }
 
   pause(): void {
     this.audio.pause();
-    this.isPlaying = false;
-  }
-
-  resume(): void {
-    this.audio.play();
+    this.isPlaying.next(false);
   }
 
   stop(): void {
     this.audio.pause();
     this.audio.currentTime = 0;
-    this.isPlaying = false;
+    this.isPlaying.next(false);
     this.activeStream = 'none';
+    this.removeCanPlayThroughListener();
+  }
+
+  removeCanPlayThroughListener(): void {
     this.audio.removeEventListener(
       'canplaythrough',
       this.canPlayThroughListener
@@ -66,10 +67,10 @@ export class AudioPlayerService {
     this.stop();
     this.liveStreamLoading.next(true);
 
-    this.audio = new Audio();
+    // Reuse the same HTMLAudioElement and just change its `src` property
     this.audio.src = this.liveStreamUrl + '?nocache=' + new Date().getTime();
-
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
+
     this.activeStream = 'liveStream';
     this.currentEpisode.next(null); // Reset current episode when playing live stream
     this.isEpisodeLoaded = false;
@@ -80,10 +81,12 @@ export class AudioPlayerService {
     this.episodeLoading.next(true);
 
     const episodeTrackUrl = this.cloudStorageService.getEpisodeTrackUrl(
-      episode.acf.mp3
+      episode.acf.track_file_name
     );
+    // Reuse the same HTMLAudioElement and just change its `src` property
     this.audio.src = episodeTrackUrl;
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
+
     this.activeStream = 'episode';
     this.currentEpisode.next(episode);
     this.isEpisodeLoaded = true;
@@ -94,10 +97,10 @@ export class AudioPlayerService {
   }
 
   get isLiveStreamPlaying(): boolean {
-    return this.activeStream === 'liveStream' && this.isPlaying;
+    return this.activeStream === 'liveStream' && this.isPlaying.getValue();
   }
 
   get isEpisodePlaying(): boolean {
-    return this.activeStream === 'episode' && this.isPlaying;
+    return this.activeStream === 'episode' && this.isPlaying.getValue();
   }
 }
