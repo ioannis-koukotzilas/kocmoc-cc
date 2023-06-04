@@ -17,21 +17,21 @@
                     </div>
 
                     <div *ngIf="episode.acf?.track_file_name" class="play-controls"
-                    [class.playing]="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying"
-                    [class.paused]="audioPlayerService.currentEpisode.value?.id === episode.id && !audioPlayerService.isEpisodePlaying"
+                    [class.playing]="audioPlayerService.currentOnDemandStream.value?.id === episode.id && audioPlayerService.isOnDemandStreamPlaying"
+                    [class.paused]="audioPlayerService.currentOnDemandStream.value?.id === episode.id && !audioPlayerService.isOnDemandStreamPlaying"
                     (click)="playEpisode(episode)">
 
                     <span class="material-symbols-outlined symbol"
-                        *ngIf="audioPlayerService.currentEpisode.value?.id === episode.id && audioPlayerService.isEpisodePlaying && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                        *ngIf="audioPlayerService.currentOnDemandStream.value?.id === episode.id && audioPlayerService.isOnDemandStreamPlaying && !(audioPlayerService.isOnDemandStreamLoading.value && audioPlayerService.currentOnDemandStream.value?.id === episode.id)">
                         pause
                     </span>
 
                     <span class="material-symbols-outlined symbol"
-                        *ngIf="(audioPlayerService.currentEpisode.value?.id !== episode.id || !audioPlayerService.isEpisodePlaying) && !(audioPlayerService.episodeLoading.value && audioPlayerService.currentEpisode.value?.id === episode.id)">
+                        *ngIf="(audioPlayerService.currentOnDemandStream.value?.id !== episode.id || !audioPlayerService.isOnDemandStreamPlaying) && !(audioPlayerService.isOnDemandStreamLoading.value && audioPlayerService.currentOnDemandStream.value?.id === episode.id)">
                         play_arrow
                     </span>
 
-                    <span class="loader" *ngIf="(audioPlayerService.episodeLoading.value) && audioPlayerService.currentEpisode.value?.id === episode.id"></span>
+                    <span class="loader" *ngIf="(audioPlayerService.isOnDemandStreamLoading.value) && audioPlayerService.currentOnDemandStream.value?.id === episode.id"></span>
 
                 </div>
 

@@ -10,17 +10,16 @@ export class AudioPlayerService {
   private audio: HTMLAudioElement = new Audio();
   private liveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
 
-  public activeStream: 'none' | 'liveStream' | 'episode' = 'none';
-  public isEpisodeLoaded = false;
-  public currentEpisode = new BehaviorSubject<Episode | null>(null);
-  public currentEpisode$ = this.currentEpisode.asObservable();
+  public activeStream: 'none' | 'liveStream' | 'onDemandStream' = 'none';
+
+  public currentOnDemandStream = new BehaviorSubject<Episode | null>(null);
+  public currentOnDemandStream$ = this.currentOnDemandStream.asObservable();
 
   public isLoading = new BehaviorSubject<boolean>(false);
   public isPlaying = new BehaviorSubject<boolean>(false);
-  public isPaused = false;
-
-  public liveStreamLoading = new BehaviorSubject<boolean>(false);
-  public episodeLoading = new BehaviorSubject<boolean>(false);
+  public isLiveStreamLoading = new BehaviorSubject<boolean>(false);
+  public isOnDemandStreamLoading = new BehaviorSubject<boolean>(false);
+  public isOnDemandStreamLoaded = new BehaviorSubject<boolean>(false);
 
   constructor(private cloudStorageService: CloudStorageService) {}
 
@@ -42,6 +41,22 @@ export class AudioPlayerService {
     this.removeCanPlayThroughListener();
   }
 
+  toggleLiveStream(): void {
+    if (this.activeStream === 'liveStream') {
+      this.isPlaying.getValue() ? this.pause() : this.play();
+    } else {
+      this.setLiveStream();
+    }
+  }
+
+  toggleOnDemandStream(): void {
+    if (this.activeStream === 'onDemandStream') {
+      this.isPlaying.getValue() ? this.pause() : this.play();
+    } else if (this.isOnDemandStreamLoaded) {
+      this.play();
+    }
+  }
+
   removeCanPlayThroughListener(): void {
     this.audio.removeEventListener(
       'canplaythrough',
@@ -52,44 +67,38 @@ export class AudioPlayerService {
   private canPlayThroughListener = () => {
     if (this.activeStream === 'liveStream') {
       setTimeout(() => {
-        this.liveStreamLoading.next(false);
+        this.isLiveStreamLoading.next(false);
         this.play();
-      }, 600); // 1 second delay
-    } else if (this.activeStream === 'episode') {
+      }, 600); // delay
+    } else if (this.activeStream === 'onDemandStream') {
       setTimeout(() => {
-        this.episodeLoading.next(false);
+        this.isOnDemandStreamLoading.next(false);
         this.play();
-      }, 600); // 3 seconds delay
+      }, 600); // delay
     }
   };
 
   setLiveStream(): void {
     this.stop();
-    this.liveStreamLoading.next(true);
-
-    // Reuse the same HTMLAudioElement and just change its `src` property
+    this.isLiveStreamLoading.next(true);
     this.audio.src = this.liveStreamUrl + '?nocache=' + new Date().getTime();
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
-
     this.activeStream = 'liveStream';
-    this.currentEpisode.next(null); // Reset current episode when playing live stream
-    this.isEpisodeLoaded = false;
+    this.currentOnDemandStream.next(null);
+    this.isOnDemandStreamLoaded.next(false);
   }
 
-  setEpisodeStream(episode: Episode): void {
+  setOnDemandStream(episode: Episode): void {
     this.stop();
-    this.episodeLoading.next(true);
-
-    const episodeTrackUrl = this.cloudStorageService.getEpisodeTrackUrl(
+    this.isOnDemandStreamLoading.next(true);
+    const onDemandStreamkUrl = this.cloudStorageService.getOnDemandStreamUrl(
       episode.acf.track_file_name
     );
-    // Reuse the same HTMLAudioElement and just change its `src` property
-    this.audio.src = episodeTrackUrl;
+    this.audio.src = onDemandStreamkUrl;
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
-
-    this.activeStream = 'episode';
-    this.currentEpisode.next(episode);
-    this.isEpisodeLoaded = true;
+    this.activeStream = 'onDemandStream';
+    this.currentOnDemandStream.next(episode);
+    this.isOnDemandStreamLoaded.next(true);
   }
 
   getCurrentAudio(): HTMLAudioElement {
@@ -100,7 +109,7 @@ export class AudioPlayerService {
     return this.activeStream === 'liveStream' && this.isPlaying.getValue();
   }
 
-  get isEpisodePlaying(): boolean {
-    return this.activeStream === 'episode' && this.isPlaying.getValue();
+  get isOnDemandStreamPlaying(): boolean {
+    return this.activeStream === 'onDemandStream' && this.isPlaying.getValue();
   }
 }

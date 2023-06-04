@@ -1,10 +1,10 @@
-<div class="audio-player" [ngSwitch]="audioPlayerService.isEpisodeLoaded" [class.active]="(audioPlayerService.isPlaying | async)">
+<div class="audio-player" [ngSwitch]="audioPlayerService.isOnDemandStreamLoaded" [class.active]="(audioPlayerService.isPlaying | async)">
 
   <ng-container *ngSwitchCase="false">
     <div class="live-stream" (click)="toggleLiveStream()">
 
       <div class="container">
-        <span class="loader" *ngIf="audioPlayerService.liveStreamLoading | async; else playPauseIcon"></span>
+        <span class="loader" *ngIf="audioPlayerService.isLiveStreamLoading | async; else playPauseIcon"></span>
         <ng-template #playPauseIcon>
           <span class="material-symbols-outlined play">{{ audioPlayerService.isLiveStreamPlaying ? 'pause' :
             'play_arrow'
@@ -18,19 +18,19 @@
 
   <ng-container *ngSwitchCase="true">
 
-    <div class="on-demand" (click)="toggleEpisode()">
+    <div class="on-demand" (click)="toggleOnDemandStream()">
 
       <div class="container">
 
-        <div class="loader" *ngIf="audioPlayerService.episodeLoading | async; else episodePlayPauseIcon"></div>
+        <div class="loader" *ngIf="audioPlayerService.isOnDemandStreamLoading | async; else episodePlayPauseIcon"></div>
 
         <ng-template #episodePlayPauseIcon>
-          <div class="material-symbols-outlined play">{{ audioPlayerService.isEpisodePlaying ? 'pause' : 'play_arrow' }}
+          <div class="material-symbols-outlined play">{{ audioPlayerService.isOnDemandStreamPlaying ? 'pause' : 'play_arrow' }}
           </div>
           
         </ng-template>
 
-        <div *ngIf="!(audioPlayerService.episodeLoading | async)">{{ ((audioPlayerService.currentEpisode$ |
+        <div *ngIf="!(audioPlayerService.isOnDemandStreamLoading | async)">{{ ((audioPlayerService.currentOnDemandStream$ |
           async)?.title)?.rendered }}</div>
 
       </div>

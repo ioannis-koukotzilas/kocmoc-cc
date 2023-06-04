@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AudioPlayerService } from 'src/app/core/services/audio-player/audio-player.service';
 import { ScriptLoaderService } from 'src/app/core/services/script-loader.service';
 
@@ -17,7 +17,6 @@ import { ScriptLoaderService } from 'src/app/core/services/script-loader.service
 })
 export class AudioPlayerComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
-  public currentEpisodeTitle = '';
 
   private _currentAudio: HTMLAudioElement | null = null;
 
@@ -29,6 +28,8 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     this._currentAudio = value;
   }
 
+  public currentEpisodeTitle = '';
+
   constructor(
     public audioPlayerService: AudioPlayerService,
     private cdr: ChangeDetectorRef,
@@ -37,7 +38,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.audioPlayerService.currentEpisode$.subscribe((episode) => {
+      this.audioPlayerService.currentOnDemandStream$.subscribe((episode) => {
         if (episode) {
           this.currentEpisodeTitle = episode.title.rendered;
           this.currentAudio = this.audioPlayerService.getCurrentAudio();
@@ -61,30 +62,12 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   toggleLiveStream(): void {
-    if (this.audioPlayerService.activeStream === 'liveStream') {
-      if (this.audioPlayerService.isPlaying.getValue()) {
-        this.audioPlayerService.pause();
-      } else {
-        this.audioPlayerService.play();
-      }
-    } else {
-      this.audioPlayerService.setLiveStream();
-    }
-}
+    this.audioPlayerService.toggleLiveStream();
+  }
 
-toggleEpisode(): void {
-    if (
-      this.audioPlayerService.activeStream === 'episode' &&
-      this.audioPlayerService.isPlaying.getValue()
-    ) {
-      this.audioPlayerService.pause();
-    } else if (
-      this.audioPlayerService.isEpisodeLoaded
-    ) {
-      this.audioPlayerService.play();
-    }
-}
-
+  toggleOnDemandStream(): void {
+    this.audioPlayerService.toggleOnDemandStream();
+  }
 
   backToLiveStream(): void {
     this.audioPlayerService.setLiveStream();
