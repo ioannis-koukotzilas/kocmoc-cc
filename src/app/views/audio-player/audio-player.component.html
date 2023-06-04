@@ -22,16 +22,21 @@
 
       <div class="container">
 
-        <div class="loader" *ngIf="audioPlayerService.isOnDemandStreamLoading | async; else episodePlayPauseIcon"></div>
+        <div class="spinner-container" *ngIf="audioPlayerService.isOnDemandStreamLoading | async; else episodePlayPauseIcon">
+          <div class="spinner"></div>
+        </div>
+
+        <div *ngIf="audioPlayerService.isOnDemandStreamLoading | async;">Loading...</div>
 
         <ng-template #episodePlayPauseIcon>
-          <div class="material-symbols-outlined play">{{ audioPlayerService.isOnDemandStreamPlaying ? 'pause' : 'play_arrow' }}
-          </div>
-          
+          <div class="material-symbols-outlined play">{{ audioPlayerService.isOnDemandStreamPlaying ? 'pause' : 'play_arrow' }}</div>
         </ng-template>
 
-        <div *ngIf="!(audioPlayerService.isOnDemandStreamLoading | async)">{{ ((audioPlayerService.currentOnDemandStream$ |
-          async)?.title)?.rendered }}</div>
+        <div *ngIf="!(audioPlayerService.isOnDemandStreamLoading | async)">
+          {{ ((audioPlayerService.currentOnDemandStream$ | async)?.title)?.rendered }}
+          - {{ ((audioPlayerService.currentOnDemandStream$ | async)?.date) | date:'dd.MM.yy' }}
+        </div>
+        
 
       </div>
 

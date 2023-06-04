@@ -19,7 +19,7 @@ export class AudioPlayerService {
   public isPlaying = new BehaviorSubject<boolean>(false);
   public isLiveStreamLoading = new BehaviorSubject<boolean>(false);
   public isOnDemandStreamLoading = new BehaviorSubject<boolean>(false);
-  public isOnDemandStreamLoaded = new BehaviorSubject<boolean>(false);
+  public isOnDemandStreamLoaded = false;
 
   constructor(private cloudStorageService: CloudStorageService) {}
 
@@ -74,7 +74,7 @@ export class AudioPlayerService {
       setTimeout(() => {
         this.isOnDemandStreamLoading.next(false);
         this.play();
-      }, 600); // delay
+      }, 6000); // delay
     }
   };
 
@@ -85,7 +85,7 @@ export class AudioPlayerService {
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
     this.activeStream = 'liveStream';
     this.currentOnDemandStream.next(null);
-    this.isOnDemandStreamLoaded.next(false);
+    this.isOnDemandStreamLoaded = false;
   }
 
   setOnDemandStream(episode: Episode): void {
@@ -98,7 +98,7 @@ export class AudioPlayerService {
     this.audio.addEventListener('canplaythrough', this.canPlayThroughListener);
     this.activeStream = 'onDemandStream';
     this.currentOnDemandStream.next(episode);
-    this.isOnDemandStreamLoaded.next(true);
+    this.isOnDemandStreamLoaded = true;
   }
 
   getCurrentAudio(): HTMLAudioElement {
