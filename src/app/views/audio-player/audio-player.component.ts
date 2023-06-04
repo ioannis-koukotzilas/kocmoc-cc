@@ -55,6 +55,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       })
     );
+
   }
 
   ngOnDestroy(): void {
@@ -93,6 +94,16 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   pauseCurrentStream(): void {
     if (this.audioPlayerService.isPlaying) {
       this.audioPlayerService.pause();
+    }
+  }
+
+  seekAudio(event: MouseEvent, duration: number): void {
+    if (this.currentAudio && duration) {
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const clickedPercentage = x / rect.width;
+      const clickedTime = clickedPercentage * duration;
+      this.currentAudio.currentTime = clickedTime;
     }
   }
 }

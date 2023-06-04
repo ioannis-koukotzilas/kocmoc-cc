@@ -11,20 +11,7 @@
   color: #000;
 }
 
-.progress-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background-color: #666;
-  }
-  
-  .progress {
-    height: 100%;
-    background-color: aquamarine;
-    transition: width 0.1s linear; 
-  }
+
 
   .live-stream .container {
     display: flex;
@@ -81,4 +68,28 @@
   100% {
       transform: rotate(360deg);
   }
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: width 0.2s;
+}
+
+.progress-bar-container {
+  height: 5px;
+  background-color: #666;
+  transition: width 0.2s;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: aquamarine;
+  transition: width 0.2s;
+}
+
+.time-display {
+  font-size: 12px;
 }

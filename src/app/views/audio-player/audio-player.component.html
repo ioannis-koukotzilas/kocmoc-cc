@@ -1,4 +1,4 @@
-<div class="audio-player" [ngSwitch]="audioPlayerService.isOnDemandStreamLoaded" [class.active]="(audioPlayerService.isPlaying | async)">
+<div class="audio-player" [ngSwitch]="(audioPlayerService.isOnDemandStreamLoaded | async)" [class.active]="(audioPlayerService.isPlaying | async)">
 
   <ng-container *ngSwitchCase="false">
     <div class="live-stream" (click)="toggleLiveStream()">
@@ -36,6 +36,10 @@
           {{ ((audioPlayerService.currentOnDemandStream$ | async)?.title)?.rendered }}
           - {{ ((audioPlayerService.currentOnDemandStream$ | async)?.date) | date:'dd.MM.yy' }}
         </div>
+
+        <div class="time-display" *ngIf="!(audioPlayerService.isOnDemandStreamLoading | async)">
+          {{ audioPlayerService.formattedCurrentTime | async }} / {{ audioPlayerService.formattedDuration | async }}
+        </div>
         
 
       </div>
@@ -46,5 +50,19 @@
       </div>
 
     </div>
+
+
+    <div class="progress" >
+
+      <div class="progress-bar-container" (click)="seekAudio($event, audioPlayerService.durationInSeconds.getValue())">
+        <div class="progress-bar" *ngIf="!(audioPlayerService.isOnDemandStreamLoading | async)" [style.width.%]="(audioPlayerService.currentTimeInSeconds.getValue() / audioPlayerService.durationInSeconds.getValue()) * 100"></div>
+      </div>
+      
+      
+      
+      </div>
+    
+
   </ng-container>
 </div>
+
