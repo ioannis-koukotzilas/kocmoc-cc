@@ -4,6 +4,7 @@ import { Genre } from 'src/app/models/genre';
 import { environment } from 'src/app/enviroments/environment';
 import { Observable } from 'rxjs';
 import { Episode } from 'src/app/models/episode';
+import { Artist } from 'src/app/models/artist';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,14 @@ export class WordPressService {
 
   fetchEpisode(id: string) {
     return this.http.get(`${this.baseUrl}/episode/${id}?_embed`);
+  }
+
+  fetchArtists(): Observable<Artist[]> {
+    return this.http.get<Artist[]>(`${this.baseUrl}/artist`);
+  }
+
+  fetchArtist(id: string): Observable<Artist> {
+    return this.http.get<Artist>(`${this.baseUrl}/artist/${id}`);
   }
 
   fetchGenre(id: string) {
