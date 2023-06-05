@@ -1,3 +1,9 @@
+/*--------------------------------------------------------------
+# Audio Player
+--------------------------------------------------------------*/
+
+
+
 .audio-player {
   background-color: #666;
     color: #fff;
@@ -12,13 +18,58 @@
 }
 
 
+/* Live Stream
+--------------------------------------------- */
+
 
   .live-stream .container {
     display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 24px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 24px;
   }
+
+
+  .live-stream .loader {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .live-stream .content {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .spinner-container {
+    width: 15px;
+    height: 15px;
+    margin: 0 4.5px;
+   }
+  
+   .spinner {
+    width: 100%;
+    height: 100%;
+    border: 2px solid;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+  
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+  }
+
+
+
   
 .on-demand {
   display: flex;
@@ -44,31 +95,7 @@
   padding: 0.25rem 24px;
  }
 
- .spinner-container {
-  width: 18px;
-  height: 18px;
-  padding: 3px;
- }
-
- .spinner {
-  width: 100%;
-  height: 100%;
-  border: 3px solid;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-  }
-
-  @keyframes rotation {
-  0% {
-      transform: rotate(0deg);
-  }
-  100% {
-      transform: rotate(360deg);
-  }
-}
+ 
 
 .progress {
   position: absolute;
@@ -92,4 +119,15 @@
 
 .time-display {
   font-size: 12px;
+}
+
+
+
+.loading {
+  background-color: #ccc;
+}
+
+.active {
+  background-color: #fff;
+  color: #000;
 }

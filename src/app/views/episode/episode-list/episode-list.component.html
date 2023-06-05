@@ -16,28 +16,17 @@
                         <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
                     </div>
 
-                    <div *ngIf="episode.acf?.track_file_name" class="play-controls"
-                    [class.playing]="audioPlayerService.currentOnDemandStream.value?.id === episode.id && audioPlayerService.isOnDemandStreamPlaying"
-                    [class.paused]="audioPlayerService.currentOnDemandStream.value?.id === episode.id && !audioPlayerService.isOnDemandStreamPlaying"
-                    (click)="playEpisode(episode)">
+                    <div *ngIf="episode.acf?.track_file_name" class="play-controls" (click)="playEpisode(episode)">
 
-                    <span class="material-symbols-outlined symbol"
-                        *ngIf="audioPlayerService.currentOnDemandStream.value?.id === episode.id && audioPlayerService.isOnDemandStreamPlaying && !(audioPlayerService.isOnDemandStreamLoading.value && audioPlayerService.currentOnDemandStream.value?.id === episode.id)">
-                        pause
-                    </span>
+                        <span class="material-symbols-outlined symbol">pause</span>
 
-                    <span class="material-symbols-outlined symbol"
-                        *ngIf="(audioPlayerService.currentOnDemandStream.value?.id !== episode.id || !audioPlayerService.isOnDemandStreamPlaying) && !(audioPlayerService.isOnDemandStreamLoading.value && audioPlayerService.currentOnDemandStream.value?.id === episode.id)">
-                        play_arrow
-                    </span>
+                        <span class="material-symbols-outlined symbol">play_arrow</span>
 
-                    <span class="loader" *ngIf="(audioPlayerService.isOnDemandStreamLoading.value) && audioPlayerService.currentOnDemandStream.value?.id === episode.id"></span>
+                        <span class="loader"></span>
+
+                    </div>
 
                 </div>
-
-                </div>
-
-                
 
                 <a [routerLink]="['/episode', episode.id]">
                     <p>{{ episode.date | date }}</p>
@@ -50,8 +39,6 @@
                         <a [routerLink]="['/genre', genre?.id]">{{ genre?.name }}</a>
                     </li>
                 </ul>
-
-                
 
             </li>
 

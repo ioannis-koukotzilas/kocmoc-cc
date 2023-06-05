@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, catchError, forkJoin, switchMap, tap } from 'rxjs';
-import { AudioPlayerService } from 'src/app/core/services/audio-player/audio-player.service';
-import { CloudStorageService } from 'src/app/core/services/cloud-storage/cloud-storage.service';
+import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
 import { Episode } from 'src/app/models/episode';
 import { Genre } from 'src/app/models/genre';
@@ -17,11 +16,17 @@ export class EpisodeListComponent implements OnInit {
   genres: { [id: string]: Genre } = {};
   isLoading = true;
 
-  constructor(
-    private wordPressService: WordPressService,
-    private cloudStorageService: CloudStorageService,
-    public audioPlayerService: AudioPlayerService
-  ) {}
+  public liveStreamLoading$: Observable<boolean>;
+  public liveStreamPlaying$: Observable<boolean>;
+  public onDemandStreamLoading$: Observable<boolean>;
+  public onDemandStreamPlaying$: Observable<boolean>;
+
+  constructor(private wordPressService: WordPressService, public audioPlayerService: AudioPlayerService) {
+    this.liveStreamLoading$ = this.audioPlayerService.liveStreamLoading.asObservable();
+    this.liveStreamPlaying$ = this.audioPlayerService.liveStreamPlaying.asObservable();
+    this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading.asObservable();
+    this.onDemandStreamPlaying$ = this.audioPlayerService.onDemandStreamPlaying.asObservable();
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -47,7 +52,6 @@ export class EpisodeListComponent implements OnInit {
       });
   }
 
-  // Check if an episode has a thumbnail
   hasThumbnail(episode: any): boolean {
     return (
       episode._embedded &&
@@ -55,13 +59,11 @@ export class EpisodeListComponent implements OnInit {
     );
   }
 
-  // Get the thumbnail URL of an episode
   getThumbnailUrl(episode: any): string {
     return episode._embedded['wp:featuredmedia'][0].media_details.sizes.medium
       .source_url;
   }
 
-  // Fetch genres for all episodes
   private fetchGenresForEpisodes(): Observable<Genre[]> {
     const genreIds = new Set<string>();
     this.episodes.forEach((episode) => {
@@ -76,7 +78,6 @@ export class EpisodeListComponent implements OnInit {
     return forkJoin(genreObservables);
   }
 
-  // Get the genres for a particular episode
   getGenresForEpisode(episode: Episode): Genre[] {
     return episode.genre.map((genreId: string) => this.genres[genreId]);
   }
@@ -84,17 +85,11 @@ export class EpisodeListComponent implements OnInit {
   playEpisode(episode: Episode) {
     if (this.audioPlayerService.currentOnDemandStream.value?.id === episode.id) {
       // If this is the currently loaded episode, just pause/resume it
-      if (this.audioPlayerService.isOnDemandStreamPlaying) {
-        this.audioPlayerService.pause();
-      } else {
-        this.audioPlayerService.play();
-      }
+      this.audioPlayerService.toggleOnDemandStream(episode);
     } else {
       // If this is a new episode, load and start it
-      this.audioPlayerService.setOnDemandStream(episode);
+      this.audioPlayerService.playOnDemandStream(episode);
     }
   }
   
-  
-
 }

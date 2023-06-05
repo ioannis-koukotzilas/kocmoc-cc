@@ -1,109 +1,91 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { AudioPlayerService } from 'src/app/core/services/audio-player/audio-player.service';
+import { Observable, Subscription } from 'rxjs';
+import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { ScriptLoaderService } from 'src/app/core/services/script-loader.service';
+import { Episode } from 'src/app/models/episode';
 
 @Component({
-  selector: 'app-audio-player',
-  templateUrl: './audio-player.component.html',
-  styleUrls: ['./audio-player.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-audio-player',
+    templateUrl: './audio-player.component.html',
+    styleUrls: ['./audio-player.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioPlayerComponent implements OnInit, OnDestroy {
-  private subscriptions: Subscription = new Subscription();
 
-  private _currentAudio: HTMLAudioElement | null = null;
+    private subscriptions: Subscription = new Subscription();
 
-  get currentAudio(): HTMLAudioElement | null {
-    return this._currentAudio;
-  }
+    public currentEpisode: Episode | null = null;
 
-  set currentAudio(value: HTMLAudioElement | null) {
-    this._currentAudio = value;
-  }
+    public liveStreamLoading$: Observable<boolean>;
+    public liveStreamPlaying$: Observable<boolean>;
+    public onDemandStreamLoading$: Observable<boolean>;
+    public onDemandStreamPlaying$: Observable<boolean>;
+    public streamTypeSelected$: Observable<string>;
 
-  public currentEpisodeTitle = '';
+    constructor(
+        public audioPlayerService: AudioPlayerService,
+        private cdr: ChangeDetectorRef,
+        private scriptLoader: ScriptLoaderService
+    ) {
+        this.liveStreamLoading$ = this.audioPlayerService.liveStreamLoading$;
+        this.liveStreamPlaying$ = this.audioPlayerService.liveStreamPlaying$;
+        this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading$;
+        this.onDemandStreamPlaying$ = this.audioPlayerService.onDemandStreamPlaying$;
+        this.streamTypeSelected$ = this.audioPlayerService.streamTypeSelected$;
+    }
 
-  constructor(
-    public audioPlayerService: AudioPlayerService,
-    private cdr: ChangeDetectorRef,
-    private scriptLoader: ScriptLoaderService
-  ) {}
+    ngOnInit(): void {
+        this.subscriptions.add(
+            this.audioPlayerService.currentOnDemandStream$.subscribe(data => {
+                this.currentEpisode = data;
+                this.cdr.markForCheck();
+            })
+        );
+    }
 
-  ngOnInit(): void {
-    this.subscriptions.add(
-      this.audioPlayerService.currentOnDemandStream$.subscribe((episode) => {
-        if (episode) {
-          this.currentEpisodeTitle = episode.title.rendered;
-          this.currentAudio = this.audioPlayerService.getCurrentAudio();
-        } else {
-          this.currentEpisodeTitle = '';
-          this.currentAudio = null;
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
+    toggleLiveStream(): void {
+        this.audioPlayerService.streamTypeSelected.next('liveStream');
+        this.audioPlayerService.toggleLiveStream();
+    }
+
+    toggleOnDemandStream(): void {
+        const currentEpisode = this.audioPlayerService.currentOnDemandStream.value;
+        if (currentEpisode) {
+            this.audioPlayerService.streamTypeSelected.next('onDemandStream');
+            if (this.audioPlayerService.currentOnDemandStream.value?.id === currentEpisode.id) {
+                this.audioPlayerService.toggleOnDemandStream(currentEpisode);
+            } else {
+                this.audioPlayerService.playOnDemandStream(currentEpisode);
+            }
         }
-        this.cdr.markForCheck();
-      })
-    );
-
-    this.subscriptions.add(
-      this.audioPlayerService.isPlaying.subscribe(() => {
-        this.cdr.markForCheck();
-      })
-    );
-
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  toggleLiveStream(): void {
-    this.audioPlayerService.toggleLiveStream();
-  }
-
-  toggleOnDemandStream(): void {
-    this.audioPlayerService.toggleOnDemandStream();
-  }
-
-  backToLiveStream(): void {
-    this.audioPlayerService.setLiveStream();
-    this.scriptLoader
-      .loadScript(
-        'https://falcon.shoutca.st/system/streaminfo.js',
-        'streaminfo-script'
-      )
-      .then(() => {
-        console.log('Script loaded successfully');
-      })
-      .catch((err) => {
-        console.error('Failed to load script', err);
-      });
-  }
-
-  playCurrentStream(): void {
-    if (!this.audioPlayerService.isPlaying) {
-      this.audioPlayerService.play();
     }
-  }
 
-  pauseCurrentStream(): void {
-    if (this.audioPlayerService.isPlaying) {
-      this.audioPlayerService.pause();
+    backToLiveStream(): void {
+        this.audioPlayerService.streamTypeSelected.next('liveStream');
+        this.audioPlayerService.stopOnDemandStream();
+        this.audioPlayerService.playLiveStream();
+        this.scriptLoader
+            .loadScript(
+                'https://falcon.shoutca.st/system/streaminfo.js',
+                'streaminfo-script'
+            )
+            .then(() => {
+                console.log('Script loaded successfully');
+            })
+            .catch((err) => {
+                console.error('Failed to load script', err);
+            });
     }
-  }
 
-  seekAudio(event: MouseEvent, duration: number): void {
-    if (this.currentAudio && duration) {
-      const rect = (event.target as HTMLElement).getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const clickedPercentage = x / rect.width;
-      const clickedTime = clickedPercentage * duration;
-      this.currentAudio.currentTime = clickedTime;
-    }
-  }
+
 }
