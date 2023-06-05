@@ -16,16 +16,14 @@ export class EpisodeListComponent implements OnInit {
   genres: { [id: string]: Genre } = {};
   isLoading = true;
 
-  public liveStreamLoading$: Observable<boolean>;
-  public liveStreamPlaying$: Observable<boolean>;
+  public currentOnDemandStream$: Observable<Episode | null>;
   public onDemandStreamLoading$: Observable<boolean>;
   public onDemandStreamPlaying$: Observable<boolean>;
 
   constructor(private wordPressService: WordPressService, public audioPlayerService: AudioPlayerService) {
-    this.liveStreamLoading$ = this.audioPlayerService.liveStreamLoading.asObservable();
-    this.liveStreamPlaying$ = this.audioPlayerService.liveStreamPlaying.asObservable();
-    this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading.asObservable();
-    this.onDemandStreamPlaying$ = this.audioPlayerService.onDemandStreamPlaying.asObservable();
+        this.currentOnDemandStream$ = this.audioPlayerService.currentOnDemandStream$;
+        this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading$;
+        this.onDemandStreamPlaying$ = this.audioPlayerService.onDemandStreamPlaying$;
   }
 
   ngOnInit(): void {

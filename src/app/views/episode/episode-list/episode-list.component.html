@@ -8,7 +8,11 @@
 
         <ul class="episodes">
 
-            <li *ngFor="let episode of episodes" class="episode">
+            <li *ngFor="let episode of episodes" class="episode"
+                [ngClass]="{
+                    'active': (currentOnDemandStream$ | async)?.id === episode.id, 
+                    'loading': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async), 
+                    'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
                 <div class="play-container">
 
@@ -18,14 +22,18 @@
 
                     <div *ngIf="episode.acf?.track_file_name" class="play-controls" (click)="playEpisode(episode)">
 
-                        <span class="material-symbols-outlined symbol">pause</span>
-
-                        <span class="material-symbols-outlined symbol">play_arrow</span>
-
-                        <span class="loader"></span>
-
+                        <span *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)" 
+                              class="material-symbols-outlined symbol">pause</span>
+                    
+                        <span *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)" 
+                              class="material-symbols-outlined symbol">play_arrow</span>
+                    
+                        <div *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)" class="spinner-container">
+                            <div class="spinner"></div>
+                        </div>       
+                    
                     </div>
-
+                    
                 </div>
 
                 <a [routerLink]="['/episode', episode.id]">

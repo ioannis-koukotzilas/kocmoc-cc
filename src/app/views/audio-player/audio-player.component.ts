@@ -1,14 +1,10 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    OnDestroy,
-    OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { ScriptLoaderService } from 'src/app/core/services/script-loader.service';
 import { Episode } from 'src/app/models/episode';
+import { LiveStreamTrack } from 'src/app/models/liveStreamTrack';
+import { StreamInfoService } from 'src/app/core/services/stream-info.service';
 
 @Component({
     selector: 'app-audio-player',
@@ -28,11 +24,9 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     public onDemandStreamPlaying$: Observable<boolean>;
     public streamTypeSelected$: Observable<string>;
 
-    constructor(
-        public audioPlayerService: AudioPlayerService,
-        private cdr: ChangeDetectorRef,
-        private scriptLoader: ScriptLoaderService
-    ) {
+    public currentLiveStreamTrack: LiveStreamTrack | null = null;
+
+    constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private scriptLoader: ScriptLoaderService, private streamInfoService: StreamInfoService) {
         this.liveStreamLoading$ = this.audioPlayerService.liveStreamLoading$;
         this.liveStreamPlaying$ = this.audioPlayerService.liveStreamPlaying$;
         this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading$;
@@ -42,9 +36,26 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subscriptions.add(
-            this.audioPlayerService.currentOnDemandStream$.subscribe(data => {
-                this.currentEpisode = data;
-                this.cdr.markForCheck();
+            this.audioPlayerService.currentOnDemandStream$.subscribe({
+                next: data => {
+                    this.currentEpisode = data;
+                    this.cdr.markForCheck();
+                },
+                error: error => {
+                    console.error('Error loading on demand stream:', error);
+                }
+            })
+        );
+
+        this.subscriptions.add(
+            this.streamInfoService.getStreamInfo().subscribe({
+                next: data => {
+                    this.currentLiveStreamTrack = data[0];
+                    this.cdr.markForCheck();
+                },
+                error: error => {
+                    console.error('Error loading stream info:', error);
+                }
             })
         );
     }
@@ -86,6 +97,5 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
                 console.error('Failed to load script', err);
             });
     }
-
 
 }

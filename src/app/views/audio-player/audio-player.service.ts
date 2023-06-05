@@ -15,21 +15,17 @@ export class AudioPlayerService {
     public liveStreamPlaying = new BehaviorSubject<boolean>(false);
     public onDemandStreamLoading = new BehaviorSubject<boolean>(false);
     public onDemandStreamPlaying = new BehaviorSubject<boolean>(false);
-    public currentOnDemandStream = new BehaviorSubject<Episode | null>(null);
     public streamTypeSelected = new BehaviorSubject<string>('liveStream');
+    public currentOnDemandStream = new BehaviorSubject<Episode | null>(null);
 
     public liveStreamLoading$ = this.liveStreamLoading.asObservable();
     public liveStreamPlaying$ = this.liveStreamPlaying.asObservable();
     public onDemandStreamLoading$ = this.onDemandStreamLoading.asObservable();
     public onDemandStreamPlaying$ = this.onDemandStreamPlaying.asObservable();
-    public currentOnDemandStream$ = this.currentOnDemandStream.asObservable();
     public streamTypeSelected$ = this.streamTypeSelected.asObservable();
+    public currentOnDemandStream$ = this.currentOnDemandStream.asObservable();
 
     constructor(private cloudStorageService: CloudStorageService) {}
-
-    getCurrentOnDemandAudio(): HTMLAudioElement {
-        return this.onDemandStreamAudio;
-    }
 
     setLiveStream(): void {
         this.liveStreamLoading.next(true);
@@ -73,8 +69,7 @@ export class AudioPlayerService {
 
     setOnDemandStream(episode: Episode): void {
         this.onDemandStreamLoading.next(true);
-        const onDemandStreamUrl = this.cloudStorageService.getOnDemandStreamUrl(episode.acf.track_file_name);
-        this.onDemandStreamAudio.src = onDemandStreamUrl;
+        this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.acf.track_file_name);
         this.currentOnDemandStream.next(episode);
     }
 
