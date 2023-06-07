@@ -3,22 +3,26 @@ export class Episode {
     date: string;
     title: { rendered: string };
     excerpt: { rendered: string };
+    content: { rendered: string };
     genre: string[];
     acf: {
         track_file_name: string;
     };
+    
 
     constructor(
         id: string,
         date: string,
         title: { rendered: string },
         excerpt: { rendered: string },
+        content: { rendered: string },
         genre: string[],
         acf: { track_file_name: string }
     ) {
         this.id = id;
         this.date = date;
         this.excerpt = excerpt;
+        this.content = content;
         this.title = title;
         this.genre = genre;
         this.acf = acf;

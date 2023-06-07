@@ -80,6 +80,13 @@ export class AudioPlayerService {
         this.onDemandStreamAudio.addEventListener('canplaythrough', this.onDemandStreamCanPlayThroughListener);
     }
 
+    resumeOnDemandStream(): void {
+        if (this.onDemandStreamAudio.paused && !this.onDemandStreamAudio.ended) {
+            this.onDemandStreamAudio.play();
+            this.onDemandStreamPlaying.next(true);
+        }
+    }
+
     pauseOnDemandStream(): void {
         this.onDemandStreamAudio.pause();
         this.onDemandStreamPlaying.next(false);
@@ -106,9 +113,20 @@ export class AudioPlayerService {
         }, 600);
     };
 
+    // toggleOnDemandStream(episode: Episode): void {
+    //     this.streamTypeSelected.next('onDemandStream');
+    //     this.onDemandStreamPlaying.value ? this.pauseOnDemandStream() : this.playOnDemandStream(episode);
+    // }
+
     toggleOnDemandStream(episode: Episode): void {
         this.streamTypeSelected.next('onDemandStream');
-        this.onDemandStreamPlaying.value ? this.pauseOnDemandStream() : this.playOnDemandStream(episode);
+        if (this.onDemandStreamPlaying.value) {
+            this.pauseOnDemandStream();
+        } else if (this.currentOnDemandStream.value?.id === episode.id) {
+            this.resumeOnDemandStream();
+        } else {
+            this.playOnDemandStream(episode);
+        }
     }
 
 }

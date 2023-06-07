@@ -1,0 +1,11 @@
+<div *ngIf="artist$ | async as artist; else loading">
+    <h1>Name: {{artist.name}}</h1>
+    <p>Id: {{artist.id}}</p>
+    <p>Slug: {{artist.slug}}</p>
+    <p>Description: {{artist.description}}</p>
+    <img [src]="artist.image" alt="Featured Image">
+</div>
+
+<ng-template #loading>
+    <p>Loading...</p>
+</ng-template>

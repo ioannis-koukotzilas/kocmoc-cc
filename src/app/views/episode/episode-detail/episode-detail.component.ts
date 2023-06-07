@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable, of, switchMap } from 'rxjs';
 import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
+import { Episode } from 'src/app/models/episode';
 
 @Component({
   selector: 'app-episode-detail',
@@ -9,25 +11,17 @@ import { WordPressService } from 'src/app/core/services/wordpress/wordpress.serv
 })
 export class EpisodeDetailComponent implements OnInit {
 
-  episode: any;
+  episode$: Observable<Episode> = of();
 
   constructor(private route: ActivatedRoute, private wordPressService: WordPressService) { }
 
   ngOnInit(): void {
-    const episodeId = this.route.snapshot.paramMap.get('id') ?? '';
-
-    if (episodeId) {
-      this.wordPressService.fetchEpisode(episodeId).subscribe({
-        next: data => {
-          this.episode = data;
-        },
-        error: error => {
-          console.error('There was an error: ', error);
-        }
-      });
-    } else {
-      console.error('Episode ID is null');
-    }
-  }
+    this.episode$ = this.route.paramMap.pipe(
+        switchMap(params => {
+            const episodeId = params.get('id') || '';
+            return this.wordPressService.fetchEpisode(episodeId);
+        })
+    );
+}
 
 }

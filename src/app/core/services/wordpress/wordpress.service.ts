@@ -28,8 +28,8 @@ export class WordPressService {
     return this.http.get<Episode[]>(`${this.baseUrl}/episode?_embed`);
   }
 
-  fetchEpisode(id: string) {
-    return this.http.get(`${this.baseUrl}/episode/${id}?_embed`);
+  fetchEpisode(id: string): Observable<Episode> {
+    return this.http.get<Episode>(`${this.baseUrl}/episode/${id}?_embed`);
   }
 
   fetchArtists(): Observable<Artist[]> {
@@ -37,7 +37,7 @@ export class WordPressService {
   }
 
   fetchArtist(id: string): Observable<Artist> {
-    return this.http.get<Artist>(`${this.baseUrl}/artist/${id}`);
+    return this.http.get<Artist>(`${this.baseUrl}/artist/${id}?_embed`);
   }
 
   fetchGenre(id: string) {

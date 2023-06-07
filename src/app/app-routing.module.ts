@@ -7,6 +7,7 @@ import { EpisodeDetailComponent } from './views/episode/episode-detail/episode-d
 import { EpisodeListComponent } from './views/episode/episode-list/episode-list.component';
 import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.component';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
+import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
 
 const routes: Routes = [
   { path: 'posts', component: PostListComponent },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'genre/:id', component: GenreDetailComponent },
   { path: 'audio-player', component: AudioPlayerComponent },
   { path: 'artists', component: ArtistListComponent },
+  { path: 'artist/:id', component: ArtistDetailComponent },
 ];
 
 @NgModule({

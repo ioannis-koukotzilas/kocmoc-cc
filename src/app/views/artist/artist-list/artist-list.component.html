@@ -6,6 +6,7 @@
         <h2>Name: {{artist.name}}</h2>
         <p>Slug: {{artist.slug}}</p>
         <p>Description: {{artist.description}}</p>
+        <a [routerLink]="['/artist', artist.id]">{{artist.name}}</a>
     </li>
 </ul>
 

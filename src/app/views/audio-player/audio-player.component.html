@@ -45,7 +45,7 @@
                     <div class="material-symbols-outlined play">{{ (onDemandStreamPlaying$ | async) ? 'pause' : 'play_arrow' }}</div>
                 </ng-template>                
 
-                <div *ngIf="!(onDemandStreamLoading$ | async)">{{ currentEpisode?.title?.rendered }} - {{ currentEpisode?.date | date:'dd.MM.yy' }}</div>
+                <div>{{ currentEpisode?.title?.rendered }} - {{ currentEpisode?.date | date:'dd.MM.yy' }}</div>
 
                 <!-- <div *ngIf="!(onDemandStreamLoading$ | async)">
                     {{ currentEpisode | json }}

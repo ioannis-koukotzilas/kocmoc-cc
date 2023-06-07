@@ -27,10 +27,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "src/assets/centova-config.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

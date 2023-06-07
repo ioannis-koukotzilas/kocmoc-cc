@@ -12,6 +12,7 @@ import { EpisodeListComponent } from './views/episode/episode-list/episode-list.
 import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
+import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ArtistListComponent } from './views/artist/artist-list/artist-list.comp
     EpisodeDetailComponent,
     EpisodeListComponent,
     GenreDetailComponent,
-    ArtistListComponent
+    ArtistListComponent,
+    ArtistDetailComponent
   ],
   imports: [
     BrowserModule,

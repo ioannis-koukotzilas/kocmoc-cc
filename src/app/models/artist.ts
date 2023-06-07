@@ -3,11 +3,13 @@ export class Artist {
     slug: string;
     name: string;
     description: string;
+    image: string;
 
-    constructor(id: string, slug: string, name: string, description: string) {
-        this.id = id;
-        this.slug = slug;
-        this.name = name;
-        this.description = description;
+    constructor(data: any) {
+        this.id = data.id;
+        this.slug = data.slug;
+        this.name = data.name;
+        this.description = data.description;
+        this.image = data.acf.artist_image;
     }
 }
