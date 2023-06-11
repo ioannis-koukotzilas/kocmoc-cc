@@ -17,6 +17,10 @@ export class EpisodeListComponent implements OnInit {
   artists: Artist[] = [];
   genres: Genre[] = [];
 
+  isLoadingEpisodes: boolean = true;
+  isLoadingArtists: boolean = true;
+  isLoadingGenres: boolean = true;
+
   private unsubscribe$ = new Subject<void>();
 
   public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
@@ -32,21 +36,32 @@ export class EpisodeListComponent implements OnInit {
   }
 
   getEpisodes(): void {
-    this.wordPressService.getEpisodes()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(episodes => this.episodes = episodes);
+    setTimeout(() => {
+      this.wordPressService.getEpisodes()
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(episodes => {
+              this.episodes = episodes;
+              this.isLoadingEpisodes = false;
+          });
+  }, 1000); // Add 2 seconds delay
   }
 
   getArtists(): void {
     this.wordPressService.getArtists()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(artists => this.artists = artists);
+      .subscribe(artists => {
+        this.artists = artists;
+        this.isLoadingArtists = false;
+      });
   }
 
   getGenres(): void {
     this.wordPressService.getGenres()
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(genres => this.genres = genres);
+      .subscribe(genres => {
+        this.genres = genres;
+        this.isLoadingGenres = false;
+      });
   }
 
   getEpisodeArtist(artistId: number): Artist | null {

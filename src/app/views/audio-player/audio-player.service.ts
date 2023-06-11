@@ -84,7 +84,7 @@ export class AudioPlayerService {
 
     setOnDemandStream(episode: Episode): void {
         this.onDemandStreamLoading.next(true);
-        this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.acf.track_file_name);
+        this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.acf.track);
         this.currentOnDemandStream.next(episode);
     }
 

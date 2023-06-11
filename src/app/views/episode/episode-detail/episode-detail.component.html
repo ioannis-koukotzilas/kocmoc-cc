@@ -15,7 +15,7 @@
         </div>
 
         <div class="play-container">
-            <div *ngIf="episode.acf?.track_file_name" class="play-controls" (click)="playEpisode(episode)">
+            <div *ngIf="episode.acf?.track" class="play-controls" (click)="playEpisode(episode)">
                 <span
                     *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
                     class="material-symbols-outlined symbol">pause</span>
@@ -32,15 +32,12 @@
 
         <button (click)="goBack()">Go Back</button>
 
-
         <!-- Display Artists -->
         <ng-container *ngIf="episode.artist && episode.artist.length > 0">
             <ul>
                 <li *ngFor="let artistId of episode.artist">
                     <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
-                        <a [routerLink]="['/artist', artist.id]">
-                            <strong>{{ artist.name }}</strong>
-                        </a>: {{ artist.description }}
+                        <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
                     </ng-container>
                 </li>
             </ul>
@@ -51,9 +48,7 @@
             <ul>
                 <li *ngFor="let genreId of episode.genre">
                     <ng-container *ngIf="getEpisodeGenre(genreId) as genre">
-                        <a [routerLink]="['/genre', genre.id]">
-                            <strong>{{ genre.name }}</strong>
-                        </a>: {{ genre.description }}
+                        <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
                     </ng-container>
                 </li>
             </ul>
@@ -65,7 +60,7 @@
             <ul *ngFor="let artistId of episode.artist">
                 <li *ngFor="let artistEpisode of getArtistEpisodes(artistId)">
                     <div class="play-container">
-                        <div *ngIf="artistEpisode.acf?.track_file_name" class="play-controls"
+                        <div *ngIf="artistEpisode.acf?.track" class="play-controls"
                             (click)="playEpisode(artistEpisode)">
                             <span
                                 *ngIf="(currentOnDemandStream$ | async)?.id === artistEpisode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
