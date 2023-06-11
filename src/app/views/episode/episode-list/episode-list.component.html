@@ -1,8 +1,6 @@
 <div class="container">
 
-    <div *ngIf="isLoading" class="loading">Loading...</div>
-
-    <div *ngIf="!isLoading">
+    <div *ngIf="episodes; else loading"></div>
 
         <h1>Episodes</h1>
 
@@ -15,10 +13,6 @@
                     'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
                 <div class="play-container">
-
-                    <div *ngIf="hasThumbnail(episode)">
-                        <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
-                    </div>
 
                     <div *ngIf="episode.acf?.track_file_name" class="play-controls" (click)="playEpisode(episode)">
 
@@ -42,16 +36,49 @@
                     <p [innerHTML]="episode.excerpt.rendered"></p>
                 </a>
 
-                <ul class="genres" *ngIf="getGenresForEpisode(episode).length > 0">
+                <!-- <ul class="genres" *ngIf="getGenresForEpisode(episode).length > 0">
                     <li *ngFor="let genre of getGenresForEpisode(episode)">
                         <a [routerLink]="['/genre', genre?.id]">{{ genre?.name }}</a>
                     </li>
+                </ul> -->
+
+                <h3>{{episode.artist}}</h3>
+                <h3>{{episode.genre}}</h3>
+
+                <!-- Display Artists -->
+               <ng-container *ngIf="episode.artist && episode.artist.length > 0">
+                <ul>
+                    <li *ngFor="let artistId of episode.artist">
+                        <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
+                            <a [routerLink]="['/artist', artist.id]">
+                                <strong>{{ artist.name }}</strong>
+                            </a>: {{ artist.description }}
+                        </ng-container>
+                    </li>
                 </ul>
+                </ng-container>
+
+               <!-- Display genres -->
+               <ng-container *ngIf="episode.genre && episode.genre.length > 0">
+                <ul>
+                    <li *ngFor="let genreId of episode.genre">
+                        <ng-container *ngIf="getEpisodeGenre(genreId) as genre">
+                            <a [routerLink]="['/genre', genre.id]">
+                                <strong>{{ genre.name }}</strong>
+                            </a>: {{ genre.description }}
+                        </ng-container>
+                    </li>
+                </ul>
+                </ng-container>
+            
+                
 
             </li>
 
         </ul>
 
-    </div>
+    <ng-template #loading>
+        <p>Loading...</p>
+    </ng-template>
 
 </div>

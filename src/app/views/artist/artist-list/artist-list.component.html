@@ -1,12 +1,26 @@
 <h1>Artists</h1>
 
-<ul *ngIf="artists$ | async as artists; else loading">
+<ul *ngIf="artists; else loading">
     <li *ngFor="let artist of artists">
         <p>Id: {{artist.id}}</p>
         <h2>Name: {{artist.name}}</h2>
         <p>Slug: {{artist.slug}}</p>
         <p>Description: {{artist.description}}</p>
         <a [routerLink]="['/artist', artist.id]">{{artist.name}}</a>
+
+       
+
+        <img *ngIf="artist.image" [src]="artist.image.sizes['thumbnail'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+        <img *ngIf="artist.image" [src]="artist.image.sizes['medium'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+        <img *ngIf="artist.image" [src]="artist.image.sizes['medium_large'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+        <img *ngIf="artist.image" [src]="artist.image.sizes['large'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+        <img *ngIf="artist.image" [src]="artist.image.sizes['1536x1536'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+        <img *ngIf="artist.image" [src]="artist.image.sizes['2048x2048'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+
+
+
+        <!-- <pre>{{ artist | json }}</pre> -->
+
     </li>
 </ul>
 

@@ -25,7 +25,20 @@ export class AudioPlayerService {
     public streamTypeSelected$ = this.streamTypeSelected.asObservable();
     public currentOnDemandStream$ = this.currentOnDemandStream.asObservable();
 
-    constructor(private cloudStorageService: CloudStorageService) {}
+    constructor(private cloudStorageService: CloudStorageService) {
+        this.liveStreamAudio.preload = 'auto';
+        this.onDemandStreamAudio.preload = 'auto';
+
+        this.liveStreamAudio.addEventListener('loadeddata', () => { console.log('liveStreamAudio loadeddata'); });
+        this.liveStreamAudio.addEventListener('canplay', () => { console.log('liveStreamAudio canplay'); });
+        this.liveStreamAudio.addEventListener('waiting', () => { console.log('liveStreamAudio waiting'); });
+        this.liveStreamAudio.addEventListener('playing', () => { console.log('liveStreamAudio playing'); });
+
+        this.onDemandStreamAudio.addEventListener('loadeddata', () => { console.log('onDemandStreamAudio loadeddata'); });
+        this.onDemandStreamAudio.addEventListener('canplay', () => { console.log('onDemandStreamAudio canplay'); });
+        this.onDemandStreamAudio.addEventListener('waiting', () => { console.log('onDemandStreamAudio waiting'); });
+        this.onDemandStreamAudio.addEventListener('playing', () => { console.log('onDemandStreamAudio playing'); });
+    }
 
     setLiveStream(): void {
         this.liveStreamLoading.next(true);
@@ -33,9 +46,11 @@ export class AudioPlayerService {
     }
 
     playLiveStream(): void {
-        this.stopOnDemandStream();
+        if (this.onDemandStreamPlaying.value) {
+            this.stopOnDemandStream();
+        }
         this.setLiveStream();
-        this.liveStreamAudio.addEventListener('canplaythrough', this.liveStreamCanPlayThroughListener);
+        this.liveStreamAudio.addEventListener('canplay', this.liveStreamCanPlayListener);
     }
 
     pauseLiveStream(): void {
@@ -48,10 +63,10 @@ export class AudioPlayerService {
         this.liveStreamAudio.currentTime = 0;
         this.liveStreamPlaying.next(false);
         this.liveStreamLoading.next(false);
-        this.liveStreamAudio.removeEventListener('canplaythrough', this.liveStreamCanPlayThroughListener);
+        this.liveStreamAudio.removeEventListener('canplay', this.liveStreamCanPlayListener);
     }
 
-    private liveStreamCanPlayThroughListener = () => {
+    private liveStreamCanPlayListener = () => {
         setTimeout(() => {
             if (!this.liveStreamAudio.error) {
                 this.liveStreamLoading.next(false);
@@ -60,7 +75,7 @@ export class AudioPlayerService {
             } else {
                 console.error(`Error loading live stream: ${this.liveStreamAudio.error.message}`);
             }
-        }, 600);
+        }, 300);
     };
 
     toggleLiveStream(): void {
@@ -74,10 +89,12 @@ export class AudioPlayerService {
     }
 
     playOnDemandStream(episode: Episode): void {
+        if (this.liveStreamPlaying.value) {
+            this.stopLiveStream();
+        }
         this.streamTypeSelected.next('onDemandStream');
-        this.stopLiveStream();
         this.setOnDemandStream(episode);
-        this.onDemandStreamAudio.addEventListener('canplaythrough', this.onDemandStreamCanPlayThroughListener);
+        this.onDemandStreamAudio.addEventListener('canplay', this.onDemandStreamCanPlayListener);
     }
 
     resumeOnDemandStream(): void {
@@ -90,7 +107,7 @@ export class AudioPlayerService {
     pauseOnDemandStream(): void {
         this.onDemandStreamAudio.pause();
         this.onDemandStreamPlaying.next(false);
-        this.onDemandStreamAudio.removeEventListener('canplaythrough', this.onDemandStreamCanPlayThroughListener);
+        this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
     }
 
     stopOnDemandStream(): void {
@@ -98,10 +115,10 @@ export class AudioPlayerService {
         this.onDemandStreamAudio.currentTime = 0;
         this.onDemandStreamPlaying.next(false);
         this.onDemandStreamLoading.next(false);
-        this.onDemandStreamAudio.removeEventListener('canplaythrough', this.onDemandStreamCanPlayThroughListener);
+        this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
     }
 
-    private onDemandStreamCanPlayThroughListener = () => {
+    private onDemandStreamCanPlayListener = () => {
         setTimeout(() => {
             if (!this.onDemandStreamAudio.error) {
                 this.onDemandStreamLoading.next(false);
@@ -110,13 +127,8 @@ export class AudioPlayerService {
             } else {
                 console.error(`Error loading on demand stream: ${this.onDemandStreamAudio.error.message}`);
             }
-        }, 600);
+        }, 300);
     };
-
-    // toggleOnDemandStream(episode: Episode): void {
-    //     this.streamTypeSelected.next('onDemandStream');
-    //     this.onDemandStreamPlaying.value ? this.pauseOnDemandStream() : this.playOnDemandStream(episode);
-    // }
 
     toggleOnDemandStream(episode: Episode): void {
         this.streamTypeSelected.next('onDemandStream');

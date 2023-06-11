@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Genre } from 'src/app/models/genre';
 import { environment } from 'src/app/enviroments/environment';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { Episode } from 'src/app/models/episode';
 import { Artist } from 'src/app/models/artist';
 
@@ -24,33 +24,54 @@ export class WordPressService {
     return this.http.get(`${this.baseUrl}/posts/${id}?_embed`);
   }
 
-  fetchEpisodes() {
-    return this.http.get<Episode[]>(`${this.baseUrl}/episode?_embed`);
+  getEpisodes(): Observable<Episode[]> {
+    return this.http.get<Episode[]>(`${this.baseUrl}/episode`)
+      .pipe(
+        catchError(this.handleError<Episode[]>('getEpisodes', []))
+      );
   }
 
-  fetchEpisode(id: string): Observable<Episode> {
-    return this.http.get<Episode>(`${this.baseUrl}/episode/${id}?_embed`);
+  getEpisode(id: number): Observable<Episode> {
+    return this.http.get<Episode>(`${this.baseUrl}/episode/${id}`)
+      .pipe(
+        catchError(this.handleError<Episode>(`getEpisode id=${id}`))
+      );
   }
 
-  fetchArtists(): Observable<Artist[]> {
-    return this.http.get<Artist[]>(`${this.baseUrl}/artist`);
+  getArtists(): Observable<Artist[]> {
+    return this.http.get<Artist[]>(`${this.baseUrl}/artist`)
+      .pipe(
+        catchError(this.handleError<Artist[]>('getArtists', []))
+      );
   }
 
-  fetchArtist(id: string): Observable<Artist> {
-    return this.http.get<Artist>(`${this.baseUrl}/artist/${id}?_embed`);
+  getArtist(id: number): Observable<Artist> {
+    return this.http.get<Artist>(`${this.baseUrl}/artist/${id}`)
+      .pipe(
+        catchError(this.handleError<Artist>(`getArtist id=${id}`))
+      );
   }
 
-  fetchGenre(id: string) {
-    return this.http.get<Genre>(`${this.baseUrl}/genre/${id}`);
+  getGenres(): Observable<Genre[]> {
+    return this.http.get<Genre[]>(`${this.baseUrl}/genre`)
+      .pipe(
+        catchError(this.handleError<Genre[]>('getGenres', []))
+      );
   }
 
-  fetchGenres(idsString: string): Observable<Genre[]> {
-    // Include the idsString in the URL to fetch genres with these ids
-    return this.http.get<Genre[]>(`${this.baseUrl}/genre?include=${idsString}`);
-  }
-  
-  fetchEpisodesByGenre(genreId: string) {
-    return this.http.get<Episode[]>(`${this.baseUrl}/episode?genre=${genreId}&_embed`);
+  getGenre(id: number): Observable<Genre> {
+    return this.http.get<Genre>(`${this.baseUrl}/genre/${id}`)
+      .pipe(
+        catchError(this.handleError<Genre>(`getGenere id=${id}`))
+      );
   }
 
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 }

@@ -1,19 +1,13 @@
-<div *ngIf="isLoading" class="loading">Loading...</div>
+<div *ngIf="genre; else loading">
 
-<div *ngIf="!isLoading">
-
-    <div *ngIf="genre" class="genre-details">
-        <h1>{{ genre.name }}</h1>
-        <p>{{ genre.description }}</p>
-        <!-- Display other genre details here -->
-    </div>
+    <h1>Name: {{genre.name}}</h1>
+    <p>Id: {{genre.id}}</p>
+    <p>Slug: {{genre.slug}}</p>
+    <p>Description: {{genre.description}}</p>
 
     <ul class="episodes">
         <li *ngFor="let episode of episodes" class="episode">
             <a [routerLink]="['/episode', episode.id]">
-                <div *ngIf="hasThumbnail(episode)">
-                    <img [src]="getThumbnailUrl(episode)" alt="Featured Image">
-                </div>
                 <p>{{ episode.date | date }}</p>
                 <h2>{{ episode.title.rendered }}</h2>
                 <p [innerHTML]="episode.excerpt.rendered"></p>
@@ -22,3 +16,7 @@
     </ul>
 
 </div>
+
+<ng-template #loading>
+    <p>Loading...</p>
+</ng-template>

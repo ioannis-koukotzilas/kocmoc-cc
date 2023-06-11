@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
-import { ScriptLoaderService } from 'src/app/core/services/script-loader.service';
 import { Episode } from 'src/app/models/episode';
 import { LiveStreamTrack } from 'src/app/models/liveStreamTrack';
 import { StreamInfoService } from 'src/app/core/services/stream-info.service';
@@ -26,7 +25,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
     public currentLiveStreamTrack: LiveStreamTrack | null = null;
 
-    constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private scriptLoader: ScriptLoaderService, private streamInfoService: StreamInfoService) {
+    constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private streamInfoService: StreamInfoService) {
         this.liveStreamLoading$ = this.audioPlayerService.liveStreamLoading$;
         this.liveStreamPlaying$ = this.audioPlayerService.liveStreamPlaying$;
         this.onDemandStreamLoading$ = this.audioPlayerService.onDemandStreamLoading$;
@@ -85,17 +84,5 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         this.audioPlayerService.streamTypeSelected.next('liveStream');
         this.audioPlayerService.stopOnDemandStream();
         this.audioPlayerService.playLiveStream();
-        this.scriptLoader
-            .loadScript(
-                'https://falcon.shoutca.st/system/streaminfo.js',
-                'streaminfo-script'
-            )
-            .then(() => {
-                console.log('Script loaded successfully');
-            })
-            .catch((err) => {
-                console.error('Failed to load script', err);
-            });
     }
-
 }

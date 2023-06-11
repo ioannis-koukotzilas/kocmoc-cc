@@ -1,9 +1,11 @@
-<div *ngIf="artist$ | async as artist; else loading">
+<div *ngIf="artist; else loading">
     <h1>Name: {{artist.name}}</h1>
     <p>Id: {{artist.id}}</p>
     <p>Slug: {{artist.slug}}</p>
     <p>Description: {{artist.description}}</p>
-    <img [src]="artist.image" alt="Featured Image">
+    <img *ngIf="artist.image" [src]="artist.image.sizes['medium'] || artist.image.url" [alt]="artist.image.title" class="artist-image" />
+
+    <!-- <pre>{{ artist | json }}</pre> -->
 </div>
 
 <ng-template #loading>
