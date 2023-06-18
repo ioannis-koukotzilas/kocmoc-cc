@@ -1,21 +1,66 @@
-<ng-container *ngIf="isLoading; else content">
-    <ng-template #loading>
-        <p>Loading...</p>
-    </ng-template>
-</ng-container>
+<div *ngIf="isLoadingEpisode; else Content">
+    <p>Loading...</p>
+</div>
 
-<ng-template #content>
+<ng-template #Content>
 
-    <div *ngIf="episode">
+    <div *ngIf="episode" >
 
-        <h1>{{ episode.title.rendered }}</h1>
-        <div [innerHTML]="episode.content.rendered"></div>
-        <div>
-            <label>Air Date:</label> {{ episode.date | date }}
+        <div class="parallax-container">
+
+        
+            <picture class="image" *ngIf="episode.image.url">
+                <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+                <source [srcset]="episode.image.size['medium_large']"
+                    media="(min-width: 425px) and (max-width: 639px)">
+                <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+                <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+            </picture>
+
+        </div>
+
+    <div class="content">
+
+        <div class="profile">
+
+            <div>
+                <label>Air Date:</label> {{ episode.date | date }}
+            </div>
+        <h1>{{ episode.title }}</h1>
+        <div [innerHTML]="episode.content"></div>
+        
+
+        <ng-container *ngIf="episode.tracklist && episode.tracklist.length > 0">
+            <h3>Tracklist</h3>
+            <ul class="tracklist">
+                <li class="track" *ngFor="let item of episode.tracklist">
+                    <div *ngIf="item.track.artist as artists">
+                        <ng-container *ngFor="let artistId of artists; last as isLast">
+                            <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
+                                <a class="artist" [routerLink]="['/artist', artistId]">{{ artist.name }}</a>{{ isLast ? '' : ', ' }}
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="title">{{ item.track.title }}</div>
+                </li>
+            </ul>
+        </ng-container>
+        
+        
+        
+        
+        
+        
+
+        <div *ngFor="let showId of episode.show">
+            <ng-container *ngIf="getEpisodeShow(showId) as show">
+                <div>Show: {{ show.name }}</div>
+                <div>{{ show.description }}</div>
+            </ng-container>
         </div>
 
         <div class="play-container">
-            <div *ngIf="episode.acf?.track" class="play-controls" (click)="playEpisode(episode)">
+            <div *ngIf="episode.track" class="play-controls" (click)="playEpisode(episode)">
                 <span
                     *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
                     class="material-symbols-outlined symbol">pause</span>
@@ -54,13 +99,42 @@
             </ul>
         </ng-container>
 
+
+
+
+    </div>
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- Display Artists and their episodes -->
         <ng-container *ngIf="episode?.artist && episode.artist.length > 0">
+
             <h3>All Episodes by Associated Artists:</h3>
-            <ul *ngFor="let artistId of episode.artist">
-                <li *ngFor="let artistEpisode of getArtistEpisodes(artistId)">
+
+            <ul *ngFor="let artistId of episode.artist" class="episodes">
+                <li *ngFor="let artistEpisode of getArtistEpisodes(artistId)" class="episode">
                     <div class="play-container">
-                        <div *ngIf="artistEpisode.acf?.track" class="play-controls"
+                        <div *ngIf="artistEpisode.track" class="play-controls"
                             (click)="playEpisode(artistEpisode)">
                             <span
                                 *ngIf="(currentOnDemandStream$ | async)?.id === artistEpisode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
@@ -77,8 +151,8 @@
 
                     <a [routerLink]="['/episode', episode.id]">
                         <p>{{ artistEpisode.date | date }}</p>
-                        <h2>{{ artistEpisode.title.rendered }}</h2>
-                        <p [innerHTML]="artistEpisode.excerpt.rendered"></p>
+                        <h2>{{ artistEpisode.title }}</h2>
+                        <p [innerHTML]="artistEpisode.excerpt"></p>
                     </a>
 
                     <!-- Display Artists -->
@@ -110,6 +184,6 @@
             </ul>
         </ng-container>
 
-
+    </div>
     </div>
 </ng-template>

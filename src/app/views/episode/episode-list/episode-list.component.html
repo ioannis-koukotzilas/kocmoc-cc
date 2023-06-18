@@ -1,72 +1,72 @@
-<div *ngIf="isLoadingEpisodes; else episodesContent">
+<div *ngIf="isLoadingEpisodes; else Content">
     <p>Loading...</p>
 </div>
 
-<ng-template #episodesContent>
+<ng-template #Content>
+
+    <div class="container">
 
     <h1>Episodes</h1>
 
     <ul class="episodes">
 
-        <li *ngFor="let episode of episodes" class="episode" [ngClass]="{
-                        'active': (currentOnDemandStream$ | async)?.id === episode.id, 
-                        'loading': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async), 
-                        'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
+        <li class="episode" *ngFor="let episode of episodes" [ngClass]="{
+            'active': (currentOnDemandStream$ | async)?.id === episode.id, 
+            'loading': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async), 
+            'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
-            <img *ngIf="episode.image" [src]="episode.image.size['medium_large'] || episode.image.url"
-                [alt]="episode.image.alt" class="featured-image" />
+            <div class="header" *ngIf="episode.image.url || episode.track">
+                <picture class="image">
+                    <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+                    <source [srcset]="episode.image.size['medium_large']"
+                        media="(min-width: 425px) and (max-width: 639px)">
+                    <source [srcset]="episode.image.size['large']" media="(min-width: 640px)">
+                    <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+                </picture>
 
-            <div class="play-container">
-                <div *ngIf="episode.acf?.track" class="play-controls" (click)="playEpisode(episode)">
-                    <span
-                        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
-                        class="material-symbols-outlined symbol">pause</span>
-                    <span
-                        *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)"
-                        class="material-symbols-outlined symbol">play_arrow</span>
-                    <div *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)"
-                        class="spinner-container">
+                <div class="audio-controls" *ngIf="episode.track" (click)="playEpisode(episode)">
+                    <div class="material-symbols-outlined symbol"
+                        *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)">
+                        play_arrow</div>
+                    <div class="loader"
+                        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)">
                         <div class="spinner"></div>
                     </div>
+                    <div class="material-symbols-outlined symbol"
+                        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)">
+                        pause</div>
                 </div>
             </div>
 
-            <a [routerLink]="['/episode', episode.id]">
-                <p>{{ episode.date | date }}</p>
-                <h2>{{ episode.title.rendered }}</h2>
-                <p [innerHTML]="episode.excerpt.rendered"></p>
+            <a class="body" [routerLink]="['/episode', episode.id]">
+                <div class="meta">
+                    <div>{{ episode.date | date }}</div>
+                    <div *ngIf="episode.location">{{ episode.location }}</div>
+                </div> 
+                <h2 class="title">{{ episode.title }}</h2>
+                <div class="excerpt" [innerHTML]="episode.excerpt"></div>
             </a>
 
-            <!-- Display Artists -->
-            <ng-container *ngIf="episode.artist && episode.artist.length > 0">
-                <ul>
-                    <li *ngFor="let artistId of episode.artist">
-                        <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
-                            <a [routerLink]="['/artist', artist.id]">
-                                <strong>{{ artist.name }}</strong>
-                            </a>: {{ artist.description }}
-                        </ng-container>
-                    </li>
-                </ul>
-            </ng-container>
-
-            <!-- Display genres -->
-            <ng-container *ngIf="episode.genre && episode.genre.length > 0">
-                <ul>
-                    <li *ngFor="let genreId of episode.genre">
+            <div class="footer" *ngIf="episode.genre && episode.genre.length > 0">
+                <ul class="genres">
+                    <li class="genre" *ngFor="let genreId of episode.genre">
                         <ng-container *ngIf="getEpisodeGenre(genreId) as genre">
-                            <a [routerLink]="['/genre', genre.id]">
-                                <strong>{{ genre.name }}</strong>
-                            </a>: {{ genre.description }}
+                            <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
                         </ng-container>
                     </li>
                 </ul>
-            </ng-container>
-
-
-
+            </div>
+    
         </li>
 
     </ul>
+
+    <button *ngIf="hasMoreEpisodes" (click)="loadMoreEpisodes()" [disabled]="isLoadingEpisodes">Load More</button>
+
+    <div *ngIf="isLoadingMoreEpisodes">
+        <p>Loading more episodes...</p>
+    </div>
+
+</div>
 
 </ng-template>

@@ -1,0 +1,50 @@
+.parallax-container {
+    position: relative;
+    height: 50vh;
+}
+
+.parallax-container .image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.parallax-container .image img {
+    object-fit: cover;
+    width: 100%;
+    height: calc(100vh);
+}
+
+.content {
+    position: relative;
+    max-width: 960px;
+    background-color: #000;
+   
+    
+}
+
+.content .profile {
+    
+    padding: 48px;
+    
+    background-color: #666;
+    
+    
+}
+
+h1 {
+    margin: 0;
+}
+
+
+.tracklist .track {
+    margin-bottom: 0.25rem;
+}
+
+.track .artist {
+    font-weight: bold;
+    
+}

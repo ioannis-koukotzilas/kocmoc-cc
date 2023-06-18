@@ -5,10 +5,12 @@ export class Artist {
     description: string;
     image: {
         url: string,
-        title: string,
-        sizes: {
+        alt: string,
+        caption: string,
+        description: string,
+        size: {
             [key: string]: string | number;
-        }
+        },
     };
 
     constructor(data: any) {
@@ -18,8 +20,10 @@ export class Artist {
         this.description = data.description;
         this.image = {
             url: data.image.url,
-            title: data.image.title,
-            sizes: data.image.sizes
+            alt: data.image.alt,
+            caption: data.image.caption,
+            description: data.image.description,
+            size: data.image.size,
         };
     }
 }

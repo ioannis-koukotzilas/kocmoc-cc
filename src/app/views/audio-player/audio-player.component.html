@@ -1,3 +1,18 @@
+
+<div *ngIf="onDemandStreamPlaying$ | async" class="progress-bar-container">
+    
+    <input
+    type="range"
+    min="0"
+    [max]="onDemandStreamDuration$ | async"
+    [value]="onDemandStreamCurrentTime$ | async"
+    (input)="onScrub($event)"
+    
+/>
+
+    
+</div>
+
 <div class="audio-player" [ngSwitch]="(streamTypeSelected$ | async)">
 
     <ng-container *ngSwitchCase="'liveStream'">
@@ -45,7 +60,10 @@
                     <div class="material-symbols-outlined play">{{ (onDemandStreamPlaying$ | async) ? 'pause' : 'play_arrow' }}</div>
                 </ng-template>                
 
-                <div>{{ currentEpisode?.title?.rendered }} - {{ currentEpisode?.date | date:'dd.MM.yy' }}</div>
+                <div *ngIf="onDemandStreamPlaying$ | async">
+                    {{ currentEpisode?.title }} - {{ currentEpisode?.date | date:'dd.MM.yy' }} | {{ formatTime(onDemandStreamCurrentTime$ | async) }} / {{ formatTime(onDemandStreamDuration$ | async) }}
+
+                </div>
 
                 <!-- <div *ngIf="!(onDemandStreamLoading$ | async)">
                     {{ currentEpisode | json }}
@@ -65,3 +83,7 @@
 
     </ng-container>
 </div>
+
+
+
+

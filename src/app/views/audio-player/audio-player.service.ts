@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { Episode } from 'src/app/models/episode';
 import { CloudStorageService } from '../../core/services/cloud-storage/cloud-storage.service';
+
+const STREAM_TYPE_LIVE = 'liveStream';
+const STREAM_TYPE_ON_DEMAND = 'onDemandStream';
+const LOAD_DELAY_MS = 2000;
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +19,7 @@ export class AudioPlayerService {
     public liveStreamPlaying = new BehaviorSubject<boolean>(false);
     public onDemandStreamLoading = new BehaviorSubject<boolean>(false);
     public onDemandStreamPlaying = new BehaviorSubject<boolean>(false);
-    public streamTypeSelected = new BehaviorSubject<string>('liveStream');
+    public streamTypeSelected = new BehaviorSubject<'liveStream' | 'onDemandStream'>(STREAM_TYPE_LIVE);
     public currentOnDemandStream = new BehaviorSubject<Episode | null>(null);
 
     public liveStreamLoading$ = this.liveStreamLoading.asObservable();
@@ -25,24 +29,13 @@ export class AudioPlayerService {
     public streamTypeSelected$ = this.streamTypeSelected.asObservable();
     public currentOnDemandStream$ = this.currentOnDemandStream.asObservable();
 
+    // Progress bar
+    public onDemandStreamCurrentTime = new BehaviorSubject<number>(0);
+    public onDemandStreamDuration = new BehaviorSubject<number>(0);
+
     constructor(private cloudStorageService: CloudStorageService) {
         this.liveStreamAudio.preload = 'auto';
         this.onDemandStreamAudio.preload = 'auto';
-
-        this.liveStreamAudio.addEventListener('loadeddata', () => { console.log('liveStreamAudio loadeddata'); });
-        this.liveStreamAudio.addEventListener('canplay', () => { console.log('liveStreamAudio canplay'); });
-        this.liveStreamAudio.addEventListener('waiting', () => { console.log('liveStreamAudio waiting'); });
-        this.liveStreamAudio.addEventListener('playing', () => { console.log('liveStreamAudio playing'); });
-
-        this.onDemandStreamAudio.addEventListener('loadeddata', () => { console.log('onDemandStreamAudio loadeddata'); });
-        this.onDemandStreamAudio.addEventListener('canplay', () => { console.log('onDemandStreamAudio canplay'); });
-        this.onDemandStreamAudio.addEventListener('waiting', () => { console.log('onDemandStreamAudio waiting'); });
-        this.onDemandStreamAudio.addEventListener('playing', () => { console.log('onDemandStreamAudio playing'); });
-    }
-
-    setLiveStream(): void {
-        this.liveStreamLoading.next(true);
-        this.liveStreamAudio.src = 'https://kocmoc1-gecko.radioca.st/stream' + '?nocache=' + new Date().getTime();
     }
 
     playLiveStream(): void {
@@ -51,6 +44,13 @@ export class AudioPlayerService {
         }
         this.setLiveStream();
         this.liveStreamAudio.addEventListener('canplay', this.liveStreamCanPlayListener);
+        this.liveStreamAudio.addEventListener('playing', this.liveStreamPlayingListener);
+    }
+
+    setLiveStream(): void {
+        this.liveStreamLoading.next(true);
+        this.liveStreamPlaying.next(false);
+        this.liveStreamAudio.src = 'https://kocmoc1-gecko.radioca.st/stream' + '?nocache=' + new Date().getTime();
     }
 
     pauseLiveStream(): void {
@@ -64,37 +64,58 @@ export class AudioPlayerService {
         this.liveStreamPlaying.next(false);
         this.liveStreamLoading.next(false);
         this.liveStreamAudio.removeEventListener('canplay', this.liveStreamCanPlayListener);
+        this.liveStreamAudio.removeEventListener('playing', this.liveStreamPlayingListener);
     }
 
     private liveStreamCanPlayListener = () => {
         setTimeout(() => {
-            if (!this.liveStreamAudio.error) {
+            if (this.liveStreamLoading.value && !this.liveStreamAudio.error) {
                 this.liveStreamLoading.next(false);
-                this.liveStreamPlaying.next(true);
                 this.liveStreamAudio.play();
-            } else {
-                console.error(`Error loading live stream: ${this.liveStreamAudio.error.message}`);
             }
-        }, 300);
+        }, LOAD_DELAY_MS);
+    };
+
+    private liveStreamPlayingListener = () => {
+        if (!this.liveStreamPlaying.value && !this.liveStreamLoading.value && !this.liveStreamAudio.error) {
+            this.liveStreamPlaying.next(true);
+        }
     };
 
     toggleLiveStream(): void {
         this.liveStreamPlaying.value ? this.pauseLiveStream() : this.playLiveStream();
     }
 
-    setOnDemandStream(episode: Episode): void {
-        this.onDemandStreamLoading.next(true);
-        this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.acf.track);
-        this.currentOnDemandStream.next(episode);
-    }
-
     playOnDemandStream(episode: Episode): void {
         if (this.liveStreamPlaying.value) {
             this.stopLiveStream();
         }
-        this.streamTypeSelected.next('onDemandStream');
+        this.streamTypeSelected.next(STREAM_TYPE_ON_DEMAND);
         this.setOnDemandStream(episode);
         this.onDemandStreamAudio.addEventListener('canplay', this.onDemandStreamCanPlayListener);
+        this.onDemandStreamAudio.addEventListener('playing', this.onDemandStreamPlayingListener);
+    }
+
+    setOnDemandStream(episode: Episode): void {
+        this.onDemandStreamLoading.next(true);
+        this.onDemandStreamPlaying.next(false);
+        this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.track);
+        this.currentOnDemandStream.next(episode);
+
+        // Add these lines
+    this.onDemandStreamAudio.addEventListener('timeupdate', () => {
+        this.onDemandStreamCurrentTime.next(this.onDemandStreamAudio.currentTime);
+    });
+    this.onDemandStreamAudio.addEventListener('durationchange', () => {
+        this.onDemandStreamDuration.next(this.onDemandStreamAudio.duration);
+    });
+    }
+
+    pauseOnDemandStream(): void {
+        this.onDemandStreamAudio.pause();
+        this.onDemandStreamPlaying.next(false);
+        this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
+        this.onDemandStreamAudio.removeEventListener('playing', this.onDemandStreamPlayingListener);
     }
 
     resumeOnDemandStream(): void {
@@ -104,34 +125,47 @@ export class AudioPlayerService {
         }
     }
 
-    pauseOnDemandStream(): void {
-        this.onDemandStreamAudio.pause();
-        this.onDemandStreamPlaying.next(false);
-        this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
-    }
-
     stopOnDemandStream(): void {
         this.onDemandStreamAudio.pause();
         this.onDemandStreamAudio.currentTime = 0;
         this.onDemandStreamPlaying.next(false);
         this.onDemandStreamLoading.next(false);
+        this.currentOnDemandStream.next(null);
         this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
+        this.onDemandStreamAudio.removeEventListener('playing', this.onDemandStreamPlayingListener);
     }
 
     private onDemandStreamCanPlayListener = () => {
         setTimeout(() => {
-            if (!this.onDemandStreamAudio.error) {
+            if (this.onDemandStreamLoading.value && !this.onDemandStreamAudio.error) {
                 this.onDemandStreamLoading.next(false);
-                this.onDemandStreamPlaying.next(true);
                 this.onDemandStreamAudio.play();
-            } else {
-                console.error(`Error loading on demand stream: ${this.onDemandStreamAudio.error.message}`);
             }
-        }, 300);
+        }, LOAD_DELAY_MS);
+
+        // Listeners for time update and duration change
+        const stopListening = new Subject<void>();
+        this.onDemandStreamAudio.addEventListener('timeupdate', () => {
+            this.onDemandStreamCurrentTime.next(this.onDemandStreamAudio.currentTime);
+        });
+        this.onDemandStreamAudio.addEventListener('durationchange', () => {
+            this.onDemandStreamDuration.next(this.onDemandStreamAudio.duration);
+        });
+        this.onDemandStreamPlaying.pipe(takeUntil(stopListening)).subscribe((isPlaying) => {
+            if (!isPlaying) {
+                stopListening.next();
+            }
+        });
+    };
+
+    private onDemandStreamPlayingListener = () => {
+        if (!this.onDemandStreamPlaying.value && !this.onDemandStreamLoading.value && !this.onDemandStreamAudio.error) {
+            this.onDemandStreamPlaying.next(true);
+        }
     };
 
     toggleOnDemandStream(episode: Episode): void {
-        this.streamTypeSelected.next('onDemandStream');
+        this.streamTypeSelected.next(STREAM_TYPE_ON_DEMAND);
         if (this.onDemandStreamPlaying.value) {
             this.pauseOnDemandStream();
         } else if (this.currentOnDemandStream.value?.id === episode.id) {
@@ -141,4 +175,16 @@ export class AudioPlayerService {
         }
     }
 
+    // Progress
+
+    setOnDemandStreamCurrentTime(time: number): void {
+        this.onDemandStreamAudio.currentTime = time;
+    }
+    
+
+    updateCurrentTime(time: number): void {
+        this.onDemandStreamCurrentTime.next(time);
+    }
+
+    
 }

@@ -9,8 +9,8 @@
         <li *ngFor="let episode of episodes" class="episode">
             <a [routerLink]="['/episode', episode.id]">
                 <p>{{ episode.date | date }}</p>
-                <h2>{{ episode.title.rendered }}</h2>
-                <p [innerHTML]="episode.excerpt.rendered"></p>
+                <h2>{{ episode.title }}</h2>
+                <p [innerHTML]="episode.excerpt"></p>
             </a>
         </li>
     </ul>
