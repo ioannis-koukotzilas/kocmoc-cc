@@ -60,6 +60,11 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         this.subscriptions.add(
             this.onDemandStreamCurrentTime$.subscribe(time => {
                 console.log('Current Time:', time);
+                const inputElement = document.querySelector('input[type="range"]') as HTMLInputElement;
+                if (inputElement && inputElement.max) {
+                    const maxTime = parseFloat(inputElement.max);
+                    this.updateSliderPercentage(time, maxTime, inputElement);
+                }
             })
         );
         
@@ -129,30 +134,43 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
     onScrub(event: Event): void {
         const inputElement = event.target as HTMLInputElement;
-        if (inputElement && inputElement.value) {
-            const scrubTime = parseFloat(inputElement.value);
-            this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
-            this.updateSliderPercentage(inputElement);
-        }
-    }
-    
-    formatTime(timeInSeconds: number | null): string {
-        if (timeInSeconds === null) {
-            return '00:00';
-        }
-    
-        const minutes: number = Math.floor(timeInSeconds / 60);
-        const seconds: number = Math.floor(timeInSeconds % 60);
-        return minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-    }
-    
-    updateSliderPercentage(inputElement: HTMLInputElement): void {
         if (inputElement && inputElement.value && inputElement.max) {
             const scrubTime = parseFloat(inputElement.value);
             const maxTime = parseFloat(inputElement.max);
-            const percentage = (scrubTime / maxTime) * 100;
-            inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
+            this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
+            this.updateSliderPercentage(scrubTime, maxTime, inputElement);
         }
+    }
+    
+   formatTime(timeInSeconds: number | null, isTotalDuration: boolean = false): string {
+    if (timeInSeconds === null) {
+        return '00:00';
+    }
+
+    const totalMinutes: number = Math.floor(timeInSeconds / 60);
+
+    if (isTotalDuration) {
+        // Custom formatting for total duration
+        let hours;
+        if (totalMinutes <= 90) {
+            hours = 1;
+        } else {
+            hours = Math.ceil((totalMinutes - 90) / 60) + 1;
+        }
+        return hours + 'hr' + (hours > 1 ? 's' : '');
+    } else {
+        // Default formatting for current time
+        const minutes = totalMinutes;
+        const seconds = Math.floor(timeInSeconds % 60);
+        return minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+    }
+}
+
+    
+    
+    updateSliderPercentage(scrubTime: number, maxTime: number, inputElement: HTMLInputElement): void {
+        const percentage = (scrubTime / maxTime) * 100;
+        inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
     }
     
     

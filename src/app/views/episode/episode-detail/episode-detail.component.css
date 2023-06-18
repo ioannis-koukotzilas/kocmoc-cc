@@ -1,32 +1,39 @@
-.parallax-container {
+.episode-detail {
     position: relative;
-    height: 50vh;
 }
 
-.parallax-container .image {
+.cover {
+    position: relative;
+    height: calc(100vh - 100px);
+}
+
+.cover picture {
     position: fixed;
-    top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 100px);
     z-index: -1;
 }
 
-.parallax-container .image img {
+.cover img {
     object-fit: cover;
     width: 100%;
-    height: calc(100vh);
+    height: 100%;
 }
 
 .content {
     position: relative;
     max-width: 960px;
-    background-color: #000;
-   
-    
+    margin: 0 auto;
+    background-color: #000;  
 }
 
-.content .profile {
+ .profile {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 960px;
     
     padding: 48px;
     

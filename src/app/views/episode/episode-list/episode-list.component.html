@@ -6,67 +6,56 @@
 
     <div class="container">
 
-    <h1>Episodes</h1>
+        <h1>Episodes</h1>
 
-    <ul class="episodes">
-
-        <li class="episode" *ngFor="let episode of episodes" [ngClass]="{
+        <ul class="episodes full">
+            <li class="episode" *ngFor="let episode of episodes" [ngClass]="{
             'active': (currentOnDemandStream$ | async)?.id === episode.id, 
             'loading': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async), 
             'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
-            <div class="header" *ngIf="episode.image.url || episode.track">
-                <picture class="image">
-                    <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-                    <source [srcset]="episode.image.size['medium_large']"
-                        media="(min-width: 425px) and (max-width: 639px)">
-                    <source [srcset]="episode.image.size['large']" media="(min-width: 640px)">
-                    <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
-                </picture>
+                <div class="header" *ngIf="episode.image.url || episode.track">
+                    <picture class="image">
+                        <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+                        <source [srcset]="episode.image.size['medium_large']"
+                            media="(min-width: 425px) and (max-width: 639px)">
+                        <source [srcset]="episode.image.size['large']" media="(min-width: 640px)">
+                        <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+                    </picture>
 
-                <div class="audio-controls" *ngIf="episode.track" (click)="playEpisode(episode)">
-                    <div class="material-symbols-outlined symbol"
-                        *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)">
-                        play_arrow</div>
-                    <div class="loader"
-                        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)">
-                        <div class="spinner"></div>
-                    </div>
-                    <div class="material-symbols-outlined symbol"
-                        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)">
-                        pause</div>
+                    <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$"
+                        [onDemandStreamLoading$]="onDemandStreamLoading$"
+                        [onDemandStreamPlaying$]="onDemandStreamPlaying$">
+                    </app-episode-audio-controls>
                 </div>
-            </div>
 
-            <a class="body" [routerLink]="['/episode', episode.id]">
-                <div class="meta">
-                    <div>{{ episode.date | date }}</div>
-                    <div *ngIf="episode.location">{{ episode.location }}</div>
-                </div> 
-                <h2 class="title">{{ episode.title }}</h2>
-                <div class="excerpt" [innerHTML]="episode.excerpt"></div>
-            </a>
+                <a class="body" [routerLink]="['/episode', episode.id]">
+                    <div class="meta">
+                        <div>{{ episode.date | date }}</div>
+                        <div *ngIf="episode.location">{{ episode.location }}</div>
+                    </div>
+                    <h2 class="title">{{ episode.title }}</h2>
+                    <div class="excerpt" [innerHTML]="episode.excerpt"></div>
+                </a>
 
-            <div class="footer" *ngIf="episode.genre && episode.genre.length > 0">
-                <ul class="genres">
-                    <li class="genre" *ngFor="let genreId of episode.genre">
-                        <ng-container *ngIf="getEpisodeGenre(genreId) as genre">
-                            <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
-                        </ng-container>
-                    </li>
-                </ul>
-            </div>
-    
-        </li>
+                <div class="footer" *ngIf="episode.genre && episode.genre.length > 0">
+                    <ul class="genres">
+                        <li class="genre" *ngFor="let genreId of episode.genre">
+                            <ng-container *ngIf="findEpisodeGenre(genreId) as genre">
+                                <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+                            </ng-container>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
 
-    </ul>
+        <button *ngIf="hasMoreEpisodes" (click)="loadMoreEpisodes()" [disabled]="isLoadingEpisodes">Load More</button>
 
-    <button *ngIf="hasMoreEpisodes" (click)="loadMoreEpisodes()" [disabled]="isLoadingEpisodes">Load More</button>
+        <div *ngIf="isLoadingMoreEpisodes">
+            <p>Loading more episodes...</p>
+        </div>
 
-    <div *ngIf="isLoadingMoreEpisodes">
-        <p>Loading more episodes...</p>
     </div>
-
-</div>
 
 </ng-template>

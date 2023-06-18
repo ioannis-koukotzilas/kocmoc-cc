@@ -1,4 +1,5 @@
 export const environment = {
     production: false,
-    baseUrl: 'http://localhost/kocmoc/wp-json/wp/v2'
+    wpJsonBaseUrl: 'http://localhost/kocmoc/wp-json/wp/v2',
+    customWpJsonBaseUrl: 'http://localhost/kocmoc/wp-json/custom/v1'
 };

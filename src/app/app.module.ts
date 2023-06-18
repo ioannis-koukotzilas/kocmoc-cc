@@ -13,6 +13,7 @@ import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.co
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
 import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
+import { EpisodeAudioControlsComponent } from './views/episode/episode-audio-controls/episode-audio-controls.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,9 @@ import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detai
     EpisodeListComponent,
     GenreDetailComponent,
     ArtistListComponent,
-    ArtistDetailComponent
+    ArtistDetailComponent,
+    EpisodeAudioControlsComponent,
+    
   ],
   imports: [
     BrowserModule,

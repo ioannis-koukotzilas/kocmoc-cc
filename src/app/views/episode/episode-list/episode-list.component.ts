@@ -5,6 +5,7 @@ import { WordPressService } from 'src/app/core/services/wordpress/wordpress.serv
 import { Episode } from 'src/app/models/episode';
 import { Artist } from 'src/app/models/artist';
 import { Genre } from 'src/app/models/genre';
+import { Show } from 'src/app/models/show';
 
 @Component({
     selector: 'app-episode-list',
@@ -14,6 +15,7 @@ import { Genre } from 'src/app/models/genre';
 export class EpisodeListComponent implements OnInit {
 
     episodes: Episode[] = [];
+    shows: Show[] = [];
     artists: Artist[] = [];
     genres: Genre[] = [];
 
@@ -32,12 +34,12 @@ export class EpisodeListComponent implements OnInit {
     constructor(private wordPressService: WordPressService, public audioPlayerService: AudioPlayerService) { }
 
     ngOnInit(): void {
-        this.getEpisodes(3, 1);
+        this.getQueriedEpisodes(10, 1);
     }
 
-    getEpisodes(perPage: number, page: number): void {
+    getQueriedEpisodes(perPage: number, page: number): void {
         setTimeout(() => {
-            this.wordPressService.getQueriedEpisodes(perPage, page)
+            this.wordPressService.getEpisodes(perPage, page)
                 .pipe(
                     switchMap(apiData => {
                         const episodes = apiData.episodes.map(episode => new Episode(episode));
@@ -47,8 +49,8 @@ export class EpisodeListComponent implements OnInit {
                             this.hasMoreEpisodes = false;
                         }
                         const episodeIds = episodes.map(episode => episode.id);
-                        const getGenres$ = this.wordPressService.getGenresByEpisodeIds(episodeIds);
-                        const getArtists$ = this.wordPressService.getArtistsByEpisodeIds(episodeIds);
+                        const getGenres$ = this.wordPressService.getEpisodeGenre(episodeIds);
+                        const getArtists$ = this.wordPressService.getEpisodeArtist(episodeIds);
                         return forkJoin([getGenres$, getArtists$]);
                     }),
                     catchError(error => {
@@ -69,31 +71,22 @@ export class EpisodeListComponent implements OnInit {
         }, 300);
     }
 
-    getEpisodeArtist(artistId: number): Artist | null {
-        return this.artists.find(artist => artist.id === artistId) || null;
+    findEpisodeShow(showId: number): Show | null {
+        return this.shows.find(x => x.id === showId) || null;
     }
 
-    getEpisodeGenre(genreId: number): Genre | null {
-        return this.genres.find(genre => genre.id === genreId) || null;
+    findEpisodeGenre(genreId: number): Genre | null {
+        return this.genres.find(x => x.id === genreId) || null;
+    }
+
+    findEpisodeArtist(artistId: number): Artist | null {
+        return this.artists.find(x => x.id === artistId) || null;
     }
 
     loadMoreEpisodes(): void {
         this.isLoadingMoreEpisodes = true;
         this.currentPage += 1;
-        this.getEpisodes(3, this.currentPage);
-    }
-
-    playEpisode(episode: Episode) {
-        // If the live stream is playing, stop it
-        if (this.audioPlayerService.liveStreamPlaying.value) {
-            this.audioPlayerService.stopLiveStream();
-        }
-        // Toggle or play the on-demand stream
-        if (this.audioPlayerService.currentOnDemandStream.value?.id === episode.id) {
-            this.audioPlayerService.toggleOnDemandStream(episode);
-        } else {
-            this.audioPlayerService.playOnDemandStream(episode);
-        }
+        this.getQueriedEpisodes(10, this.currentPage);
     }
 
     ngOnDestroy(): void {
