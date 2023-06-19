@@ -33,7 +33,6 @@ export class EpisodeDetailComponent implements OnInit {
     currentPage: number = 1;
     hasMoreEpisodes: boolean = true;
     isLoadingMoreEpisodes: boolean = false;
-    
 
     constructor(private route: ActivatedRoute, private wordPressService: WordPressService, private audioPlayerService: AudioPlayerService, private location: Location) { }
 
@@ -41,36 +40,48 @@ export class EpisodeDetailComponent implements OnInit {
         this.getEpisode();
     }
 
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
+    }
+
     getEpisode(): void {
         this.route.paramMap.pipe(
             takeUntil(this.unsubscribe$),
             switchMap(params => {
                 const id = Number(params.get('id') || '0');
-                return this.wordPressService.getEpisode(id);
+                this.isLoadingEpisode = true;
+                this.episodes = [];
+                return this.wordPressService.getEpisode(id).pipe(
+                    catchError(error => {
+                        console.error('An error occurred:', error);
+                        this.isLoadingEpisode = false;
+                        return of(null);
+                    })
+                );
             }),
             switchMap(apiData => {
+                if (!apiData) return of({ shows: [], artists: [], genres: [] });
                 this.episode = new Episode(apiData);
                 const requests = {
                     shows: this.episode?.show && this.episode.show.length > 0 ? this.wordPressService.getEpisodeShow([this.episode.id]) : of([]),
                     artists: this.episode?.artist && this.episode.artist.length > 0 ? this.wordPressService.getEpisodeArtist([this.episode.id]) : of([]),
                     genres: this.episode?.genre && this.episode.genre.length > 0 ? this.wordPressService.getEpisodeGenre([this.episode.id]) : of([]),
                 };
-                return forkJoin(requests);
-            }),
-            catchError(error => {
-                console.error('An error occurred:', error);
-                return of({shows: [], artists: [], genres: []});
+                return forkJoin(requests).pipe(
+                    catchError(error => {
+                        console.error('An error occurred:', error);
+                        return of({ shows: [], artists: [], genres: [] });
+                    })
+                );
             })
-        ).subscribe(({shows, artists, genres}) => {
+        ).subscribe(({ shows, artists, genres }) => {
             this.shows = shows;
             this.artists = artists;
             this.genres = genres;
             this.isLoadingEpisode = false;
 
-            // Extract show IDs from the shows array
             const showIds = shows.map(show => show.id);
-
-            // Now that we have the current episode and show IDs, get related episodes
             if (this.episode && showIds.length > 0) {
                 this.getRelatedEpisodes(4, 1, showIds);
             }
@@ -81,7 +92,7 @@ export class EpisodeDetailComponent implements OnInit {
         return this.shows.find(x => x.id === showId) || null;
     }
 
-    getEpisodeArtist(artistId: number): Artist | null {
+    testEpisodeArtist(artistId: number): Artist | null {
         return this.artists.find(x => x.id === artistId) || null;
     }
 
@@ -90,40 +101,37 @@ export class EpisodeDetailComponent implements OnInit {
     }
 
     getRelatedEpisodes(perPage: number, page: number, showIds: number[]): void {
-        setTimeout(() => {
-            this.wordPressService.getRelatedEpisodes(perPage, page, showIds)
-                .pipe(
-                    switchMap(apiData => {
-                        const episodes = apiData.episodes.map(episode => new Episode(episode));
-                       // .filter(episode => episode.id !== this.episode?.id); // Exclude current episode;
-                        this.episodes = this.episodes.concat(episodes);
-                        const totalPages = Number(apiData.headers.get('X-WP-TotalPages'));
-                        if (page >= totalPages) {
-                            this.hasMoreEpisodes = false;
-                        }
-                        const episodeIds = episodes.map(episode => episode.id);
-                        const getShows$ = this.wordPressService.getEpisodeShow(episodeIds);
-                        const getGenres$ = this.wordPressService.getEpisodeGenre(episodeIds);
-                        const getArtists$ = this.wordPressService.getEpisodeArtist(episodeIds);
-                        return forkJoin([getShows$, getGenres$, getArtists$]);
-                    }),
-                    catchError(error => {
-                        console.error('An error occurred:', error);
-                        return of(null);
-                    }),
-                    takeUntil(this.unsubscribe$)
-                )
-                .subscribe(result => {
-                    if (result) {
-                        const [shows, genres, artists] = result;
-                        this.shows = shows;
-                        this.genres = genres;
-                        this.artists = artists;
-                    }
-                    this.isLoadingMoreEpisodes = false;
-                });
-        }, 300);
-    }    
+        this.wordPressService.getRelatedEpisodes(perPage, page, showIds).pipe(
+            switchMap(apiData => {
+                const allEpisodes = apiData.episodes.map(episode => new Episode(episode));
+                // Filter out the current episode only from the episodes list
+                const filteredEpisodes = allEpisodes.filter(episode => episode.id !== this.episode?.id);
+                this.episodes = this.episodes.concat(filteredEpisodes);
+                const totalPages = Number(apiData.headers.get('X-WP-TotalPages'));
+                if (page >= totalPages) {
+                    this.hasMoreEpisodes = false;
+                }
+                const episodeIds = allEpisodes.map(episode => episode.id);
+                const getShows$ = this.wordPressService.getEpisodeShow(episodeIds);
+                const getGenres$ = this.wordPressService.getEpisodeGenre(episodeIds);
+                const getArtists$ = this.wordPressService.getEpisodeArtist(episodeIds);
+                return forkJoin([getShows$, getGenres$, getArtists$]);
+            }),
+            catchError(error => {
+                console.error('An error occurred:', error);
+                return of(null);
+            }),
+            takeUntil(this.unsubscribe$)
+        ).subscribe(result => {
+            if (result) {
+                const [shows, genres, artists] = result;
+                this.shows = shows;
+                this.genres = genres;
+                this.artists = artists;
+            }
+            this.isLoadingMoreEpisodes = false;
+        });
+    }
 
     getShowEpisodes(showId: number): Episode[] {
         return this.episodes.filter(episode => episode.show.includes(showId));
@@ -135,10 +143,5 @@ export class EpisodeDetailComponent implements OnInit {
 
     goBack(): void {
         this.location.back();
-    }
-
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
     }
 }

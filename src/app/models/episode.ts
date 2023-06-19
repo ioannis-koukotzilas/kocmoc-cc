@@ -19,7 +19,7 @@ export class Episode {
 
     tracklist: {
         track: {
-            artist: number[];
+            tracklist_artist: number[];
             title: string;
         }
     }[]; // tracklist is an array

@@ -46,7 +46,7 @@
                 <ng-container *ngIf="episode.artist && episode.artist.length > 0">
                     <ul>
                         <li *ngFor="let artistId of episode.artist">
-                            <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
+                            <ng-container *ngIf="testEpisodeArtist(artistId) as artist">
                                 <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
                             </ng-container>
                         </li>
@@ -69,9 +69,9 @@
                     <h3>Tracklist</h3>
                     <ul class="tracklist">
                         <li class="track" *ngFor="let item of episode.tracklist">
-                            <div *ngIf="item.track.artist as artists">
+                            <div *ngIf="item.track.tracklist_artist as artists">
                                 <ng-container *ngFor="let artistId of artists; last as isLast">
-                                    <ng-container *ngIf="getEpisodeArtist(artistId) as artist">
+                                    <ng-container *ngIf="testEpisodeArtist(artistId) as artist">
                                         <a class="artist" [routerLink]="['/artist', artistId]">{{ artist.name }}</a>{{
                                         isLast ? '' : ', ' }}
                                     </ng-container>
@@ -81,6 +81,7 @@
                         </li>
                     </ul>
                 </ng-container>
+                
 
             </section>
         </div>
