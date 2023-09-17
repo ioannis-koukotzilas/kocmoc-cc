@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CloudStorageService } from './core/services/cloud-storage/cloud-storage.service';
-import { WordPressService } from './core/services/wordpress/wordpress.service';
+import { WPService } from './core/services/wp/wp.service';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +13,10 @@ export class AppComponent implements OnInit {
   title = 'KOCMOC.CC';
   posts: any[] = [];
 
-  constructor(private wordPressService: WordPressService) { }
+  constructor(private wpService: WPService) { }
 
   ngOnInit(): void {
-    this.wordPressService.fetchPosts().subscribe(data => {
+    this.wpService.fetchPosts().subscribe(data => {
       this.posts = data;
     });
   }

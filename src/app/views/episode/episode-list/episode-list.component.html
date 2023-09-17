@@ -1,4 +1,4 @@
-<div *ngIf="isLoadingEpisodes; else Content">
+<div *ngIf="loading; else Content">
     <p>Loading...</p>
 </div>
 
@@ -38,21 +38,19 @@
                     <div class="excerpt" [innerHTML]="episode.excerpt"></div>
                 </a>
 
-                <div class="footer" *ngIf="episode.genre && episode.genre.length > 0">
+                <div class="footer" *ngIf="episode.genres && episode.genres.length > 0">
                     <ul class="genres">
-                        <li class="genre" *ngFor="let genreId of episode.genre">
-                            <ng-container *ngIf="findEpisodeGenre(genreId) as genre">
-                                <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
-                            </ng-container>
+                        <li class="genre" *ngFor="let genre of episode.genres">
+                            <a [routerLink]="['/genre', genre.id]"> {{genre.name }}</a>
                         </li>
                     </ul>
                 </div>
             </li>
         </ul>
 
-        <button *ngIf="hasMoreEpisodes" (click)="loadMoreEpisodes()" [disabled]="isLoadingEpisodes">Load More</button>
+        <button *ngIf="hasMore" (click)="loadMore()">Load More</button>
 
-        <div *ngIf="isLoadingMoreEpisodes">
+        <div *ngIf="loadingMore">
             <p>Loading more episodes...</p>
         </div>
 

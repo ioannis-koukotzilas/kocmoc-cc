@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, switchMap, takeUntil } from 'rxjs';
-import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Episode } from 'src/app/models/episode';
 import { Genre } from 'src/app/models/genre';
 
@@ -18,7 +18,7 @@ export class GenreDetailComponent implements OnInit {
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private route: ActivatedRoute, private wordPressService: WordPressService) { }
+  constructor(private route: ActivatedRoute, private wpService: WPService) { }
 
   ngOnInit(): void {
     this.getGenre();
@@ -26,7 +26,7 @@ export class GenreDetailComponent implements OnInit {
 
   getGenre(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.wordPressService.getGenre(id)
+    this.wpService.getGenre(id)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(genre => this.genre = genre);
   }

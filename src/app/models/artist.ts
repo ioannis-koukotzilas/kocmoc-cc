@@ -1,3 +1,5 @@
+import { Episode } from "./episode";
+
 export class Artist {
     id: number;
     slug: string;
@@ -13,6 +15,10 @@ export class Artist {
         },
     };
 
+    episodeId: number;
+
+    episodes?: Episode[]; 
+
     constructor(data: any) {
         this.id = data.id;
         this.slug = data.slug;
@@ -25,5 +31,6 @@ export class Artist {
             description: data.image.description,
             size: data.image.size,
         };
+        this.episodeId = data.episodeId;
     }
 }

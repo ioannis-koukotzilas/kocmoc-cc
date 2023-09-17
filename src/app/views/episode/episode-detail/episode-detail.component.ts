@@ -1,147 +1,158 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable, Subject, catchError, forkJoin, of, switchMap, takeUntil } from 'rxjs';
-import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
+import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUntil, tap } from 'rxjs';
+
 import { Episode } from 'src/app/models/episode';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
-import { Artist } from 'src/app/models/artist';
-import { Genre } from 'src/app/models/genre';
-import { Show } from 'src/app/models/show';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
-    selector: 'app-episode-detail',
-    templateUrl: './episode-detail.component.html',
-    styleUrls: ['./episode-detail.component.css']
+  selector: 'app-episode-detail',
+  templateUrl: './episode-detail.component.html',
+  styleUrls: ['./episode-detail.component.css']
 })
 export class EpisodeDetailComponent implements OnInit {
 
-    episode: Episode | undefined;
-    shows: Show[] = [];
-    artists: Artist[] = [];
-    genres: Genre[] = [];
-    episodes: Episode[] = [];
+  private unsubscribe$ = new Subject<void>();
 
-    isLoadingEpisode: boolean = true;
+  public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
+  public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
+  public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
 
-    private unsubscribe$ = new Subject<void>();
+  episode: Episode | null = null;
+  relatedEpisodes: Episode[] = [];
 
-    public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
-    public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
-    public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
+  loading: boolean = true;
 
-    currentPage: number = 1;
-    hasMoreEpisodes: boolean = true;
-    isLoadingMoreEpisodes: boolean = false;
+  page: number = 1;
+  perPage: number = 9;
 
-    constructor(private route: ActivatedRoute, private wordPressService: WordPressService, private audioPlayerService: AudioPlayerService, private location: Location) { }
+  hasMore: boolean = true;
+  loadingMore: boolean = false;
 
-    ngOnInit(): void {
-        this.getEpisode();
-    }
+  constructor(private route: ActivatedRoute, private wpService: WPService, private audioPlayerService: AudioPlayerService, private location: Location) { }
 
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
-    }
+  ngOnInit() {
+    this.getEpisode();
+  }
 
-    getEpisode(): void {
-        this.route.paramMap.pipe(
-            takeUntil(this.unsubscribe$),
-            switchMap(params => {
-                const id = Number(params.get('id') || '0');
-                this.isLoadingEpisode = true;
-                this.episodes = [];
-                return this.wordPressService.getEpisode(id).pipe(
-                    catchError(error => {
-                        console.error('An error occurred:', error);
-                        this.isLoadingEpisode = false;
-                        return of(null);
-                    })
-                );
-            }),
-            switchMap(apiData => {
-                if (!apiData) return of({ shows: [], artists: [], genres: [] });
-                this.episode = new Episode(apiData);
-                const requests = {
-                    shows: this.episode?.show && this.episode.show.length > 0 ? this.wordPressService.getEpisodeShow([this.episode.id]) : of([]),
-                    artists: this.episode?.artist && this.episode.artist.length > 0 ? this.wordPressService.getEpisodeArtist([this.episode.id]) : of([]),
-                    genres: this.episode?.genre && this.episode.genre.length > 0 ? this.wordPressService.getEpisodeGenre([this.episode.id]) : of([]),
-                };
-                return forkJoin(requests).pipe(
-                    catchError(error => {
-                        console.error('An error occurred:', error);
-                        return of({ shows: [], artists: [], genres: [] });
-                    })
-                );
-            })
-        ).subscribe(({ shows, artists, genres }) => {
-            this.shows = shows;
-            this.artists = artists;
-            this.genres = genres;
-            this.isLoadingEpisode = false;
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
-            const showIds = shows.map(show => show.id);
-            if (this.episode && showIds.length > 0) {
-                this.getRelatedEpisodes(4, 1, showIds);
-            }
-        });
-    }
+  getEpisode() {
+    this.route.paramMap.pipe(
+      switchMap(params => {
+        const id = Number(params.get('id') || '0');
+        this.loading = true;
+        return this.wpService.getEpisode(id).pipe(
+          catchError(error => {
+            console.error('Error getting episode from WPService:', error);
+            return of(null);  // Continue the stream by emitting null.
+          })
+        );
+      }),
+      tap(episode => {
+        if (episode) this.episode = new Episode(episode);
+      }),
+      switchMap(episode => {
+        if (!episode) return of({ shows: [], genres: [], artists: [], tracklists: [] });  // If episode retrieval failed, continue with empty data.
+        return forkJoin({
+          shows: this.wpService.getEpisodeShow([episode.id]),
+          genres: this.wpService.getEpisodeGenre([episode.id]),
+          artists: this.wpService.getEpisodeArtist([episode.id]),
+          tracklists: this.wpService.getEpisodeTracklist([episode.id])
+        }).pipe(
+          catchError(error => {
+            console.error('ForkJoin error getting episode details:', error);
+            return of(null);  // Continue the stream by emitting null.
+          })
+        );
+      }),
+      tap((data) => {
+        if (data) {
+          const { shows, genres, artists, tracklists } = data;
+          if (this.episode) {
+            this.episode.shows = shows;
+            this.episode.genres = genres;
+            this.episode.artists = artists;
+            this.episode.tracklists = tracklists;
+          }
+        }
+      }),
+      takeUntil(this.unsubscribe$),
+    ).subscribe({
+      next: () => {
+        this.loading = false;
+        const shows = this.episode?.shows?.map(show => show.id);
+        if (shows && shows.length > 0) {
+          this.getRelatedEpisodes(this.page, this.perPage, shows);
+        }
+      },
+      error: (error) => {
+        console.error('Main observable error while processing episode:', error);
+      },
+      complete: () => {
+        console.log('Episode detail component unsubscription completed.');
+      }
+    });
+  }
 
-    getEpisodeShow(showId: number): Show | null {
-        return this.shows.find(x => x.id === showId) || null;
-    }
+  getRelatedEpisodes(page: number, perPage: number, id: number[]) {
+    this.wpService.getRelatedEpisodes(page, perPage, id).pipe(
+      switchMap(data => {
+        const episodes = data.episodes.map(episode => new Episode(episode));
+        const filteredEpisodes = episodes.filter(x => x.id !== this.episode?.id);
 
-    testEpisodeArtist(artistId: number): Artist | null {
-        return this.artists.find(x => x.id === artistId) || null;
-    }
+        this.relatedEpisodes = [...filteredEpisodes];
 
-    getEpisodeGenre(genreId: number): Genre | null {
-        return this.genres.find(x => x.id === genreId) || null;
-    }
+        const id = filteredEpisodes.map(episode => episode.id);
 
-    getRelatedEpisodes(perPage: number, page: number, showIds: number[]): void {
-        this.wordPressService.getRelatedEpisodes(perPage, page, showIds).pipe(
-            switchMap(apiData => {
-                const allEpisodes = apiData.episodes.map(episode => new Episode(episode));
-                // Filter out the current episode only from the episodes list
-                const filteredEpisodes = allEpisodes.filter(episode => episode.id !== this.episode?.id);
-                this.episodes = this.episodes.concat(filteredEpisodes);
-                const totalPages = Number(apiData.headers.get('X-WP-TotalPages'));
-                if (page >= totalPages) {
-                    this.hasMoreEpisodes = false;
-                }
-                const episodeIds = allEpisodes.map(episode => episode.id);
-                const getShows$ = this.wordPressService.getEpisodeShow(episodeIds);
-                const getGenres$ = this.wordPressService.getEpisodeGenre(episodeIds);
-                const getArtists$ = this.wordPressService.getEpisodeArtist(episodeIds);
-                return forkJoin([getShows$, getGenres$, getArtists$]);
-            }),
-            catchError(error => {
-                console.error('An error occurred:', error);
-                return of(null);
-            }),
-            takeUntil(this.unsubscribe$)
-        ).subscribe(result => {
-            if (result) {
-                const [shows, genres, artists] = result;
-                this.shows = shows;
-                this.genres = genres;
-                this.artists = artists;
-            }
-            this.isLoadingMoreEpisodes = false;
-        });
-    }
+        const totalPages = Number(data.headers.get('X-WP-TotalPages'));
+        if (page >= totalPages) {
+          this.hasMore = false;
+        }
 
-    getShowEpisodes(showId: number): Episode[] {
-        return this.episodes.filter(episode => episode.show.includes(showId));
-    }
+        return forkJoin([
+          this.wpService.getEpisodeShow(id),
+          this.wpService.getEpisodeGenre(id),
+          this.wpService.getEpisodeArtist(id)
+        ]).pipe(
+          map(([shows, genres, artists]) => {
+            filteredEpisodes.forEach(episode => {
+              episode.shows = shows.filter(show => show.episodeId === episode.id);
+              episode.genres = genres.filter(genre => genre.episodeId === episode.id);
+              episode.artists = artists.filter(artist => artist.episodeId === episode.id);
+            });
+            return [shows, genres, artists];
+          }),
+          catchError(error => {
+            console.error('ForkJoin observable error while getting details):', error);
+            return of(null);  // Emit null to let outer stream continue.
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('WPService observable error while getting the related episodes list:', error);
+        return of(null); // Emit null to let outer stream continue.
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: () => {
+        this.loadingMore = false;
+      },
+      error: (error) => {
+        console.error('Main observable error:', error);
+      },
+      complete: () => {
+        console.log('Get related episodes completed.');
+      }
+    });
+  }
 
-    getArtistEpisodes(artistId: number): Episode[] {
-        return this.episodes.filter(episode => episode.artist.includes(artistId));
-    }
-
-    goBack(): void {
-        this.location.back();
-    }
+  goBack() {
+    this.location.back();
+  }
 }

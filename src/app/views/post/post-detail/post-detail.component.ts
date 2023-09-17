@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -13,14 +13,14 @@ export class PostDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private wordPressService: WordPressService
+    private wpService: WPService
   ) { }
 
   ngOnInit(): void {
     const postId = this.route.snapshot.paramMap.get('id') ?? '';
 
     if (postId) {
-      this.wordPressService.fetchPost(postId).subscribe({
+      this.wpService.fetchPost(postId).subscribe({
         next: data => {
           this.post = data;
         },

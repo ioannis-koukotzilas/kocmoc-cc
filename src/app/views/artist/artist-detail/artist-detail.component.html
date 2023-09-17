@@ -1,13 +1,41 @@
-<div *ngIf="artist; else loading">
-    <h1>Name: {{artist.name}}</h1>
-    <p>Id: {{artist.id}}</p>
-    <p>Slug: {{artist.slug}}</p>
-    <p>Description: {{artist.description}}</p>
-    <!-- <img *ngIf="artist.image" [src]="artist.image.sizes['medium'] || artist.image.url" [alt]="artist.image.title" class="artist-image" /> -->
 
-    <!-- <pre>{{ artist | json }}</pre> -->
+
+
+<div *ngIf="loading; else Content">
+    <p>Loading...</p>
 </div>
 
-<ng-template #loading>
-    <p>Loading...</p>
+<ng-template #Content>
+
+    <div class="artist-detail" *ngIf="artist">
+
+        <div class="cover" *ngIf="artist.image.url">
+            <picture>
+                <source [srcset]="artist.image.size['medium']" media="(max-width: 424px)">
+                <source [srcset]="artist.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+                <source [srcset]="artist.image.size['2048x2048']" media="(min-width: 640px)">
+                <img [src]="artist.image.size['medium_large']" [alt]="artist.image.alt" />
+            </picture>
+
+            <section class="profile">
+
+                <h1>Name: {{artist.name}}</h1>
+                <p>Id: {{artist.id}}</p>
+                <p>Slug: {{artist.slug}}</p>
+                <p>Description: {{artist.description}}</p>
+
+            </section>
+        </div>
+
+        <!-- Relate Episodes -->
+
+        <!-- <app-episode-related-list 
+        [episodes]="relatedEpisodes"
+        [currentOnDemandStream$]="currentOnDemandStream$"
+        [onDemandStreamLoading$]="onDemandStreamLoading$"
+        [onDemandStreamPlaying$]="onDemandStreamPlaying$">
+        </app-episode-related-list> -->
+    
+
+    </div>
 </ng-template>

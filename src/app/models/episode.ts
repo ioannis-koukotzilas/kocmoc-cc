@@ -1,3 +1,8 @@
+import { Artist } from "./artist";
+import { Genre } from "./genre";
+import { Show } from "./show";
+import { Tracklist } from "./tracklist";
+
 export class Episode {
     id: number;
     slug: string;
@@ -14,21 +19,13 @@ export class Episode {
             [key: string]: string | number;
         }, 
     };
-    track: string; // To hold track name from ACF
+    track: string;
     location: string;
 
-    tracklist: {
-        track: {
-            tracklist_artist: number[];
-            title: string;
-        }
-    }[]; // tracklist is an array
-
-    show: number[]; // To hold shows IDs from JSON response
-    artist: number[]; // To hold artist IDs from JSON response
-    genre: number[];  // To hold genre IDs from JSON response
-
-    
+    shows?: Show[]; 
+    artists?: Artist[]; 
+    genres?: Genre[];
+    tracklists?: Tracklist[]; 
 
     constructor(data: any) {
         this.id = data.id;
@@ -46,11 +43,5 @@ export class Episode {
         };
         this.track = data.acf.track;
         this.location = data.acf.location;
-
-        this.tracklist = data.acf.tracklist;
-        
-        this.show = data.show;
-        this.artist = data.artist;
-        this.genre = data.genre;  
     }
 }

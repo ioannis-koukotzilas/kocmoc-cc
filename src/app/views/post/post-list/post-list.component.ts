@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
   selector: 'app-post-list',
@@ -11,10 +11,10 @@ export class PostListComponent implements OnInit {
   posts: any[] = [];
   isLoading = true;
 
-  constructor(private wordPressService: WordPressService) { }
+  constructor(private wpService: WPService) { }
 
   ngOnInit(): void {
-    this.wordPressService.fetchPosts().subscribe({
+    this.wpService.fetchPosts().subscribe({
       next: data => {
         this.posts = data;
         this.isLoading = false;

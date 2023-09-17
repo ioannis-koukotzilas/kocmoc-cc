@@ -12,6 +12,7 @@ export class Show {
             [key: string]: string | number;
         },
     };
+    episodeId: number;
 
     constructor(data: any) {
         this.id = data.id;
@@ -25,6 +26,7 @@ export class Show {
             description: data.image.description,
             size: data.image.size,
         };
+        this.episodeId = data.episodeId;
     }
 }
 

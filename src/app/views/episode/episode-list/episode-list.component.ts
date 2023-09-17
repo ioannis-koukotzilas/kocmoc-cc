@@ -1,96 +1,97 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
-import { WordPressService } from 'src/app/core/services/wordpress/wordpress.service';
 import { Episode } from 'src/app/models/episode';
-import { Artist } from 'src/app/models/artist';
-import { Genre } from 'src/app/models/genre';
-import { Show } from 'src/app/models/show';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
-    selector: 'app-episode-list',
-    templateUrl: './episode-list.component.html',
-    styleUrls: ['./episode-list.component.css'],
+  selector: 'app-episode-list',
+  templateUrl: './episode-list.component.html',
+  styleUrls: ['./episode-list.component.css'],
 })
 export class EpisodeListComponent implements OnInit {
 
-    episodes: Episode[] = [];
-    shows: Show[] = [];
-    artists: Artist[] = [];
-    genres: Genre[] = [];
+  private unsubscribe$ = new Subject<void>();
 
-    isLoadingEpisodes: boolean = true;
+  public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
+  public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
+  public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
 
-    currentPage: number = 1;
-    hasMoreEpisodes: boolean = true;
-    isLoadingMoreEpisodes: boolean = false;
+  episodes: Episode[] = [];
 
-    private unsubscribe$ = new Subject<void>();
+  loading: boolean = true;
 
-    public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
-    public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
-    public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
+  page: number = 1;
+  perPage: number = 4;
 
-    constructor(private wordPressService: WordPressService, public audioPlayerService: AudioPlayerService) { }
+  hasMore: boolean = true;
+  loadingMore: boolean = false;
 
-    ngOnInit(): void {
-        this.getQueriedEpisodes(10, 1);
-    }
+  constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService) { }
 
-    getQueriedEpisodes(perPage: number, page: number): void {
-        setTimeout(() => {
-            this.wordPressService.getEpisodes(perPage, page)
-                .pipe(
-                    switchMap(apiData => {
-                        const episodes = apiData.episodes.map(episode => new Episode(episode));
-                        this.episodes = this.episodes.concat(episodes);
-                        const totalPages = Number(apiData.headers.get('X-WP-TotalPages'));
-                        if (page >= totalPages) {
-                            this.hasMoreEpisodes = false;
-                        }
-                        const episodeIds = episodes.map(episode => episode.id);
-                        const getGenres$ = this.wordPressService.getEpisodeGenre(episodeIds);
-                        const getArtists$ = this.wordPressService.getEpisodeArtist(episodeIds);
-                        return forkJoin([getGenres$, getArtists$]);
-                    }),
-                    catchError(error => {
-                        console.error('An error occurred:', error);
-                        return of(null);
-                    }),
-                    takeUntil(this.unsubscribe$)
-                )
-                .subscribe(result => {
-                    if (result) {
-                        const [genres, artists] = result;
-                        this.genres = genres;
-                        this.artists = artists;
-                    }
-                    this.isLoadingEpisodes = false;
-                    this.isLoadingMoreEpisodes = false;
-                });
-        }, 300);
-    }
+  ngOnInit() {
+    this.getEpisodes(this.page, this.perPage);
+  }
 
-    findEpisodeShow(showId: number): Show | null {
-        return this.shows.find(x => x.id === showId) || null;
-    }
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
-    findEpisodeGenre(genreId: number): Genre | null {
-        return this.genres.find(x => x.id === genreId) || null;
-    }
+  getEpisodes(page: number, perPage: number) {
+    this.wpService.getEpisodes(page, perPage).pipe(
+      switchMap(data => {
+        const episodes = data.episodes.map(episode => new Episode(episode));
+        this.episodes = [...this.episodes, ...episodes];
 
-    findEpisodeArtist(artistId: number): Artist | null {
-        return this.artists.find(x => x.id === artistId) || null;
-    }
+        const id = episodes.map(episode => episode.id);
 
-    loadMoreEpisodes(): void {
-        this.isLoadingMoreEpisodes = true;
-        this.currentPage += 1;
-        this.getQueriedEpisodes(10, this.currentPage);
-    }
+        const totalPages = Number(data.headers.get('X-WP-TotalPages'));
+        if (page >= totalPages) {
+          this.hasMore = false;
+        }
 
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
-    }
+        return forkJoin([
+          this.wpService.getEpisodeShow(id),
+          this.wpService.getEpisodeGenre(id),
+          this.wpService.getEpisodeArtist(id)
+        ]).pipe(
+          map(([shows, genres, artists]) => {
+            episodes.forEach(episode => {
+              episode.shows = shows.filter(show => show.episodeId === episode.id),
+              episode.genres = genres.filter(genre => genre.episodeId === episode.id),
+              episode.artists = artists.filter(artist => artist.episodeId === episode.id)
+            });
+            return [shows, genres, artists];
+          }),
+          catchError(error => {
+            console.error('ForkJoin observable error while getting details):', error);
+            return of(null);  // Emit null to let outer stream continue.
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('WPService observable error while getting the episodes list:', error);
+        return of(null); // Emit null to let outer stream continue.
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: () => {
+        this.loading = false;
+        this.loadingMore = false;
+      },
+      error: (error) => {
+        console.error('Main observable error:', error);
+      },
+      complete: () => {
+        console.log('Get episodes completed.');
+      }
+    });
+  }
+
+  loadMore() {
+    this.loadingMore = true;
+    this.page += 1;
+    this.getEpisodes(this.page, this.perPage);
+  }
 }
