@@ -1,0 +1,36 @@
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
+</div>
+
+<ng-template #Content>
+
+  <div class="artist-detail" *ngIf="producer">
+
+      <div class="cover" *ngIf="producer.image.url">
+          <picture>
+              <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+              <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+              <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
+              <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+          </picture>
+
+          <section class="profile">
+
+              <h1>Name: {{producer.name}}</h1>
+              <p>Id: {{producer.id}}</p>
+              <p>Slug: {{producer.slug}}</p>
+              <p>Description: {{producer.description}}</p>
+
+          </section>
+      </div>
+
+      <app-episode-related-list 
+      [currentOnDemandStream$]="currentOnDemandStream$"
+      [onDemandStreamLoading$]="onDemandStreamLoading$"
+      [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+      [episodes]="producerEpisodes">
+      </app-episode-related-list>
+  
+
+  </div>
+</ng-template>

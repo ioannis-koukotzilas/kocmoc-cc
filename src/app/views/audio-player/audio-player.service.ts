@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, catchError, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { Episode } from 'src/app/models/episode';
 import { CloudStorageService } from '../../core/services/cloud-storage/cloud-storage.service';
+import { WPService } from 'src/app/core/services/wp/wp.service';
 
 const STREAM_TYPE_LIVE = 'liveStream';
 const STREAM_TYPE_ON_DEMAND = 'onDemandStream';
-const LOAD_DELAY_MS = 2000;
+const LOAD_DELAY_MS = 400;
 
 @Injectable({
   providedIn: 'root',
 })
 export class AudioPlayerService {
+
+  private readonly onDestroy = new Subject<void>();
 
   private liveStreamAudio: HTMLAudioElement = new Audio();
   private onDemandStreamAudio: HTMLAudioElement = new Audio();
@@ -33,15 +36,30 @@ export class AudioPlayerService {
   public onDemandStreamCurrentTime = new BehaviorSubject<number>(0);
   public onDemandStreamDuration = new BehaviorSubject<number>(0);
 
-  constructor(private cloudStorageService: CloudStorageService) {
+  // Random Play
+  private randomPlayCount: number = 0;
+  private readonly MAX_RANDOM_PLAYS = 1;
+  private playedEpisodes: number[] = [];
+
+  constructor(private cloudStorageService: CloudStorageService, private wpService: WPService) {
     this.liveStreamAudio.preload = 'auto';
     this.onDemandStreamAudio.preload = 'auto';
+
+    this.onDemandStreamAudio.addEventListener('ended', () => {
+      if (this.randomPlayCount < this.MAX_RANDOM_PLAYS) {
+        this.playRandomTrackFromSameGenre();
+      } else {
+        this.randomPlayCount = 0; // Reset the play count
+        this.playLiveStream();  // Play the live stream
+      }
+    });
   }
 
   playLiveStream(): void {
     if (this.onDemandStreamPlaying.value) {
       this.stopOnDemandStream();
     }
+    this.streamTypeSelected.next(STREAM_TYPE_LIVE);
     this.setLiveStream();
     this.liveStreamAudio.addEventListener('canplay', this.liveStreamCanPlayListener);
     this.liveStreamAudio.addEventListener('playing', this.liveStreamPlayingListener);
@@ -181,10 +199,56 @@ export class AudioPlayerService {
     this.onDemandStreamAudio.currentTime = time;
   }
 
-
   updateCurrentTime(time: number): void {
     this.onDemandStreamCurrentTime.next(time);
   }
 
+  private playRandomTrackFromSameGenre = (): void => {
+    const currentEpisodeId = this.currentOnDemandStream.value?.id;
+    const currentGenreIds = this.currentOnDemandStream.value?.genre;
+
+    if (!currentGenreIds || !currentGenreIds.length) return;
+
+    this.wpService.getActiveGenres(1, 100)
+      .pipe(
+        map(response => response.filter(genre => currentGenreIds.includes(genre.id))),
+        switchMap(activeGenres => {
+          if (activeGenres && activeGenres.length) {
+            return this.wpService.getEpisodes(1, 100).pipe(
+              map(response => response.episodes.map(episodeData => new Episode(episodeData)))
+            );
+          } else {
+            return of([]);
+          }
+        }),
+        map(episodes => episodes.filter(episode =>
+          episode.id !== currentEpisodeId && 
+          !this.playedEpisodes.includes(episode.id) &&  // Exclude already played episodes
+          episode.genre && episode.genre.some(genreId => currentGenreIds.includes(genreId))
+        )),
+        catchError(error => {
+          console.error('Error occurred:', error);
+          return of([]);
+        }),
+        takeUntil(this.onDestroy)
+      )
+      .subscribe(matchingEpisodes => {
+        if (matchingEpisodes && matchingEpisodes.length) {
+          const randomEpisode = matchingEpisodes[Math.floor(Math.random() * matchingEpisodes.length)];
+          console.log('Randomly Selected Episode:', randomEpisode);
+          this.playedEpisodes.push(randomEpisode.id);  // Add the episode to the played list
+          this.randomPlayCount++;
+          this.playOnDemandStream(randomEpisode);
+        } else {
+          this.randomPlayCount = 0;
+          this.playedEpisodes = [];  // Reset the list if no more matching episodes are available
+        }
+      });
+  };
+
+  cleanup() {
+    this.onDestroy.next();
+    this.onDestroy.complete();
+  }
 
 }

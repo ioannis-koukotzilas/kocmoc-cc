@@ -15,6 +15,8 @@ import { ArtistListComponent } from './views/artist/artist-list/artist-list.comp
 import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
 import { EpisodeAudioControlsComponent } from './views/episode/episode-audio-controls/episode-audio-controls.component';
 import { EpisodeRelatedListComponent } from './views/episode/episode-related-list/episode-related-list.component';
+import { ProducerDetailComponent } from './views/producer/producer-detail/producer-detail.component';
+import { ProducerListComponent } from './views/producer/producer-list/producer-list.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,8 @@ import { EpisodeRelatedListComponent } from './views/episode/episode-related-lis
     ArtistDetailComponent,
     EpisodeAudioControlsComponent,
     EpisodeRelatedListComponent,
+    ProducerDetailComponent,
+    ProducerListComponent,
     
   ],
   imports: [

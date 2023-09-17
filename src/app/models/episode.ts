@@ -1,5 +1,6 @@
 import { Artist } from "./artist";
 import { Genre } from "./genre";
+import { Producer } from "./producer";
 import { Show } from "./show";
 import { Tracklist } from "./tracklist";
 
@@ -22,6 +23,9 @@ export class Episode {
     track: string;
     location: string;
 
+    genre: number[]; // Important for random selection
+
+    producers?: Producer[]; 
     shows?: Show[]; 
     artists?: Artist[]; 
     genres?: Genre[];
@@ -43,5 +47,6 @@ export class Episode {
         };
         this.track = data.acf.track;
         this.location = data.acf.location;
+        this.genre = data.genre;
     }
 }

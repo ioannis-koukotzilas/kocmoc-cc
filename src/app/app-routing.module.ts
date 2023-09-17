@@ -8,10 +8,14 @@ import { EpisodeListComponent } from './views/episode/episode-list/episode-list.
 import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.component';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
 import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
+import { ProducerListComponent } from './views/producer/producer-list/producer-list.component';
+import { ProducerDetailComponent } from './views/producer/producer-detail/producer-detail.component';
 
 const routes: Routes = [
   { path: 'posts', component: PostListComponent },
   { path: 'post/:id', component: PostDetailComponent },
+  { path: 'producers', component: ProducerListComponent },
+  { path: 'producer/:id', component: ProducerDetailComponent },
   { path: 'episodes', component: EpisodeListComponent },
   { path: 'episode/:id', component: EpisodeDetailComponent },
   { path: 'genre/:id', component: GenreDetailComponent },

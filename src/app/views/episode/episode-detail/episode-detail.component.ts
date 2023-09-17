@@ -58,8 +58,9 @@ export class EpisodeDetailComponent implements OnInit {
         if (episode) this.episode = new Episode(episode);
       }),
       switchMap(episode => {
-        if (!episode) return of({ shows: [], genres: [], artists: [], tracklists: [] });  // If episode retrieval failed, continue with empty data.
+        if (!episode) return of({ producers: [], shows: [], genres: [], artists: [], tracklists: [] });  // If episode retrieval failed, continue with empty data.
         return forkJoin({
+          producers: this.wpService.getEpisodeProducer([episode.id]),
           shows: this.wpService.getEpisodeShow([episode.id]),
           genres: this.wpService.getEpisodeGenre([episode.id]),
           artists: this.wpService.getEpisodeArtist([episode.id]),
@@ -73,8 +74,9 @@ export class EpisodeDetailComponent implements OnInit {
       }),
       tap((data) => {
         if (data) {
-          const { shows, genres, artists, tracklists } = data;
+          const { producers, shows, genres, artists, tracklists } = data;
           if (this.episode) {
+            this.episode.producers = producers
             this.episode.shows = shows;
             this.episode.genres = genres;
             this.episode.artists = artists;
@@ -88,7 +90,7 @@ export class EpisodeDetailComponent implements OnInit {
         this.loading = false;
         const shows = this.episode?.shows?.map(show => show.id);
         if (shows && shows.length > 0) {
-          this.getRelatedEpisodes(this.page, this.perPage, shows);
+          this.getRelatedShowEpisodes(this.page, this.perPage, shows);
         }
       },
       error: (error) => {
@@ -100,8 +102,8 @@ export class EpisodeDetailComponent implements OnInit {
     });
   }
 
-  getRelatedEpisodes(page: number, perPage: number, id: number[]) {
-    this.wpService.getRelatedEpisodes(page, perPage, id).pipe(
+  getRelatedShowEpisodes(page: number, perPage: number, id: number[]) {
+    this.wpService.getRelatedShowEpisodes(page, perPage, id).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
         const filteredEpisodes = episodes.filter(x => x.id !== this.episode?.id);
@@ -116,17 +118,19 @@ export class EpisodeDetailComponent implements OnInit {
         }
 
         return forkJoin([
+          this.wpService.getEpisodeProducer(id),
           this.wpService.getEpisodeShow(id),
           this.wpService.getEpisodeGenre(id),
           this.wpService.getEpisodeArtist(id)
         ]).pipe(
-          map(([shows, genres, artists]) => {
+          map(([producers, shows, genres, artists]) => {
             filteredEpisodes.forEach(episode => {
+              episode.producers = producers.filter(producer => producer.episodeId === episode.id);
               episode.shows = shows.filter(show => show.episodeId === episode.id);
               episode.genres = genres.filter(genre => genre.episodeId === episode.id);
               episode.artists = artists.filter(artist => artist.episodeId === episode.id);
             });
-            return [shows, genres, artists];
+            return [producers, shows, genres, artists];
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);

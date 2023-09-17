@@ -7,6 +7,7 @@ import { Episode } from 'src/app/models/episode';
 import { Artist } from 'src/app/models/artist';
 import { Show } from 'src/app/models/show';
 import { Tracklist } from 'src/app/models/tracklist';
+import { Producer } from 'src/app/models/producer';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,12 @@ export class WPService {
     );
   }
 
+  getEpisodeProducer(id: number[]): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/producer?episode=${id}`).pipe(
+      catchError(this.handleError<Producer[]>('getEpisodeProducer', []))
+    );
+  }
+
   getEpisodeShow(id: number[]): Observable<Show[]> {
     return this.http.get<Show[]>(`${this.customWpJsonBaseUrl}/show?episode=${id}`).pipe(
       catchError(this.handleError<Show[]>('getEpisodeShow', []))
@@ -72,7 +79,7 @@ export class WPService {
     );
   }
 
-  getRelatedEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
+  getRelatedShowEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
     return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
       params: {
         page: page.toString(),
@@ -84,7 +91,50 @@ export class WPService {
       map((response: HttpResponse<Episode[]>) => {
         return { episodes: response.body as Episode[], headers: response.headers };
       }),
-      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getRelatedEpisodes', {
+      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getRelatedShowEpisodes', {
+        episodes: [],
+        headers: new HttpHeaders()
+      }))
+    );
+  }
+
+  // Producer
+
+  getProducers(page: number, perPage: number): Observable<{ producers: Producer[], headers: HttpHeaders }> {
+    return this.http.get<Producer[]>(`${this.wpJsonBaseUrl}/producer`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString()
+      },
+      observe: 'response'
+    }).pipe(
+      map(({ body, headers }) => ({ producers: body as Producer[], headers })),
+      catchError(this.handleError<{ producers: Producer[], headers: HttpHeaders }>('getProducers', {
+        producers: [],
+        headers: new HttpHeaders()
+      }))
+    );
+  }
+
+  getProducer(id: number): Observable<Producer> {
+    return this.http.get<Producer>(`${this.wpJsonBaseUrl}/producer/${id}`).pipe(
+      catchError(this.handleError<Producer>(`getProducer id=${id}`))
+    );
+  }
+
+  getProducerEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
+    return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString(),
+        producer: id
+      },
+      observe: 'response'
+    }).pipe(
+      map((response: HttpResponse<Episode[]>) => {
+        return { episodes: response.body as Episode[], headers: response.headers };
+      }),
+      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getProducerEpisodes', {
         episodes: [],
         headers: new HttpHeaders()
       }))
@@ -115,31 +165,40 @@ export class WPService {
     );
   }
 
-  getArtistEpisode(id: number[]): Observable<Episode[]> {
-    return this.http.get<Episode[]>(`${this.customWpJsonBaseUrl}/episode?artist=${id}`).pipe(
-      catchError(this.handleError<Episode[]>('getArtistEpisode', []))
+  getRelatedArtistEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
+    return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString(),
+        artist: id
+      },
+      observe: 'response'
+    }).pipe(
+      map((response: HttpResponse<Episode[]>) => {
+        return { episodes: response.body as Episode[], headers: response.headers };
+      }),
+      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getRelatedArtistEpisodes', {
+        episodes: [],
+        headers: new HttpHeaders()
+      }))
     );
   }
 
+  // Random selection
+
+  getActiveGenres(page: number, perPage: number): Observable<Genre[]> {
+    return this.http.get<Genre[]>(`${this.customWpJsonBaseUrl}/active-genres`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString()
+      }
+    }).pipe(
+      catchError(this.handleError<Genre[]>('getActiveGenres', []))
+    );
+  }
+
+
   // Need fix
-
-  // getArtists(): Observable<Artist[]> {
-  //   return this.http.get<Artist[]>(`${this.wpJsonBaseUrl}/artist`)
-  //     .pipe(
-  //       catchError(this.handleError<Artist[]>('getArtists', []))
-  //     );
-  // }
-
-  // getArtist(id: number): Observable<Artist> {
-  //   return this.http.get<Artist>(`${this.wpJsonBaseUrl}/artist/${id}`)
-  //     .pipe(
-  //       catchError(this.handleError<Artist>(`getArtist id=${id}`))
-  //     );
-  // }
-
-
-
-
 
   getQueriedShowsByEpisodeIds(episodeIds: number[], perPage: number, page: number): Observable<Show[]> {
     const ids = episodeIds.join(',');
@@ -163,13 +222,6 @@ export class WPService {
       );
   }
 
-
-
-
-
-
-
-
   fetchPosts() {
     return this.http.get<any[]>(`${this.wpJsonBaseUrl}/posts?_embed`);
   }
@@ -177,6 +229,5 @@ export class WPService {
   fetchPost(id: string) {
     return this.http.get(`${this.wpJsonBaseUrl}/posts/${id}?_embed`);
   }
-
 
 }

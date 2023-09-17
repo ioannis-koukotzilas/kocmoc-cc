@@ -1,0 +1,38 @@
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
+</div>
+
+<ng-template #Content>
+
+  <div class="container">
+
+    <h1>Producers</h1>
+
+    <ul class="producers">
+      <li class="producer" *ngFor="let producer of producers">
+
+        <picture class="image" *ngIf="producer.image.url">
+          <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+          <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+          <source [srcset]="producer.image.size['large']" media="(min-width: 640px)">
+          <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+        </picture>
+
+        <p>Id: {{producer.id}}</p>
+        <h2>Name: {{producer.name}}</h2>
+        <p>Slug: {{producer.slug}}</p>
+        <p>Description: {{producer.description}}</p>
+        <a [routerLink]="['/producer', producer.id]">{{producer.name}}</a>
+
+      </li>
+    </ul>
+
+    <button *ngIf="hasMore" (click)="loadMore()">Load More</button>
+
+    <div *ngIf="loadingMore">
+      <p>Loading more producers...</p>
+    </div>
+
+  </div>
+
+</ng-template>
