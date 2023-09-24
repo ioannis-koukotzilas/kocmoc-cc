@@ -52,17 +52,19 @@ export class EpisodeListComponent implements OnInit {
         }
 
         return forkJoin([
+          this.wpService.getEpisodeProducer(id),
           this.wpService.getEpisodeShow(id),
           this.wpService.getEpisodeGenre(id),
           this.wpService.getEpisodeArtist(id)
         ]).pipe(
-          map(([shows, genres, artists]) => {
+          map(([producers, shows, genres, artists]) => {
             episodes.forEach(episode => {
+              episode.producers = shows.filter(producer => producer.episodeId === episode.id),
               episode.shows = shows.filter(show => show.episodeId === episode.id),
               episode.genres = genres.filter(genre => genre.episodeId === episode.id),
               episode.artists = artists.filter(artist => artist.episodeId === episode.id)
             });
-            return [shows, genres, artists];
+            return [producers, shows, genres, artists];
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);

@@ -6,7 +6,7 @@ import { WPService } from 'src/app/core/services/wp/wp.service';
 
 const STREAM_TYPE_LIVE = 'liveStream';
 const STREAM_TYPE_ON_DEMAND = 'onDemandStream';
-const LOAD_DELAY_MS = 400;
+const LOAD_DELAY_MS = 300;
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ export class AudioPlayerService {
 
   // Random Play
   private randomPlayCount: number = 0;
-  private readonly MAX_RANDOM_PLAYS = 1;
+  private readonly MAX_RANDOM_PLAYS = 12;
   private playedEpisodes: number[] = [];
 
   constructor(private cloudStorageService: CloudStorageService, private wpService: WPService) {

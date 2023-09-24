@@ -1,86 +1,84 @@
 <div *ngIf="loading; else Content">
-    <p>Loading...</p>
+  <p>Loading...</p>
 </div>
 
 <ng-template #Content>
 
-    <div class="episode-detail" *ngIf="episode">
+  <ng-container *ngIf="episode">
 
-        <div class="cover" *ngIf="episode.image.url">
+    <div class="episode">
 
-            <picture>
-                <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-                <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-                <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
-                <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
-            </picture>
+      <picture *ngIf="episode.image.url">
+        <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+        <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+        <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+      </picture>
 
-            <section class="profile">
+      <div class="content">
 
-                <div class="meta">
-                    <span class="date">{{ episode.date | date }}</span>
-                    <span class="location" *ngIf="episode.location"> / {{ episode.location }}</span>
-                </div>
+        <div class="main">
 
-                <h1 class="title">{{ episode.title }} w/ <ng-container *ngFor="let producer of episode.producers; let last = last">{{ producer.name }}<ng-container *ngIf="!last">, </ng-container></ng-container></h1>
-                
-                
+          <h1 class="title">{{ episode.title }}</h1>
 
-                <ul class="producers">
-                    <li class="producer" *ngFor="let producer of episode.producers">
-                        <a [routerLink]="['/producer', producer.id]"> Producer: {{ producer.name }}</a>
-                    </li>
-                </ul>
+          <div class="meta">
+            <div class="location-date">
+              <span *ngIf="episode.location">{{ episode.location }}, </span><span class="date">{{ episode.date | date}}</span>
+            </div>
 
-                <div class="description" *ngIf="episode.content" [innerHTML]="episode.content"></div>
+            <div class="producers" *ngIf="episode.producers">
+              <span>With: </span>
+              <ng-container *ngFor="let producer of episode.producers; let last = last">
+                <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
+              </ng-container>
+            </div>
+          </div>
 
-                <ul class="shows">
-                    <li class="show" *ngFor="let show of episode.shows">
-                        <a [routerLink]="['/show', show.id]"> Show: {{ show.name }}</a>
-                    </li>
-                </ul>
+          <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$"
+            [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$">
+          </app-episode-audio-controls>
 
-                <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$"
-                    [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$">
-                </app-episode-audio-controls>
+          <div class="description" *ngIf="episode.content" [innerHTML]="episode.content"></div>
+        
+          <ul class="genres" *ngIf="episode.genres">
+            <li class="genre" *ngFor="let genre of episode.genres">
+              <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+            </li>
+          </ul>
 
-                <ul class="genres">
-                    <li class="genre" *ngFor="let genre of episode.genres">
-                        <a [routerLink]="['/genre', genre.id]"> {{ genre.name }}</a>
-                    </li>
-                </ul>
+          <div class="show" *ngIf="episode.shows && episode.shows.length > 0">
+            <a [routerLink]="['/show', episode.shows[0].id]">Find more</a>
+          </div>
 
-                <ng-container *ngIf="episode.tracklists && episode.tracklists.length > 0">
-                    <h3>Tracklist</h3>
-                    <ul class="tracklists">
-                        <li class="tracklist" *ngFor="let tracklist of episode.tracklists">
-                            {{ tracklist.episodeId }}
-                            <ul class="tracks">
-                                <li class="track" *ngFor="let track of tracklist.tracks">
-                                    <div *ngFor="let artist of track.artists">
-                                        <a [routerLink]="['/artist', artist.id]"> {{ artist.name }}</a>
-                                    </div>
-                                    <div>{{ track.title }}</div>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </ng-container>
-
-                <button (click)="goBack()">Back</button>
-
-            </section>
         </div>
 
-        <!-- Relate Episodes -->
+        <div class="tracklist" *ngIf="episode.tracklists && episode.tracklists.length > 0">
+          <h2 class="title">Tracklist</h2>
+          <ul class="tracks">
+            <li class="track" *ngFor="let track of episode.tracklists[0].tracks">
+              <div class="artist" *ngFor="let artist of track.artistsTerms; let last = last">
+                <a [routerLink]="['/artist', artist.id]">{{ artist.name }}<ng-container *ngIf="!last">,</ng-container></a>
+              </div>
+              <div class="title">{{ track.title }}</div>
+              <div class="name">{{ track.artistName }}</div>
+            </li>
+          </ul>
+        </div>
 
-        <app-episode-related-list 
-        [currentOnDemandStream$]="currentOnDemandStream$"
-        [onDemandStreamLoading$]="onDemandStreamLoading$"
-        [onDemandStreamPlaying$]="onDemandStreamPlaying$"
-        [episodes]="relatedEpisodes">
-        </app-episode-related-list>
-    
+        <div class="footer">
+          <button (click)="goBack()">Back</button>
+        </div>
 
+      </div>
     </div>
+
+    <!-- Relate Episodes -->
+
+    <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+      [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+      [episodes]="relatedEpisodes">
+    </app-episode-related-list>
+
+  </ng-container>
+
 </ng-template>

@@ -6,8 +6,8 @@
 
   <div class="artist-detail" *ngIf="producer">
 
-      <div class="cover" *ngIf="producer.image.url">
-          <picture>
+      <div class="cover" >
+          <picture *ngIf="producer.image.url">
               <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
               <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
               <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">

@@ -1,4 +1,4 @@
-export class LiveStreamTrack {
+export class LiveStreamEpisode {
     artist: string;
     title: string;
 

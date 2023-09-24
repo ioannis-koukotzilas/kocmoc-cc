@@ -2,90 +2,103 @@
 # Audio Player
 --------------------------------------------------------------*/
 
+/* .audio-player {
+  position: relative;
+  z-index: 3;
+} */
 
-
-.audio-player {
-  background-color: #666;
-    color: #fff;
-    
-    transition: background-color 0.2s, color 0.2s;
-    cursor: pointer;
+/* Stream
+--------------------------------------------- */
+.audio-player .stream {
+  height: 2.75rem;
 }
-
-.audio-player.active {
-  background-color: #fff;
-  color: #000;
-}
-
 
 /* Live Stream
 --------------------------------------------- */
 
-
-  .live-stream .container {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.25rem 24px;
-  }
-
-
-  .live-stream .loader {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .live-stream .content {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .spinner-container {
-    width: 15px;
-    height: 15px;
-    margin: 0 4.5px;
-   }
-  
-   .spinner {
-    width: 100%;
-    height: 100%;
-    border: 2px solid;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    }
-  
-    @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-  }
-
-
-
-  
-.on-demand {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+.audio-player .live-stream {
+  background-color: rgb(var(--color-primary-800));
+  color: #fff;
+  cursor: pointer;
 }
 
- .on-demand .container {
+.audio-player .live-stream:hover,
+.audio-player .live-stream.loading {
+  background-color: rgb(var(--color-primary-500));
+  color: #fff;
+}
+
+.audio-player .live-stream.playing {
+  background-color: rgb(var(--color-primary-50));
+  color: #000;
+}
+
+.audio-player .live-stream .container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 24px;
+}
+
+/* On Demand Stream
+--------------------------------------------- */
+
+.audio-player .on-demand-stream {
+  background-color: rgb(var(--color-primary-800));
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.audio-player .on-demand-stream:hover,
+.audio-player .on-demand-stream.loading {
+  background-color: rgb(var(--color-primary-500));
+  color: #fff;
+}
+
+.audio-player .on-demand-stream.playing {
+  background-color: rgb(var(--color-primary-50));
+  color: #000;
+}
+
+.audio-player .on-demand-stream .channel {
+padding: 0 24px;
+font-size: var(--font-sm);
+}
+
+.audio-player .on-demand-stream .channel:after {
+  display: inline-block;
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: 0.5rem;
+  background-color: red;
+  border-radius: 50%;
+  animation: channel 2s ease-in-out infinite both;
+}
+
+@keyframes channel {
+  0% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.audio-player .on-demand-stream .container {
   flex-grow: 1;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem 24px;
- }
+  padding: 0 24px;
+}
 
- .reverse {
+.audio-player .on-demand-stream .reverse {
   background-color: aquamarine;
   color: #000;
   font-size: 0.8rem;
@@ -93,19 +106,148 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 24px;
- }
-
- 
-
-
-
-
-
-.loading {
-  background-color: #ccc;
 }
 
-.active {
+/* Loader
+--------------------------------------------- */
+
+.audio-player .loader {
+  width: 15px;
+  height: 15px;
+  margin: 0 4.5px;
+}
+
+.audio-player .loader .spinner {
+  width: 100%;
+  height: 100%;
+  border: 2px solid;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Progress Bar
+--------------------------------------------- */
+
+/* .audio-player {
+  background-color: rgb(var(--color-primary-800));
+  padding: 24px;
+} */
+
+/* Main range container */
+.audio-player input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #d3d3d3; /* Light gray background for the track */
+  outline: none;
+  transition: background 0.15s ease-in-out;
+}
+
+/* The thumb (slider) */
+.audio-player input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: 4px;
+  background: #ff523c;
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+
+.audio-player input[type="range"]::-moz-range-thumb {
+  width: 4px;
+  height: 4px;
+  background: #ff523c;
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+}
+
+/* Active portion of the track */
+.audio-player input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #ff523c 0%,
+    #ff523c var(--slider-percentage),
+    #d3d3d3 var(--slider-percentage),
+    #d3d3d3 100%
+  );
+}
+
+.audio-player input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #ff523c 0%,
+    #ff523c var(--slider-percentage),
+    #d3d3d3 var(--slider-percentage),
+    #d3d3d3 100%
+  );
+}
+
+.audio-player input[type="range"]::-moz-range-progress {
+  background-color: #ff523c;
+}
+
+/* Hover effect for better UX */
+.audio-player input[type="range"]:hover::-webkit-slider-thumb {
+  background: #1ed760; /* Slightly brighter green on hover */
+}
+
+.audio-player input[type="range"]:hover::-moz-range-thumb {
+  background: #1ed760;
+}
+
+
+
+.on-demand-stream-expandable-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: -1;
   background-color: #fff;
   color: #000;
+}
+
+.on-demand-stream-expandable-panel .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.on-demand-stream-expandable-panel img {
+  object-fit: cover;
+  max-height: 50vh;
+  width: 100%;
+}
+
+.on-demand-stream-expandable-panel .content > .wrapper {
+  padding: 24px;
+}
+
+.on-demand-stream-expandable-panel .content .title {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: 1.5rem;
 }

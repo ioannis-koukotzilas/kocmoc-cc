@@ -25,8 +25,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/assets/css/normalize.css",
-              "src/styles.css"
+              "src/styles/fonts.css",
+              "src/styles/variables.css",
+              "src/styles/symbols.css",
+              "src/styles/normalize.css",
+              "src/styles/main.css"
             ],
             "scripts": []
           },
@@ -98,8 +101,22 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

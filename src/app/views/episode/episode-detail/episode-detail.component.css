@@ -1,67 +1,101 @@
-.episode-detail {
-    position: relative;
+.episode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.cover {
-    min-height: calc(100vh - 100px);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.episode picture img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  height: calc(100vh - 3rem - 2.75rem);
+  position: sticky;
+  top: calc(3rem + 2.75rem);
 }
 
-/* .cover picture {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 100px);
-    z-index: -1;
-} */
-
-.cover picture img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    max-height: calc(100vh - 100px);
-    position: sticky;
-    top: 0;
+.episode .content {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.profile {
-    max-width: 600px;
-    margin: 4.5rem auto;
+.episode .content .main {
+  padding: 24px;
 }
 
-/* .content {
-    position: relative;
-    max-width: 960px;
-    margin: 0 auto;
-    background-color: #000;  
+.episode .content .main > .title {
+  font-size: var(--font-4xl);
+  margin-bottom: 1.5rem;
 }
 
- .profile {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-width: 960px;
-    
-    padding: 48px;
-    
-    background-color: #666;
-    
-    
+.episode .content .main .meta {
+  margin-bottom: 1.5rem;
 }
 
-h1 {
-    margin: 0;
+.episode .content .main .genres {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: var(--font-sm);
+  margin-bottom: 1.5rem;
 }
 
-
-.tracklist .track {
-    margin-bottom: 0.25rem;
+.episode .content .main .genre a {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
 }
 
-.track .artist {
-    font-weight: bold;
-    
-} */
+.episode .content .main .show {
+  margin-bottom: 1.5rem;
+}
+
+.episode .content .tracklist {
+  padding: 24px;
+  flex-grow: 1;
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .tracklist a {
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .tracklist a:visited {
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .tracklist a:hover,
+.episode .content .tracklist a:focus {
+  color: rgb(var(--color-primary-700));
+}
+
+.episode .content .tracklist > .title {
+  font-size: var(--font-2xl);
+  margin-bottom: 1.5rem;
+}
+
+.episode .content .tracklist .track {
+  margin-bottom: 0.5rem;
+}
+
+.episode .content .tracklist .track .artist a {
+  font-weight: var(--font-bold);
+}
+
+.episode .content .footer {
+  padding: 24px;
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .footer a {
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .footer a:visited {
+  color: rgb(var(--color-primary-950));
+}
+
+.episode .content .footer a:hover,
+.episode .content .footer a:focus {
+  color: rgb(var(--color-primary-700));
+}

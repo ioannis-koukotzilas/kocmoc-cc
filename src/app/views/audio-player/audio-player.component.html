@@ -1,90 +1,106 @@
-
-<div *ngIf="onDemandStreamPlaying$ | async" class="progress-bar-container">
-    
-    <input
-    type="range"
-    min="0"
-    [max]="onDemandStreamDuration$ | async"
-    [value]="onDemandStreamCurrentTime$ | async"
-    (input)="onScrub($event)"
-    
-/>
-
-    
-</div>
-
 <div class="audio-player" [ngSwitch]="(streamTypeSelected$ | async)">
-
-    <ng-container *ngSwitchCase="'liveStream'">
-
-        <div class="live-stream" (click)="toggleLiveStream()" [class.loading]="(liveStreamLoading$ | async)" [class.active]="(liveStreamPlaying$ | async)">
-
-            <div class="container">
-
-                <div *ngIf="(liveStreamLoading$ | async); else liveStreamContent" class="loader" >
-                    <div class="spinner-container">
-                        <div class="spinner"></div>
-                    </div>       
-                </div>
-
-                <ng-template #liveStreamContent>
-                    <div class="content">
-                        <div class="material-symbols-outlined play">{{ (liveStreamPlaying$ | async) ? 'stop' : 'play_arrow' }}</div>
-                    </div>
-                </ng-template>
-                
-               
-
-                <div class="stream-info">
-                    {{currentLiveStreamTrack?.artist}} - {{currentLiveStreamTrack?.title}}
-                </div>
-                  
-
-            </div>
-
+  <ng-container *ngSwitchCase="'liveStream'">
+    <div class="stream live-stream" [class.loading]="(liveStreamLoading$ | async)" [class.playing]="(liveStreamPlaying$ | async)">
+      <div class="container" (click)="toggleLiveStream()">
+        <div class="loader" *ngIf="(liveStreamLoading$ | async); else liveStreamControls">
+          <div class="spinner"></div>
         </div>
 
-    </ng-container>
+        <ng-template #liveStreamControls>
+          <div class="symbol">{{ (liveStreamPlaying$ | async) ? 'stop' : 'play_arrow' }}</div>
+        </ng-template>
 
-    <ng-container *ngSwitchCase="'onDemandStream'">
+        <div class="stream-info">
+          {{liveStreamEpisode?.artist}} - {{liveStreamEpisode?.title}}
+        </div>
+      </div>
 
-        <div class="on-demand" (click)="toggleOnDemandStream()">
+      <button (click)="toggleLiveStreamExpandablePanel()">
+        <span class="symbol">expand_more</span>
+      </button>
+    </div>
 
-            <div class="container">
+    <div class="live-stream-expandable-panel" *ngIf="liveStreamExpandablePanel" [@expandablePanelAnimation]="liveStreamExpandablePanel ? 'expanded' : 'collapsed'">
+      <ng-container *ngIf="producer">
+        <picture *ngIf="producer.image">
+          <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+          <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+          <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
+          <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+        </picture>
+        <h1>{{ producer.name }}</h1>
+        <p>{{ producer.description }}</p>
+      </ng-container>
+    </div>
 
-                <div *ngIf="(onDemandStreamLoading$ | async); else episodePlayPauseIcon" class="spinner-container">
-                    <div class="spinner"></div>
-                </div>
+  </ng-container>
 
-                <ng-template #episodePlayPauseIcon>
-                    <div class="material-symbols-outlined play">{{ (onDemandStreamPlaying$ | async) ? 'pause' : 'play_arrow' }}</div>
-                </ng-template>                
+  <ng-container *ngSwitchCase="'onDemandStream'">
+    <div class="stream on-demand-stream" [class.loading]="(onDemandStreamLoading$ | async)" [class.playing]="(onDemandStreamPlaying$ | async)">
 
-                <!-- <div *ngIf="onDemandStreamPlaying$ | async">
-                    {{ currentEpisode?.title }} - {{ currentEpisode?.date | date:'dd.MM.yy' }} | {{ formatTime(onDemandStreamCurrentTime$ | async) }} / {{ formatTime(onDemandStreamDuration$ | async, true) }}
-                </div> -->
+      <div class="channel">On Demand</div>
 
-                {{ currentEpisode?.title }} - {{ currentEpisode?.date | date:'dd.MM.yy' }} | {{ formatTime(onDemandStreamCurrentTime$ | async) }} / {{ formatTime(onDemandStreamDuration$ | async, true) }}
+      <div class="container" (click)="toggleOnDemandStream()">
 
-                <!-- <div *ngIf="!(onDemandStreamLoading$ | async)">
-                    {{ currentEpisode | json }}
-                </div> -->
-                
-                
-                
-
-            </div>
-
-            <div class="reverse" (click)="backToLiveStream()">
-                <span class="material-symbols-outlined play">autorenew</span>
-                Live Stream
-            </div>
-
+        <div class="loader" *ngIf="(onDemandStreamLoading$ | async); else onDemandStreamControls">
+          <div class="spinner"></div>
         </div>
 
-    </ng-container>
+        <ng-template #onDemandStreamControls>
+          <div class="symbol">{{ (onDemandStreamPlaying$ | async) ? 'pause' : 'play_arrow' }}</div>
+        </ng-template>
+
+        <div class="stream-info" *ngIf="episode">
+          {{ episode.title }} - {{ episode.date | date:'dd.MM.yy' }} | {{ formatTime(onDemandStreamCurrentTime$ | async) }} / {{ formatTime(onDemandStreamDuration$ | async) }}
+        </div>
+      </div>
+
+      <button (click)="toggleOnDemandStreamExpandablePanel()">
+        <span class="symbol">expand_more</span>
+      </button>
+  
+      <button (click)="backToLiveStream()">
+        <span class="symbol">sync</span>
+      </button>
+    </div>
+
+    <div class="on-demand-stream-expandable-panel" *ngIf="onDemandStreamExpandablePanel" [@expandablePanelAnimation]="onDemandStreamExpandablePanel ? 'expanded' : 'collapsed'">
+      <ng-container *ngIf="episode">
+        <div class="grid">
+          <picture *ngIf="episode.image">
+            <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+            <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+            <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+            <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+          </picture>
+          <div class="content">
+            <div class="wrapper">
+              <h1 class="title">{{ episode.title }}</h1>
+              <p>{{ episode.date | date:'dd.MM.yy' }} | {{ episode.location }}</p>
+              <div class="description" [innerHTML]="episode.content"></div>
+
+              <ng-container *ngIf="episode.producers?.length">
+                <div class="producers">
+                  <h2>Producers</h2>
+                  <ul>
+                    <li *ngFor="let producer of episode.producers">
+                      <h3>{{ producer.name }}</h3>
+                      <p>{{ producer.description }}</p>
+                      <!-- If you want to show producer's image -->
+                      <!-- <img [src]="producer.image.url" [alt]="producer.image.alt" /> -->
+                    </li>
+                  </ul>
+                </div>
+              </ng-container>
+
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <input type="range" min="0" [max]="onDemandStreamDuration$ | async" [value]="onDemandStreamCurrentTime$ | async" (input)="onScrub($event)" />
+    </div>
+
+  </ng-container>
 </div>
-
-
 
 

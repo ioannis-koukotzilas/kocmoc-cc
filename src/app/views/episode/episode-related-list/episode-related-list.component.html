@@ -1,47 +1,38 @@
 <ng-container *ngIf="episodes && episodes.length > 0">
 
-  <div class="content">
-      <h2>Related Episodes</h2>
+    <ul class="episodes related">
+        <li class="episode" *ngFor="let episode of episodes">
 
-      <ul class="episodes related">
-          <li class="episode" *ngFor="let episode of episodes">
+            <div class="header" *ngIf="episode.image.url">
+                <picture class="image">
+                    <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+                    <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+                    <source [srcset]="episode.image.size['large']" media="(min-width: 640px)">
+                    <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+                </picture>
 
-              <div class="header" *ngIf="episode.image.url">
-                  <picture class="image">
-                      <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-                      <source [srcset]="episode.image.size['medium_large']"
-                          media="(min-width: 425px) and (max-width: 639px)">
-                      <source [srcset]="episode.image.size['large']" media="(min-width: 640px)">
-                      <img [src]="episode.image.size['medium_large']"
-                          [alt]="episode.image.alt" />
-                  </picture>
+                <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$"
+                    [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$">
+                </app-episode-audio-controls>
+            </div>
 
-                  <app-episode-audio-controls [episode]="episode"
-                      [currentOnDemandStream$]="currentOnDemandStream$"
-                      [onDemandStreamLoading$]="onDemandStreamLoading$"
-                      [onDemandStreamPlaying$]="onDemandStreamPlaying$">
-                  </app-episode-audio-controls>
-              </div>
+            <a class="body" [routerLink]="['/episode', episode.id]">
+                <div class="meta">
+                    <div>{{ episode.date | date }}</div>
+                    <div *ngIf="episode.location">{{ episode.location }}</div>
+                </div>
+                <h2 class="title">{{ episode.title }}</h2>
+                <div class="excerpt" [innerHTML]="episode.excerpt"></div>
+            </a>
 
-              <a class="body" [routerLink]="['/episode', episode.id]">
-                  <div class="meta">
-                      <div>{{ episode.date | date }}</div>
-                      <div *ngIf="episode.location">{{ episode.location }}</div>
-                  </div>
-                  <h2 class="title">{{ episode.title }}</h2>
-                  <div class="excerpt" [innerHTML]="episode.excerpt"></div>
-              </a>
-
-              <div class="footer" *ngIf="episode.genres && episode.genres.length > 0">
-                  <ul class="genres">
-                      <li class="genre" *ngFor="let genre of episode.genres">
-                          <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
-                      </li>
-                  </ul>
-              </div>
-          </li>
-      </ul>
-
-  </div>
+            <div class="footer" *ngIf="episode.genres && episode.genres.length > 0">
+                <ul class="genres">
+                    <li class="genre" *ngFor="let genre of episode.genres">
+                        <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
 
 </ng-container>

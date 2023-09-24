@@ -1,14 +1,7 @@
 <div class="audio-controls" *ngIf="episode?.track" (click)="playEpisode()">
-    <div class="material-symbols-outlined symbol"
-        *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)">
-        play_arrow
-    </div>
-    <div class="loader"
-        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)">
-        <div class="spinner"></div>
-    </div>
-    <div class="material-symbols-outlined symbol"
-        *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)">
-        pause
-    </div>
+  <div class="symbol" *ngIf="(currentOnDemandStream$ | async)?.id !== episode.id || (currentOnDemandStream$ | async)?.id === episode.id && !(onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)">play_arrow</div>
+  <div class="loader" *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)">
+    <div class="spinner"></div>
+  </div>
+  <div class="symbol" *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)">pause</div>
 </div>

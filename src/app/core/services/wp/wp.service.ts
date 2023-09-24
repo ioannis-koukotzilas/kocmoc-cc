@@ -141,6 +141,17 @@ export class WPService {
     );
   }
 
+  getProducerByName(name: string): Observable<Producer> {
+    return this.http.get<Producer>(`${this.customWpJsonBaseUrl}/producer-by-name`, {
+      params: {
+        name: name
+      },
+    }).pipe(
+      catchError(this.handleError<Producer>(`getProducerByName name=${name}`))
+    );
+  }
+
+
   // Artists
 
   getArtists(perPage: number, page: number): Observable<{ artists: Artist[], headers: HttpHeaders }> {

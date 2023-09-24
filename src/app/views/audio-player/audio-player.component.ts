@@ -2,177 +2,201 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, } from '@angular/core'
 import { Observable, Subscription } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { Episode } from 'src/app/models/episode';
-import { LiveStreamTrack } from 'src/app/models/liveStreamTrack';
+import { LiveStreamEpisode } from 'src/app/models/liveStreamEpisode';
 import { StreamInfoService } from 'src/app/core/services/stream-info.service';
+import { Producer } from 'src/app/models/producer';
+import { WPService } from 'src/app/core/services/wp/wp.service';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 const STREAM_TYPE_LIVE = 'liveStream';
 
 @Component({
-    selector: 'app-audio-player',
-    templateUrl: './audio-player.component.html',
-    styleUrls: ['./audio-player.component.css'],
+  selector: 'app-audio-player',
+  templateUrl: './audio-player.component.html',
+  styleUrls: ['./audio-player.component.css'],
+  animations: [
+    trigger('expandablePanelAnimation', [
+      state('expanded', style({
+        transform: 'translateY(0)'
+      })),
+      state('collapsed', style({
+        transform: 'translateY(-100%)'
+      })),
+      transition('void => expanded', [
+        style({
+          transform: 'translateY(-100%)'
+        }),
+        animate('300ms ease-in-out')
+      ]),
+      transition('expanded => void', [
+        animate('300ms ease-in-out', style({
+          transform: 'translateY(-100%)'
+        }))
+      ])
+    ])
+  ]
 })
 export class AudioPlayerComponent implements OnInit, OnDestroy {
 
-    private subscriptions: Subscription = new Subscription();
+  private subscriptions: Subscription = new Subscription();
 
-    public currentEpisode: Episode | null = null;
+  public episode: Episode | null = null;
 
-    public liveStreamLoading$: Observable<boolean> = this.audioPlayerService.liveStreamLoading$;
-    public liveStreamPlaying$: Observable<boolean> = this.audioPlayerService.liveStreamPlaying$;
-    public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
-    public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
-    public streamTypeSelected$: Observable<string> = this.audioPlayerService.streamTypeSelected$;
+  public liveStreamLoading$: Observable<boolean> = this.audioPlayerService.liveStreamLoading$;
+  public liveStreamPlaying$: Observable<boolean> = this.audioPlayerService.liveStreamPlaying$;
+  public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
+  public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
+  public streamTypeSelected$: Observable<string> = this.audioPlayerService.streamTypeSelected$;
 
-    // Progress
-    public onDemandStreamCurrentTime$: Observable<number> = this.audioPlayerService.onDemandStreamCurrentTime.asObservable();
-    public onDemandStreamDuration$: Observable<number> = this.audioPlayerService.onDemandStreamDuration.asObservable();
+  // Progress
+  public onDemandStreamCurrentTime$: Observable<number> = this.audioPlayerService.onDemandStreamCurrentTime.asObservable();
+  public onDemandStreamDuration$: Observable<number> = this.audioPlayerService.onDemandStreamDuration.asObservable();
 
-    public currentLiveStreamTrack: LiveStreamTrack | null = null;
+  public liveStreamEpisode: LiveStreamEpisode | null = null;
+  public producer: Producer | null = null;
 
-    constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private streamInfoService: StreamInfoService) { }
+  public liveStreamExpandablePanel: boolean = false;
+  public onDemandStreamExpandablePanel: boolean = false;
 
-    ngOnInit(): void {
-        this.subscriptions.add(
-            this.audioPlayerService.currentOnDemandStream$.subscribe({
-                next: data => {
-                    this.currentEpisode = data;
-                    this.cdr.markForCheck();
-                },
-                error: error => {
-                    console.error('Error loading on demand stream:', error);
-                }
-            })
-        );
+  constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private streamInfoService: StreamInfoService, private wpService: WPService) { }
 
-        this.subscriptions.add(
-            this.streamInfoService.getStreamInfo().subscribe({
-                next: data => {
-                    this.currentLiveStreamTrack = data[0];
-                    this.cdr.markForCheck();
-                },
-                error: error => {
-                    console.error('Error loading stream info:', error);
-                }
-            })
-        );
-
-        this.subscriptions.add(
-            this.onDemandStreamCurrentTime$.subscribe(time => {
-                console.log('Current Time:', time);
-                const inputElement = document.querySelector('input[type="range"]') as HTMLInputElement;
-                if (inputElement && inputElement.max) {
-                    const maxTime = parseFloat(inputElement.max);
-                    this.updateSliderPercentage(time, maxTime, inputElement);
-                }
-            })
-        );
-        
-        this.subscriptions.add(
-            this.onDemandStreamDuration$.subscribe(duration => {
-                console.log('Duration:', duration);
-            })
-        );
-        
-    }
-
-    ngOnDestroy(): void {
-        this.subscriptions.unsubscribe();
-    }
-
-    toggleLiveStream(): void {
-        this.audioPlayerService.streamTypeSelected.next('liveStream');
-        this.audioPlayerService.toggleLiveStream();
-    }
-
-    toggleOnDemandStream(): void {
-        const currentEpisode = this.audioPlayerService.currentOnDemandStream.value;
-        if (currentEpisode) {
-            this.audioPlayerService.streamTypeSelected.next('onDemandStream');
-            if (this.audioPlayerService.currentOnDemandStream.value?.id === currentEpisode.id) {
-                this.audioPlayerService.toggleOnDemandStream(currentEpisode);
-            } else {
-                this.audioPlayerService.playOnDemandStream(currentEpisode);
-            }
+  ngOnInit(): void {
+    this.subscriptions.add(
+      this.audioPlayerService.currentOnDemandStream$.subscribe({
+        next: data => {
+          this.episode = data;
+          this.cdr.markForCheck();
+          console.log('Received new data:', data);
+        },
+        error: error => {
+          console.error('Error loading on demand stream:', error);
+        },
+        complete: () => {
+          console.log('onDemandStream$ completed');
         }
-    }
-
-    backToLiveStream(): void {
-        this.audioPlayerService.streamTypeSelected.next(STREAM_TYPE_LIVE);
-        this.audioPlayerService.playLiveStream();
-    }
-
-    // Progress
-
-
-    
-    // onScrub(event: Event): void {
-    //     const inputElement = event.target as HTMLInputElement;
-    //     if (inputElement && inputElement.value) {
-    //         const scrubTime = parseFloat(inputElement.value);
-    //         this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
-    //     }
-    // }
-
-    // formatTime(timeInSeconds: number | null): string {
-    //     if (timeInSeconds == null) return '00:00';
-    
-    //     const minutes: number = Math.floor(timeInSeconds / 60);
-    //     const seconds: number = Math.floor(timeInSeconds % 60);
-    //     return minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-    // }
-    
-    // updateSliderPercentage(event: Event): void {
-    //     const inputElement = event.target as HTMLInputElement;
-    //     if (inputElement && inputElement.value && inputElement.max) {
-    //         const scrubTime = parseFloat(inputElement.value);
-    //         const maxTime = parseFloat(inputElement.max);
-    //         const percentage = (scrubTime / maxTime) * 100;
-    //         inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
-    //     }
-    // }
-
-    onScrub(event: Event): void {
-        const inputElement = event.target as HTMLInputElement;
-        if (inputElement && inputElement.value && inputElement.max) {
-            const scrubTime = parseFloat(inputElement.value);
+      })
+    );
+  
+    this.subscriptions.add(
+      this.streamInfoService.getStreamInfo().subscribe({
+        next: data => {
+          this.liveStreamEpisode = data[0];
+          this.matchProducerWithCentovaArtist();
+          this.cdr.markForCheck();
+        },
+        error: error => {
+          console.error('Error loading stream info:', error);
+        },
+        complete: () => {
+          console.log('getStreamInfo$ completed');
+        }
+      })
+    );
+  
+    this.subscriptions.add(
+      this.onDemandStreamCurrentTime$.subscribe({
+        next: time => {
+          console.log('Current Time:', time);
+          const inputElement = document.querySelector('input[type="range"]') as HTMLInputElement;
+          if (inputElement && inputElement.max) {
             const maxTime = parseFloat(inputElement.max);
-            this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
-            this.updateSliderPercentage(scrubTime, maxTime, inputElement);
+            this.updateSliderPercentage(time, maxTime, inputElement);
+          }
+        },
+        complete: () => {
+          console.log('onDemandStreamCurrentTime$ completed');
         }
+      })
+    );
+  
+    this.subscriptions.add(
+      this.onDemandStreamDuration$.subscribe({
+        next: duration => {
+          console.log('Duration:', duration);
+        },
+        complete: () => {
+          console.log('onDemandStreamDuration$ completed');
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  toggleLiveStream(): void {
+    this.audioPlayerService.streamTypeSelected.next('liveStream');
+    this.audioPlayerService.toggleLiveStream();
+  }
+
+  toggleOnDemandStream(): void {
+    const currentEpisode = this.audioPlayerService.currentOnDemandStream.value;
+    if (currentEpisode) {
+      this.audioPlayerService.streamTypeSelected.next('onDemandStream');
+      if (this.audioPlayerService.currentOnDemandStream.value?.id === currentEpisode.id) {
+        this.audioPlayerService.toggleOnDemandStream(currentEpisode);
+      } else {
+        this.audioPlayerService.playOnDemandStream(currentEpisode);
+      }
     }
-    
-   formatTime(timeInSeconds: number | null, isTotalDuration: boolean = false): string {
+  }
+
+  backToLiveStream(): void {
+    this.audioPlayerService.streamTypeSelected.next(STREAM_TYPE_LIVE);
+    this.audioPlayerService.playLiveStream();
+  }
+
+  onScrub(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement && inputElement.value && inputElement.max) {
+      const scrubTime = parseFloat(inputElement.value);
+      const maxTime = parseFloat(inputElement.max);
+      this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
+
+      // Update slider percentage
+      this.updateSliderPercentage(scrubTime, maxTime, inputElement);
+    }
+  }
+
+  updateSliderPercentage(scrubTime: number, maxTime: number, inputElement: HTMLInputElement): void {
+    const percentage = (scrubTime / maxTime) * 100;
+    inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
+  }
+
+  formatTime(timeInSeconds: number | null): string {
     if (timeInSeconds === null) {
-        return '00:00';
+      return '00:00';
     }
 
     const totalMinutes: number = Math.floor(timeInSeconds / 60);
+    const seconds: number = Math.floor(timeInSeconds % 60);
 
-    if (isTotalDuration) {
-        // Custom formatting for total duration
-        let hours;
-        if (totalMinutes <= 90) {
-            hours = 1;
-        } else {
-            hours = Math.ceil((totalMinutes - 90) / 60) + 1;
+    return `${totalMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  toggleLiveStreamExpandablePanel() {
+    this.liveStreamExpandablePanel = !this.liveStreamExpandablePanel;
+  }
+
+  toggleOnDemandStreamExpandablePanel() {
+    this.onDemandStreamExpandablePanel = !this.onDemandStreamExpandablePanel;
+  }
+
+  private matchProducerWithCentovaArtist() {
+    if (this.liveStreamEpisode && this.liveStreamEpisode.artist) {
+      const centovaArtist = this.liveStreamEpisode.artist.toLowerCase();
+
+      this.wpService.getProducerByName(centovaArtist).subscribe({
+        next: (data) => {
+          if (data) {
+            this.producer = data;
+          }
+        },
+        error: (error) => {
+          console.error("Error get producer by name:", error);
         }
-        return hours + 'hr' + (hours > 1 ? 's' : '');
-    } else {
-        // Default formatting for current time
-        const minutes = totalMinutes;
-        const seconds = Math.floor(timeInSeconds % 60);
-        return minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+      });
     }
-}
-
-    
-    
-    updateSliderPercentage(scrubTime: number, maxTime: number, inputElement: HTMLInputElement): void {
-        const percentage = (scrubTime / maxTime) * 100;
-        inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
-    }
-    
-    
-    
+  }
 }

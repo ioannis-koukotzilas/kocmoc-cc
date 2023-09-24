@@ -1,0 +1,98 @@
+/*--------------------------------------------------------------
+# Symbols
+--------------------------------------------------------------*/
+
+.symbol {
+  font-family: var(--font-symbol);
+  font-weight: normal;
+  font-style: normal;
+  font-size: var(--font-2xl);
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga";
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.symbol::after {
+  display: inline-block;
+}
+
+/* new */
+
+.symbol-expand-more::after {
+  content: '\e5cf';
+}
+
+.symbol-expand-less::after {
+  content: '\e5ce';
+}
+
+/* Search */
+
+.symbol-search::after {
+  content: '\e8b6';
+}
+
+.symbol-add::after {
+  content: '\e145';
+}
+
+.symbol-explore::after {
+  content: '\e87a';
+}
+
+.symbol-chevron-right::after {
+  content: '\e5cc';
+}
+
+.symbol-chevron-left::after {
+  content: '\e5cb';
+}
+
+.symbol-where-to-vote::after {
+  content: '\e177';
+}
+
+.symbol-pets::after {
+  content: '\e91d';
+}
+
+.symbol-open-in-full::after {
+  content: '\f1ce';
+}
+
+.symbol-forest::after {
+  content: '\ea99';
+}
+
+.symbol-landscape::after {
+  content: '\e3f7';
+}
+
+.symbol-pets::after {
+  content: '\e91d';
+}
+
+.symbol-psychiatry::after {
+  content: '\e123';
+}
+
+.symbol-hiking::after {
+  content: '\e50a';
+}
+
+.symbol-schedule::after {
+  content: '\e8b5';
+}
+
+.symbol-article::after {
+  content: '\ef42';
+}

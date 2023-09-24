@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, map, tap } from "rxjs";
-import { LiveStreamTrack } from "src/app/models/liveStreamTrack";
+import { LiveStreamEpisode } from "src/app/models/liveStreamEpisode";
 
 @Injectable({
     providedIn: 'root',
@@ -12,8 +12,8 @@ export class StreamInfoService {
 
     constructor(private http: HttpClient) { }
 
-    getStreamInfo(): Observable<LiveStreamTrack[]> {
-        return this.http.get<{ response: { data: { songs: { track: LiveStreamTrack }[] } } }>(this.API_URL).pipe(
+    getStreamInfo(): Observable<LiveStreamEpisode[]> {
+        return this.http.get<{ response: { data: { songs: { track: LiveStreamEpisode }[] } } }>(this.API_URL).pipe(
             map(response => response.response.data.songs.map(song => song.track))
         );
     }

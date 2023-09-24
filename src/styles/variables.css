@@ -1,0 +1,80 @@
+/*--------------------------------------------------------------
+# Variables
+--------------------------------------------------------------*/
+
+/* Root
+--------------------------------------------- */
+
+:root {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: monospace;
+  --font-symbol: 'Material Symbols Outlined';
+
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-4xl: 2.25rem;
+  --font-5xl: 3rem;
+  --font-6xl: 3.75rem;
+  --font-7xl: 4.5rem;
+
+  --font-regular: 400;
+  --font-bold: 700;
+  --font-color-primary: 900;
+
+  --font-normal: normal;
+  --font-italic: italic;
+
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-base: 1.5;
+
+  --color-primary-0: 255 255 255;
+  --color-primary-50: 246 246 246;
+  --color-primary-100: 231 231 231;
+  --color-primary-200: 209 209 209;
+  --color-primary-300: 176 176 176;
+  --color-primary-400: 136 136 136;
+  --color-primary-500: 109 109 109;
+  --color-primary-600: 93 93 93;
+  --color-primary-700: 79 79 79;
+  --color-primary-800: 69 69 69;
+  --color-primary-900: 61 61 61;
+  --color-primary-950: 0 0 0;
+
+  --color-accent-50: 236 238 255;
+  --color-accent-100: 221 225 255;
+  --color-accent-200: 194 199 255;
+  --color-accent-300: 156 161 255;
+  --color-accent-400: 122 117 255;
+  --color-accent-500: 102 83 255;
+  --color-accent-600: 90 54 245;
+  --color-accent-700: 78 42 216;
+  --color-accent-800: 63 37 174;
+  --color-accent-900: 54 38 137;
+  --color-accent-950: 34 22 80;
+
+  --max-w-base: 2560px;
+  --max-w-sm: 540px;
+  --max-w-md: 720px;
+  --max-w-lg: 960px;
+  --max-w-xl: 1140px;
+  --max-w-xxl: 1320px;
+  --max-w-full: 100%;
+}
+
+@media (max-width: 720px) {
+  :root {
+  --font-3xl: var(--font-2xl);
+  }
+}
+
+
+
+
+
