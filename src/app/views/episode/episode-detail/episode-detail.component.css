@@ -7,9 +7,9 @@
   object-fit: cover;
   width: 100%;
   height: 100%;
-  height: calc(100vh - 3rem - 2.75rem);
+  height: calc(100vh - 3rem - 2.65rem);
   position: sticky;
-  top: calc(3rem + 2.75rem);
+  top: calc(3rem + 2.65rem);
 }
 
 .episode .content {
@@ -20,6 +20,7 @@
 
 .episode .content .main {
   padding: 24px;
+  background-color: rgb(var(--color-primary-900));
 }
 
 .episode .content .main > .title {
@@ -50,22 +51,6 @@
 
 .episode .content .tracklist {
   padding: 24px;
-  flex-grow: 1;
-  background-color: rgb(var(--color-primary-0));
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .tracklist a {
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .tracklist a:visited {
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .tracklist a:hover,
-.episode .content .tracklist a:focus {
-  color: rgb(var(--color-primary-700));
 }
 
 .episode .content .tracklist > .title {
@@ -82,20 +67,9 @@
 }
 
 .episode .content .footer {
+  flex-grow: 1;
   padding: 24px;
-  background-color: rgb(var(--color-primary-0));
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .footer a {
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .footer a:visited {
-  color: rgb(var(--color-primary-950));
-}
-
-.episode .content .footer a:hover,
-.episode .content .footer a:focus {
-  color: rgb(var(--color-primary-700));
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
 }

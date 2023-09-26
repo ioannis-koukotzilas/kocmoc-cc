@@ -8,12 +8,20 @@
 
     <div class="episode">
 
+      <!-- <picture *ngIf="episode.image.url">
+        <source appLazyLoad [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+        <source appLazyLoad [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source appLazyLoad [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+        <img appLazyLoad [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+      </picture> -->
+
       <picture *ngIf="episode.image.url">
-        <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-        <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-        <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
-        <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+        <source appLazyLoad [attr.data-srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+        <source appLazyLoad [attr.data-srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source appLazyLoad [attr.data-srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+        <img appLazyLoad [attr.data-src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
       </picture>
+    
 
       <div class="content">
 
@@ -56,7 +64,7 @@
           <h2 class="title">Tracklist</h2>
           <ul class="tracks">
             <li class="track" *ngFor="let track of episode.tracklists[0].tracks">
-              <div class="artist" *ngFor="let artist of track.artistsTerms; let last = last">
+              <div class="artist" *ngFor="let artist of track.artistTerms; let last = last">
                 <a [routerLink]="['/artist', artist.id]">{{ artist.name }}<ng-container *ngIf="!last">,</ng-container></a>
               </div>
               <div class="title">{{ track.title }}</div>
@@ -74,10 +82,15 @@
 
     <!-- Relate Episodes -->
 
-    <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
-      [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
-      [episodes]="relatedEpisodes">
-    </app-episode-related-list>
+    <section *ngIf="relatedEpisodes">
+      <div class="container">
+        <h2 class="title">Most Recent Episodes</h2>
+        <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+        [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+        [episodes]="relatedEpisodes">
+      </app-episode-related-list>
+      </div>
+    </section>
 
   </ng-container>
 

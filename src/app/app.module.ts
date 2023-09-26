@@ -17,6 +17,7 @@ import { EpisodeAudioControlsComponent } from './views/episode/episode-audio-con
 import { EpisodeRelatedListComponent } from './views/episode/episode-related-list/episode-related-list.component';
 import { ProducerDetailComponent } from './views/producer/producer-detail/producer-detail.component';
 import { ProducerListComponent } from './views/producer/producer-list/producer-list.component';
+import { LazyLoadDirective } from './lazy-load.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { ProducerListComponent } from './views/producer/producer-list/producer-l
     EpisodeRelatedListComponent,
     ProducerDetailComponent,
     ProducerListComponent,
+    LazyLoadDirective,
     
   ],
   imports: [

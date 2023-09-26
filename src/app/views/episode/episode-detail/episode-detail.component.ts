@@ -76,7 +76,7 @@ export class EpisodeDetailComponent implements OnInit {
         if (data) {
           const { producers, shows, genres, artists, tracklists } = data;
           if (this.episode) {
-            this.episode.producers = producers
+            this.episode.producers = producers;
             this.episode.shows = shows;
             this.episode.genres = genres;
             this.episode.artists = artists;

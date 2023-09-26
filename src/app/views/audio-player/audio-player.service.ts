@@ -38,7 +38,7 @@ export class AudioPlayerService {
 
   // Random Play
   private randomPlayCount: number = 0;
-  private readonly MAX_RANDOM_PLAYS = 12;
+  private readonly MAX_RANDOM_PLAYS = 2;
   private playedEpisodes: number[] = [];
 
   constructor(private cloudStorageService: CloudStorageService, private wpService: WPService) {
@@ -50,33 +50,33 @@ export class AudioPlayerService {
         this.playRandomTrackFromSameGenre();
       } else {
         this.randomPlayCount = 0; // Reset the play count
-        this.playLiveStream();  // Play the live stream
+        this.liveStreamPlay();  // Play the live stream
       }
     });
   }
 
-  playLiveStream(): void {
+  liveStreamPlay() {
     if (this.onDemandStreamPlaying.value) {
-      this.stopOnDemandStream();
+      this.onDemandStreamStop();
     }
     this.streamTypeSelected.next(STREAM_TYPE_LIVE);
-    this.setLiveStream();
+    this.liveStreamSet();
     this.liveStreamAudio.addEventListener('canplay', this.liveStreamCanPlayListener);
     this.liveStreamAudio.addEventListener('playing', this.liveStreamPlayingListener);
   }
 
-  setLiveStream(): void {
+  liveStreamSet() {
     this.liveStreamLoading.next(true);
     this.liveStreamPlaying.next(false);
     this.liveStreamAudio.src = 'https://kocmoc1-gecko.radioca.st/stream' + '?nocache=' + new Date().getTime();
   }
 
-  pauseLiveStream(): void {
+  liveStreamPause() {
     this.liveStreamAudio.pause();
     this.liveStreamPlaying.next(false);
   }
 
-  stopLiveStream(): void {
+  liveStreamStop() {
     this.liveStreamAudio.pause();
     this.liveStreamAudio.currentTime = 0;
     this.liveStreamPlaying.next(false);
@@ -100,27 +100,26 @@ export class AudioPlayerService {
     }
   };
 
-  toggleLiveStream(): void {
-    this.liveStreamPlaying.value ? this.pauseLiveStream() : this.playLiveStream();
+  liveStreamTogglePlay() {
+    this.liveStreamPlaying.value ? this.liveStreamPause() : this.liveStreamPlay();
   }
 
-  playOnDemandStream(episode: Episode): void {
+  onDemandStreamPlay(episode: Episode) {
     if (this.liveStreamPlaying.value) {
-      this.stopLiveStream();
+      this.liveStreamStop();
     }
     this.streamTypeSelected.next(STREAM_TYPE_ON_DEMAND);
-    this.setOnDemandStream(episode);
+    this.onDemandStreamSet(episode);
     this.onDemandStreamAudio.addEventListener('canplay', this.onDemandStreamCanPlayListener);
     this.onDemandStreamAudio.addEventListener('playing', this.onDemandStreamPlayingListener);
   }
 
-  setOnDemandStream(episode: Episode): void {
+  onDemandStreamSet(episode: Episode) {
     this.onDemandStreamLoading.next(true);
     this.onDemandStreamPlaying.next(false);
     this.onDemandStreamAudio.src = this.cloudStorageService.getOnDemandStreamUrl(episode.track);
     this.currentOnDemandStream.next(episode);
 
-    // Add these lines
     this.onDemandStreamAudio.addEventListener('timeupdate', () => {
       this.onDemandStreamCurrentTime.next(this.onDemandStreamAudio.currentTime);
     });
@@ -129,21 +128,21 @@ export class AudioPlayerService {
     });
   }
 
-  pauseOnDemandStream(): void {
+  onDemandStreamPause() {
     this.onDemandStreamAudio.pause();
     this.onDemandStreamPlaying.next(false);
     this.onDemandStreamAudio.removeEventListener('canplay', this.onDemandStreamCanPlayListener);
     this.onDemandStreamAudio.removeEventListener('playing', this.onDemandStreamPlayingListener);
   }
 
-  resumeOnDemandStream(): void {
+  onDemandStreamResume() {
     if (this.onDemandStreamAudio.paused && !this.onDemandStreamAudio.ended) {
       this.onDemandStreamAudio.play();
       this.onDemandStreamPlaying.next(true);
     }
   }
 
-  stopOnDemandStream(): void {
+  onDemandStreamStop() {
     this.onDemandStreamAudio.pause();
     this.onDemandStreamAudio.currentTime = 0;
     this.onDemandStreamPlaying.next(false);
@@ -182,28 +181,28 @@ export class AudioPlayerService {
     }
   };
 
-  toggleOnDemandStream(episode: Episode): void {
+  onDemandStreamTogglePlay(episode: Episode) {
     this.streamTypeSelected.next(STREAM_TYPE_ON_DEMAND);
     if (this.onDemandStreamPlaying.value) {
-      this.pauseOnDemandStream();
+      this.onDemandStreamPause();
     } else if (this.currentOnDemandStream.value?.id === episode.id) {
-      this.resumeOnDemandStream();
+      this.onDemandStreamResume();
     } else {
-      this.playOnDemandStream(episode);
+      this.onDemandStreamPlay(episode);
     }
   }
 
   // Progress b
 
-  setOnDemandStreamCurrentTime(time: number): void {
+  onDemandStreamSetCurrentTime(time: number) {
     this.onDemandStreamAudio.currentTime = time;
   }
 
-  updateCurrentTime(time: number): void {
+  onDemandStreamUpdateCurrentTime(time: number) {
     this.onDemandStreamCurrentTime.next(time);
   }
 
-  private playRandomTrackFromSameGenre = (): void => {
+  private playRandomTrackFromSameGenre = () => {
     const currentEpisodeId = this.currentOnDemandStream.value?.id;
     const currentGenreIds = this.currentOnDemandStream.value?.genre;
 
@@ -238,10 +237,11 @@ export class AudioPlayerService {
           console.log('Randomly Selected Episode:', randomEpisode);
           this.playedEpisodes.push(randomEpisode.id);  // Add the episode to the played list
           this.randomPlayCount++;
-          this.playOnDemandStream(randomEpisode);
+          this.onDemandStreamPlay(randomEpisode);
         } else {
           this.randomPlayCount = 0;
           this.playedEpisodes = [];  // Reset the list if no more matching episodes are available
+          this.liveStreamPlay();
         }
       });
   };
@@ -250,5 +250,12 @@ export class AudioPlayerService {
     this.onDestroy.next();
     this.onDestroy.complete();
   }
+
+
+
+
+
+
+  
 
 }

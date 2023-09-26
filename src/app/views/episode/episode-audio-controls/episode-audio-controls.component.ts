@@ -42,7 +42,7 @@ export class EpisodeAudioControlsComponent implements OnInit, OnDestroy {
 
     // If the live stream is playing, stop it
     if (this.audioPlayerService.liveStreamPlaying.value) {
-      this.audioPlayerService.stopLiveStream();
+      this.audioPlayerService.liveStreamStop();
     }
 
     // Toggle or play the on-demand stream
@@ -50,9 +50,9 @@ export class EpisodeAudioControlsComponent implements OnInit, OnDestroy {
       this.audioPlayerService.currentOnDemandStream.value?.id ===
       this.episode.id
     ) {
-      this.audioPlayerService.toggleOnDemandStream(this.episode);
+      this.audioPlayerService.onDemandStreamTogglePlay(this.episode);
     } else {
-      this.audioPlayerService.playOnDemandStream(this.episode);
+      this.audioPlayerService.onDemandStreamPlay(this.episode);
     }
   }
 }

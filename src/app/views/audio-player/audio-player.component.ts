@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { Episode } from 'src/app/models/episode';
@@ -26,10 +26,10 @@ const STREAM_TYPE_LIVE = 'liveStream';
         style({
           transform: 'translateY(-100%)'
         }),
-        animate('300ms ease-in-out')
+        animate('200ms ease-in-out')
       ]),
       transition('expanded => void', [
-        animate('300ms ease-in-out', style({
+        animate('200ms ease-in-out', style({
           transform: 'translateY(-100%)'
         }))
       ])
@@ -55,17 +55,18 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   public liveStreamEpisode: LiveStreamEpisode | null = null;
   public producer: Producer | null = null;
 
-  public liveStreamExpandablePanel: boolean = false;
-  public onDemandStreamExpandablePanel: boolean = false;
+  public liveStreamExpandablePanelActive: boolean = false;
+  public onDemandStreamExpandablePanelActive: boolean = false;
 
-  constructor(public audioPlayerService: AudioPlayerService, private cdr: ChangeDetectorRef, private streamInfoService: StreamInfoService, private wpService: WPService) { }
+  @ViewChild('audioPlayer') audioPlayer: ElementRef = {} as ElementRef;
 
-  ngOnInit(): void {
+  constructor(public audioPlayerService: AudioPlayerService, private streamInfoService: StreamInfoService, private wpService: WPService) { }
+
+  ngOnInit() {
     this.subscriptions.add(
       this.audioPlayerService.currentOnDemandStream$.subscribe({
         next: data => {
           this.episode = data;
-          this.cdr.markForCheck();
           console.log('Received new data:', data);
         },
         error: error => {
@@ -76,13 +77,12 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         }
       })
     );
-  
+
     this.subscriptions.add(
       this.streamInfoService.getStreamInfo().subscribe({
         next: data => {
           this.liveStreamEpisode = data[0];
           this.matchProducerWithCentovaArtist();
-          this.cdr.markForCheck();
         },
         error: error => {
           console.error('Error loading stream info:', error);
@@ -92,15 +92,15 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         }
       })
     );
-  
+
     this.subscriptions.add(
       this.onDemandStreamCurrentTime$.subscribe({
         next: time => {
-          console.log('Current Time:', time);
-          const inputElement = document.querySelector('input[type="range"]') as HTMLInputElement;
-          if (inputElement && inputElement.max) {
-            const maxTime = parseFloat(inputElement.max);
-            this.updateSliderPercentage(time, maxTime, inputElement);
+          // console.log('Current Time:', time);
+          const inputRange = document.querySelector('input[type="range"]') as HTMLInputElement;
+          if (inputRange && inputRange.max) {
+            const maxTime = parseFloat(inputRange.max);
+            this.updateSliderPercentage(time, maxTime, inputRange);
           }
         },
         complete: () => {
@@ -108,7 +108,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         }
       })
     );
-  
+
     this.subscriptions.add(
       this.onDemandStreamDuration$.subscribe({
         next: duration => {
@@ -121,50 +121,48 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 
-  toggleLiveStream(): void {
+  liveStreamTogglePlay() {
     this.audioPlayerService.streamTypeSelected.next('liveStream');
-    this.audioPlayerService.toggleLiveStream();
+    this.audioPlayerService.liveStreamTogglePlay();
   }
 
-  toggleOnDemandStream(): void {
+  onDemandStreamTogglePlay() {
     const currentEpisode = this.audioPlayerService.currentOnDemandStream.value;
     if (currentEpisode) {
       this.audioPlayerService.streamTypeSelected.next('onDemandStream');
       if (this.audioPlayerService.currentOnDemandStream.value?.id === currentEpisode.id) {
-        this.audioPlayerService.toggleOnDemandStream(currentEpisode);
+        this.audioPlayerService.onDemandStreamTogglePlay(currentEpisode);
       } else {
-        this.audioPlayerService.playOnDemandStream(currentEpisode);
+        this.audioPlayerService.onDemandStreamPlay(currentEpisode);
       }
     }
   }
 
-  backToLiveStream(): void {
+  backToLiveStream() {
     this.audioPlayerService.streamTypeSelected.next(STREAM_TYPE_LIVE);
-    this.audioPlayerService.playLiveStream();
+    this.audioPlayerService.liveStreamPlay();
   }
 
-  onScrub(event: Event): void {
+  onScrub(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement && inputElement.value && inputElement.max) {
       const scrubTime = parseFloat(inputElement.value);
       const maxTime = parseFloat(inputElement.max);
-      this.audioPlayerService.setOnDemandStreamCurrentTime(scrubTime);
-
-      // Update slider percentage
+      this.audioPlayerService.onDemandStreamSetCurrentTime(scrubTime);
       this.updateSliderPercentage(scrubTime, maxTime, inputElement);
     }
   }
 
-  updateSliderPercentage(scrubTime: number, maxTime: number, inputElement: HTMLInputElement): void {
+  updateSliderPercentage(scrubTime: number, maxTime: number, inputElement: HTMLInputElement) {
     const percentage = (scrubTime / maxTime) * 100;
     inputElement.style.setProperty('--slider-percentage', `${percentage}%`);
   }
 
-  formatTime(timeInSeconds: number | null): string {
+  formatTime(timeInSeconds: number | null) {
     if (timeInSeconds === null) {
       return '00:00';
     }
@@ -175,12 +173,22 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     return `${totalMinutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  toggleLiveStreamExpandablePanel() {
-    this.liveStreamExpandablePanel = !this.liveStreamExpandablePanel;
+  liveStreamToggleExpandablePanel() {
+    this.liveStreamExpandablePanelActive = !this.liveStreamExpandablePanelActive;
   }
 
-  toggleOnDemandStreamExpandablePanel() {
-    this.onDemandStreamExpandablePanel = !this.onDemandStreamExpandablePanel;
+  onDemandStreamToggleExpandablePanel() {
+    this.onDemandStreamExpandablePanelActive = !this.onDemandStreamExpandablePanelActive;
+  }
+
+  @HostListener('document:click', ['$event'])
+  public documentClick(event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+
+    if (!this.audioPlayer.nativeElement.contains(targetElement)) {
+      this.liveStreamExpandablePanelActive = false;
+      this.onDemandStreamExpandablePanelActive = false;
+    }
   }
 
   private matchProducerWithCentovaArtist() {
@@ -191,6 +199,8 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         next: (data) => {
           if (data) {
             this.producer = data;
+          } else {
+            this.producer = null;
           }
         },
         error: (error) => {

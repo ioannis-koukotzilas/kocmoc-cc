@@ -9,76 +9,39 @@
 
 /* Stream
 --------------------------------------------- */
-.audio-player .stream {
-  height: 2.75rem;
+.audio-player .stream > .container {
+  height: 2.65rem;
 }
 
 /* Live Stream
 --------------------------------------------- */
 
-.audio-player .live-stream {
-  background-color: rgb(var(--color-primary-800));
-  color: #fff;
-  cursor: pointer;
+.audio-player .live-stream > .container {
+  display: flex;
 }
 
-.audio-player .live-stream:hover,
-.audio-player .live-stream.loading {
-  background-color: rgb(var(--color-primary-500));
-  color: #fff;
-}
-
-.audio-player .live-stream.playing {
-  background-color: rgb(var(--color-primary-50));
-  color: #000;
-}
-
-.audio-player .live-stream .container {
+.audio-player .live-stream .channel {
+  padding: 0 20px;
+  font-size: var(--font-sm);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0 24px;
+  gap: 0.5rem;
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-accent-950));
+  border-right: 1px solid;
 }
 
-/* On Demand Stream
---------------------------------------------- */
-
-.audio-player .on-demand-stream {
-  background-color: rgb(var(--color-primary-800));
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.audio-player .on-demand-stream:hover,
-.audio-player .on-demand-stream.loading {
-  background-color: rgb(var(--color-primary-500));
-  color: #fff;
-}
-
-.audio-player .on-demand-stream.playing {
-  background-color: rgb(var(--color-primary-50));
-  color: #000;
-}
-
-.audio-player .on-demand-stream .channel {
-padding: 0 24px;
-font-size: var(--font-sm);
-}
-
-.audio-player .on-demand-stream .channel:after {
+.audio-player .live-stream .channel:after {
   display: inline-block;
-  content: '';
+  content: "";
   width: 0.5rem;
   height: 0.5rem;
-  margin-left: 0.5rem;
-  background-color: red;
+  background-color: aquamarine;
   border-radius: 50%;
-  animation: channel 2s ease-in-out infinite both;
+  animation: liveStreamChannel 2s ease-in-out infinite both;
 }
 
-@keyframes channel {
+@keyframes liveStreamChannel {
   0% {
     opacity: 0.8;
   }
@@ -90,28 +53,177 @@ font-size: var(--font-sm);
   }
 }
 
-.audio-player .on-demand-stream .container {
+.audio-player .live-stream .toggle-play {
   flex-grow: 1;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 24px;
+  padding: 0 20px 0 18px;
+  gap: 0.75rem;
+  background-color: rgb(var(--color-primary-900));
+  color: rgb(var(--color-primary-200));
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.audio-player .on-demand-stream .reverse {
-  background-color: aquamarine;
-  color: #000;
-  font-size: 0.8rem;
+.audio-player .live-stream .toggle-play:hover {
+  background-color: rgb(var(--color-primary-800));
+  color: rgb(var(--color-primary-100));
+}
+
+.audio-player .live-stream .toggle-play.loading,
+.audio-player .live-stream .toggle-play.playing {
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-primary-950));
+}
+
+.audio-player .live-stream .side-actions {
+  display: flex;
+  align-items: center;
+}
+
+.audio-player .live-stream .side-actions > div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 16.5px;
+  background-color: rgb(var(--color-primary-600));
+  cursor: pointer;
+}
+
+.audio-player .live-stream .side-actions > div:not(:last-child) {
+  border-right: 1px solid rgb(var(--color-primary-500));
+}
+
+.audio-player .live-stream .side-actions .toggle-expandable-panel {
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.audio-player .live-stream .side-actions .toggle-expandable-panel:hover,
+.audio-player .live-stream .side-actions .toggle-expandable-panel.active {
+  background-color: rgb(var(--color-primary-200));
+  color: rgb(var(--color-primary-950));
+}
+
+.audio-player .live-stream .side-actions .toggle-expandable-panel .symbol {
+  transition: transform 0.3s ease;
+}
+
+.audio-player .live-stream .side-actions .toggle-expandable-panel.active .symbol {
+  transform: rotate(180deg);
+}
+
+/* On Demand Stream
+--------------------------------------------- */
+
+.audio-player .on-demand-stream {
+}
+
+.audio-player .on-demand-stream > .container {
+  display: flex;
+}
+
+.audio-player .on-demand-stream .channel {
+  padding: 0 20px;
+  font-size: var(--font-sm);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem 24px;
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-accent-950));
+  border-right: 1px solid;
+}
+
+.audio-player .on-demand-stream .channel:after {
+  display: inline-block;
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: orange;
+  border-radius: 50%;
+  animation: onDemandStreamChannel 2s ease-in-out infinite both;
+}
+
+@keyframes onDemandStreamChannel {
+  0% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.audio-player .on-demand-stream .toggle-play {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 18px;
+  gap: 0.75rem;
+  background-color: rgb(var(--color-primary-900));
+  color: rgb(var(--color-primary-200));
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.audio-player .on-demand-stream .toggle-play:hover {
+  background-color: rgb(var(--color-primary-800));
+  color: rgb(var(--color-primary-100));
+}
+
+.audio-player .on-demand-stream .toggle-play.loading,
+.audio-player .on-demand-stream .toggle-play.playing {
+  background-color: rgb(var(--color-primary-0));
+  color: rgb(var(--color-primary-950));
+}
+
+.audio-player .on-demand-stream .side-actions {
+  display: flex;
+  align-items: center;
+}
+
+.audio-player .on-demand-stream .side-actions > div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 16.5px;
+  background-color: rgb(var(--color-primary-600));
+  cursor: pointer;
+}
+
+.audio-player .on-demand-stream .side-actions > div:not(:last-child) {
+  border-right: 1px solid rgb(var(--color-primary-500));
+}
+
+.audio-player .on-demand-stream .side-actions .back-to-live-stream,
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel {
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.audio-player .on-demand-stream .side-actions .back-to-live-stream:hover,
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel:hover,
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel.active {
+  background-color: rgb(var(--color-primary-200));
+  color: rgb(var(--color-primary-950));
+}
+
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel.active:hover {
+  background-color: rgb(var(--color-primary-100));
+}
+
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel .symbol {
+  transition: transform 0.3s ease;
+}
+
+.audio-player .on-demand-stream .side-actions .toggle-expandable-panel.active .symbol {
+  transform: rotate(180deg);
 }
 
 /* Loader
 --------------------------------------------- */
 
-.audio-player .loader {
+/* .audio-player .loader {
   width: 15px;
   height: 15px;
   margin: 0 4.5px;
@@ -135,7 +247,7 @@ font-size: var(--font-sm);
   100% {
     transform: rotate(360deg);
   }
-}
+} */
 
 /* Progress Bar
 --------------------------------------------- */
@@ -218,8 +330,6 @@ font-size: var(--font-sm);
   background: #1ed760;
 }
 
-
-
 .on-demand-stream-expandable-panel {
   position: absolute;
   top: 100%;
@@ -247,6 +357,38 @@ font-size: var(--font-sm);
 }
 
 .on-demand-stream-expandable-panel .content .title {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: 1.5rem;
+}
+
+.live-stream-expandable-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+  background-color: #fff;
+  color: #000;
+}
+
+.live-stream-expandable-panel .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.live-stream-expandable-panel img {
+  object-fit: cover;
+  max-height: 50vh;
+  width: 100%;
+}
+
+.live-stream-expandable-panel .content > .wrapper {
+  padding: 24px;
+}
+
+.live-stream-expandable-panel .content .title {
   font-size: var(--font-2xl);
   font-weight: var(--font-bold);
   margin-bottom: 1.5rem;

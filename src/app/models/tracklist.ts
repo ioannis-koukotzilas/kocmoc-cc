@@ -1,7 +1,7 @@
 export class Tracklist {
   episodeId: number;
   tracks: {
-    artistsTerms: {
+    artistTerms: {
       id: number;
       name: string;
     }[];

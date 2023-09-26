@@ -59,7 +59,7 @@ export class EpisodeListComponent implements OnInit {
         ]).pipe(
           map(([producers, shows, genres, artists]) => {
             episodes.forEach(episode => {
-              episode.producers = shows.filter(producer => producer.episodeId === episode.id),
+              episode.producers = producers.filter(producer => producer.episodeId === episode.id),
               episode.shows = shows.filter(show => show.episodeId === episode.id),
               episode.genres = genres.filter(genre => genre.episodeId === episode.id),
               episode.artists = artists.filter(artist => artist.episodeId === episode.id)
