@@ -150,6 +150,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   onScrub(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement && inputElement.value && inputElement.max) {
+      this.audioPlayerService.onDemandStreamLoading.next(true);
       const scrubTime = parseFloat(inputElement.value);
       const maxTime = parseFloat(inputElement.max);
       this.audioPlayerService.onDemandStreamSetCurrentTime(scrubTime);

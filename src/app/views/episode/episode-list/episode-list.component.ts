@@ -5,7 +5,7 @@ import { Episode } from 'src/app/models/episode';
 import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
-  selector: 'app-episode-list',
+  selector: 'episode-list',
   templateUrl: './episode-list.component.html',
   styleUrls: ['./episode-list.component.css'],
 })

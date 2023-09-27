@@ -109,11 +109,17 @@
         </div>
       </ng-container>
 
-       <h1 style="font-size: 58px;">{{ formatTime(onDemandStreamCurrentTime$ | async) }} / {{ formatTime(onDemandStreamDuration$ | async) }}</h1>
+      <div class="progress-bar">
+        <div class="container">
+          <time>{{ formatTime(onDemandStreamCurrentTime$ | async) }}</time>
+          <input type="range" min="0" [max]="onDemandStreamDuration$ | async" [value]="onDemandStreamCurrentTime$ | async" (input)="onScrub($event)" />
+          <time>{{ formatTime(onDemandStreamDuration$ | async) }}</time>
+        </div>
+       </div>
 
-      <input type="range" min="0" [max]="onDemandStreamDuration$ | async" [value]="onDemandStreamCurrentTime$ | async" (input)="onScrub($event)" />
     </div>
 
   </ng-container>
 
 </div>
+

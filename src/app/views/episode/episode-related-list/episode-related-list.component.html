@@ -1,6 +1,9 @@
 <ng-container *ngIf="episodes && episodes.length > 0">
-  <ul class="episodes related-episodes">
-    <li class="episode" *ngFor="let episode of episodes">
+  <ul class="episodes-loop">
+    <li class="episode" *ngFor="let episode of episodes" [ngClass]="{
+      'active': (currentOnDemandStream$ | async)?.id === episode.id, 
+      'loading': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async), 
+      'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
       <div class="header" *ngIf="episode.image.url">
         <picture class="image">
@@ -15,11 +18,10 @@
 
       <a class="body" [routerLink]="['/episode', episode.id]">
         <div class="meta">
-          <div>{{ episode.date | date }}</div>
+          <div>{{ episode.date | date:'dd.MM.yy' }}</div>
           <div *ngIf="episode.location">{{ episode.location }}</div>
         </div>
         <h2 class="title">{{ episode.title }}</h2>
-        <div class="excerpt" [innerHTML]="episode.excerpt"></div>
       </a>
 
       <div class="footer" *ngIf="episode.genres && episode.genres.length > 0">

@@ -149,9 +149,9 @@ button {
   z-index: 100;
 }
 
-.header {
+/* .header {
   background-color: #000;
-}
+} */
 
 .menu {
   display: flex;
@@ -235,4 +235,241 @@ app-episode-detail
   .audio-controls
   .symbol {
   font-size: var(--font-5xl);
+}
+
+
+
+
+
+
+
+/*--------------------------------------------------------------
+# Episodes Loop
+--------------------------------------------------------------*/
+
+/* Grid
+--------------------------------------------- */
+
+.episodes-loop {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  row-gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .episodes-loop {
+    column-gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .episodes-loop {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .episodes-loop {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .episodes-loop {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1536px) {
+  .episodes-loop {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Episode
+--------------------------------------------- */
+
+.episodes-loop .episode {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Episode Header
+--------------------------------------------- */
+
+.episodes-loop .episode .header {
+  position: relative;
+}
+
+.episodes-loop .episode .header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+}
+
+/* Audio Controls */
+
+.episodes-loop .episode .audio-controls {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.episodes-loop .episode .header:hover .audio-controls,
+.episodes-loop .episode.loading .audio-controls,
+.episodes-loop .episode.playing .audio-controls,
+.episodes-loop .episode.active .audio-controls {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+@media (min-width: 960px) {
+  .episodes-loop .episode .audio-controls {
+    opacity: 0;
+    visibility: hidden;
+    transition: background-color 0.2s, opacity 0.2s, visibility 0.2s;
+  }
+  
+  .episodes-loop .episode .header:hover .audio-controls,
+  .episodes-loop .episode.loading .audio-controls,
+  .episodes-loop .episode.playing .audio-controls,
+  .episodes-loop .episode.active .audio-controls {
+    opacity: 1;
+    visibility: visible;
+  } 
+}
+
+.episodes-loop .episode .audio-controls .symbol {
+  font-size: var(--font-5xl);
+}
+
+.episodes-loop .episode .audio-controls .loader {
+  display: inline-block;
+  width: var(--font-5xl);
+  height: var(--font-5xl);
+  padding: 0.628571428571429rem;
+}
+
+/* Episode Body
+--------------------------------------------- */
+
+.episodes-loop .episode .body {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: rgba(var(--color-primary-900), 1);
+}
+
+.episodes-loop .episode.loading .body,
+.episodes-loop .episode.playing .body {
+  background-color: rgba(var(--color-primary-50), 1);
+  color: rgba(var(--color-primary-950), 1);
+}
+
+.episodes-loop .episode.active:not(.loading):not(.playing) .body {
+  background-color: rgba(var(--color-primary-800), 1);
+}
+
+.episodes-loop .episode .body .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.episodes-loop .episode .body .title {
+  font-size: var(--font-2xl);
+  font-weight: 600;
+}
+
+/* Episode Footer
+--------------------------------------------- */
+
+.episodes-loop .episode .footer {
+  padding: 20px;
+  background-color: rgba(var(--color-primary-900), 1);
+}
+
+.episodes-loop .episode.loading .footer,
+.episodes-loop .episode.playing .footer {
+  background-color: rgba(var(--color-primary-50), 1);
+  color: rgba(var(--color-primary-950), 1);
+}
+
+.episodes-loop .episode.loading .footer a,
+.episodes-loop .episode.playing .footer a {
+  color: rgba(var(--color-primary-950), 1);
+}
+
+.episodes-loop .episode.active:not(.loading):not(.playing) .footer {
+  background-color: rgba(var(--color-primary-800), 1);
+}
+
+.episodes-loop .episode .footer .genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.episodes-loop .episode .footer .genres .genre a {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid;
+  font-size: var(--font-sm);
+}
+
+
+
+
+
+/* footer */
+
+/*--------------------------------------------------------------
+# Site Footer
+--------------------------------------------------------------*/
+
+.site-footer > .container {
+  max-width: var(--container-fluid);
+  margin: 0 auto;
+  padding: 3rem 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  border-top: 1px solid;
+}
+
+/* Logo
+--------------------------------------------- */
+
+.site-footer .logo svg {
+  display: block;
+  width: clamp(4.236rem, calc(4.236rem + ((1vw - 0.2rem) * 1.87)), 6.854rem);
+  height: auto;
+  fill: rgba(var(--color-primary-100), 1);
+}
+
+/* Links
+--------------------------------------------- */
+
+.site-footer .links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* CC
+--------------------------------------------- */
+
+.site-footer .cc {
+  font-size: var(--font-size-sm);
 }
