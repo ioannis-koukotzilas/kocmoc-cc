@@ -55,7 +55,7 @@
           </ul>
 
           <div class="show" *ngIf="episode.shows && episode.shows.length > 0">
-            <a [routerLink]="['/show', episode.shows[0].id]">Find more</a>
+            <a [routerLink]="['/show', episode.shows[0].id]">Find more {{episode.shows[0].name}}</a>
           </div>
 
         </div>
@@ -82,7 +82,7 @@
 
     <!-- Relate Episodes -->
 
-    <section class="related-episodes" *ngIf="relatedEpisodes">
+    <section class="related-episodes" *ngIf="relatedEpisodes && relatedEpisodes.length > 0">
       <div class="container">
         <h2 class="title">Recent Episodes</h2>
         <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"

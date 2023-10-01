@@ -1,3 +1,5 @@
+import { Producer } from "./producer";
+
 export class Show {
     id: number;
     slug: string;
@@ -13,6 +15,8 @@ export class Show {
         },
     };
     episodeId: number;
+
+    producers?: Producer[]; 
 
     constructor(data: any) {
         this.id = data.id;

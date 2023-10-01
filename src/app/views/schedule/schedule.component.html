@@ -1,0 +1,17 @@
+<div *ngIf="scheduleEvents && scheduleEvents.length > 0; else noEvents">
+  <ul>
+    <li *ngFor="let event of scheduleEvents">
+      <h3>{{ event.summary }}</h3>
+      <p><strong>Start:</strong> {{ event.start | date:'medium' }}</p>
+      <p><strong>End:</strong> {{ event.end | date:'medium' }}</p>
+      <p><strong>Description:</strong> {{ event.description }}</p>
+      <p><strong>Location:</strong> {{ event.location }}</p>
+    </li>
+  </ul>
+</div>
+
+<ng-template #noEvents>
+  <p>No upcoming events at the moment.</p>
+</ng-template>
+
+<p>Schedule Component is here!</p>

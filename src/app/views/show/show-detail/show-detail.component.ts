@@ -3,16 +3,16 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { Episode } from 'src/app/models/episode';
-import { Producer } from 'src/app/models/producer';
+import { Show } from 'src/app/models/show';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
 
 @Component({
-  selector: 'app-producer-detail',
-  templateUrl: './producer-detail.component.html',
-  styleUrls: ['./producer-detail.component.css']
+  selector: 'app-show-detail',
+  templateUrl: './show-detail.component.html',
+  styleUrls: ['./show-detail.component.css']
 })
-export class ProducerDetailComponent {
+export class ShowDetailComponent {
   private unsubscribe$ = new Subject<void>();
 
   public currentOnDemandStream$: Observable<Episode | null> = this.audioPlayerService.currentOnDemandStream$;
@@ -21,9 +21,9 @@ export class ProducerDetailComponent {
 
   loading: boolean = true;
 
-  producer: Producer | null = null;
+  show: Show | null = null;
 
-  producerEpisodes: Episode[] = [];
+  relatedEpisodes: Episode[] = [];
 
   page: number = 1;
   perPage: number = 9;
@@ -34,7 +34,7 @@ export class ProducerDetailComponent {
   constructor(private route: ActivatedRoute, private location: Location, private audioPlayerService: AudioPlayerService, private wpService: WPService) { }
 
   ngOnInit(): void {
-    this.getProducer();
+    this.getShow();
   }
 
   ngOnDestroy(): void {
@@ -42,52 +42,52 @@ export class ProducerDetailComponent {
     this.unsubscribe$.complete();
   }
 
-  getProducer() {
+  getShow() {
     this.route.paramMap.pipe(
       switchMap(params => {
         const id = Number(params.get('id') || '0');
         this.loading = true;
-        return this.wpService.getProducer(id).pipe(
+        return this.wpService.getShow(id).pipe(
           catchError(error => {
-            console.error('Error getting artist from WPService:', error);
-            return of(null);  // Continue the stream by emitting null.
+            console.error('Error getting show from WPService:', error);
+            return of(null);
           })
         );
       }),
-      tap(producer => {
-        if (producer) this.producer = new Producer(producer);
+      tap(show => {
+        if (show) this.show = new Show(show);
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe({
       next: () => {
         this.loading = false;
-        this.getProducerShows(this.producer?.id || 0);
-        this.getProducerEpisodes(this.page, this.perPage, this.producer?.id || 0);
+        this.getShowProducers(this.show?.id || 0);
+        this.getShowEpisodes(this.page, this.perPage, this.show?.id || 0);
       },
       error: (error) => {
-        console.error('Main observable error while processing producer:', error);
+        console.error('Main observable error while processing show:', error);
       },
       complete: () => {
-        console.log('Producer detail component unsubscription completed.');
+        console.log('Show detail component unsubscription completed.');
       }
     });
   }
 
-  getProducerShows(id: number) {
-    this.wpService.getProducerShows([id]).pipe(
-      tap(shows => {
-        if (this.producer && shows) {
-          this.producer.shows = shows;
+  getShowProducers(id: number) {
+    this.wpService.getShowProducers([id]).pipe(
+      tap(producers => {
+        if (this.show && producers) {
+          this.show.producers = producers;
         }
       }),
       catchError(error => {
-        console.error('Error getting shows for the producer:', error);
+        console.error('Error fetching producers for the show:', error);
         return of(null);
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
-        console.log('Successfully fetched shows for the producer.');
+        console.log('Successfully fetched producers for the show.');
       },
       error: (error) => {
         console.error('Main observable error while fetching show producers:', error);
@@ -98,12 +98,13 @@ export class ProducerDetailComponent {
     });
   }
 
-  getProducerEpisodes(page: number, perPage: number, id: number) {
-    this.wpService.getProducerEpisodes(page, perPage, [id]).pipe(
+
+  getShowEpisodes(page: number, perPage: number, id: number) {
+    this.wpService.getShowEpisodes(page, perPage, [id]).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
 
-        this.producerEpisodes = [...episodes];
+        this.relatedEpisodes = [...episodes];
 
         const id = episodes.map(episode => episode.id);
 
@@ -129,13 +130,13 @@ export class ProducerDetailComponent {
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);
-            return of(null);  // Emit null to let outer stream continue.
+            return of(null);
           })
         );
       }),
       catchError(error => {
         console.error('WPService observable error while getting the related episodes list:', error);
-        return of(null); // Emit null to let outer stream continue.
+        return of(null);
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe({

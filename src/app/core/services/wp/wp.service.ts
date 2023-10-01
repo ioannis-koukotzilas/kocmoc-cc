@@ -122,6 +122,12 @@ export class WPService {
     );
   }
 
+  getProducerShows(id: number[]): Observable<Show[]> {
+    return this.http.get<Show[]>(`${this.customWpJsonBaseUrl}/producer-shows?producer=${id}`).pipe(
+      catchError(this.handleError<Show[]>('getProducerShows', []))
+    );
+  }
+
   getProducerEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
     return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
       params: {
@@ -151,6 +157,38 @@ export class WPService {
     );
   }
 
+  // Show
+
+  getShow(id: number): Observable<Show> {
+    return this.http.get<Show>(`${this.wpJsonBaseUrl}/show/${id}`).pipe(
+      catchError(this.handleError<Show>(`getShow id=${id}`))
+    );
+  }
+
+  getShowProducers(id: number[]): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/show-producers?show=${id}`).pipe(
+      catchError(this.handleError<Producer[]>('getShowProducers', []))
+    );
+  }
+
+  getShowEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
+    return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString(),
+        show: id
+      },
+      observe: 'response'
+    }).pipe(
+      map((response: HttpResponse<Episode[]>) => {
+        return { episodes: response.body as Episode[], headers: response.headers };
+      }),
+      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getShowEpisodes', {
+        episodes: [],
+        headers: new HttpHeaders()
+      }))
+    );
+  }
 
   // Artists
 
@@ -231,14 +269,6 @@ export class WPService {
       .pipe(
         catchError(this.handleError<Genre>(`getGenere id=${id}`))
       );
-  }
-
-  fetchPosts() {
-    return this.http.get<any[]>(`${this.wpJsonBaseUrl}/posts?_embed`);
-  }
-
-  fetchPost(id: string) {
-    return this.http.get(`${this.wpJsonBaseUrl}/posts/${id}?_embed`);
   }
 
 }

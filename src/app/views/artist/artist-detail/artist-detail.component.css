@@ -1,0 +1,19 @@
+.container > .content {
+  max-width: var(--max-w-xl);
+  padding: 20px;
+}
+
+.container > .content .title {
+  font-size: var(--font-4xl);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.related-episodes > .container {
+  padding: 1.5rem 20px;
+}
+
+.related-episodes > .container > .title {
+  font-size: var(--font-3xl);
+  margin-bottom: 1.5rem;
+}

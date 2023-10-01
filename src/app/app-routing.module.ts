@@ -1,27 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AudioPlayerComponent } from './views/audio-player/audio-player.component';
-import { PostListComponent } from './views/post/post-list/post-list.component';
-import { PostDetailComponent } from './views/post/post-detail/post-detail.component';
 import { EpisodeDetailComponent } from './views/episode/episode-detail/episode-detail.component';
 import { EpisodeListComponent } from './views/episode/episode-list/episode-list.component';
 import { GenreDetailComponent } from './views/genre/genre-detail/genre-detail.component';
-import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
 import { ArtistDetailComponent } from './views/artist/artist-detail/artist-detail.component';
 import { ProducerListComponent } from './views/producer/producer-list/producer-list.component';
 import { ProducerDetailComponent } from './views/producer/producer-detail/producer-detail.component';
+import { ShowListComponent } from './views/show/show-list/show-list.component';
+import { ShowDetailComponent } from './views/show/show-detail/show-detail.component';
 
 const routes: Routes = [
-  { path: 'posts', component: PostListComponent },
-  { path: 'post/:id', component: PostDetailComponent },
   { path: 'producers', component: ProducerListComponent },
   { path: 'producer/:id', component: ProducerDetailComponent },
   { path: 'episodes', component: EpisodeListComponent },
   { path: 'episode/:id', component: EpisodeDetailComponent },
+  { path: 'shows', component: ShowListComponent },
+  { path: 'show/:id', component: ShowDetailComponent },
   { path: 'genre/:id', component: GenreDetailComponent },
   { path: 'audio-player', component: AudioPlayerComponent },
-  { path: 'artists', component: ArtistListComponent },
   { path: 'artist/:id', component: ArtistDetailComponent },
+  { path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

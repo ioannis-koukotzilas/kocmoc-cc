@@ -1,0 +1,47 @@
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
+</div>
+
+<ng-template #Content>
+
+  <div class="show" *ngIf="show">
+
+    <div class="container">
+
+      <picture *ngIf="show.image.url">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['medium']" media="(max-width: 424px)">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['2048x2048']" media="(min-width: 640px)">
+        <img appLazyLoad [attr.data-src]="show.image.size['medium_large']" [alt]="show.image.alt" />
+      </picture>
+    
+      <div class="content">
+
+        <div class="main">
+          <h1 class="title">{{ show.name }}</h1>
+          <div class="description" *ngIf="show.description" [innerHTML]="show.description"></div>
+        </div>
+
+        <ng-container *ngFor="let producer of show.producers; let last = last">
+          <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
+        </ng-container>
+
+        <div class="footer">
+          <button (click)="back()">Back</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <section class="related-episodes" *ngIf="relatedEpisodes">
+    <div class="container">
+      <h2 class="title">Recent Episodes</h2>
+      <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+      [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+      [episodes]="relatedEpisodes">
+    </app-episode-related-list>
+    </div>
+  </section>
+
+</ng-template>

@@ -1,48 +1,71 @@
-
-
-
 <div *ngIf="loading; else Content">
-    <p>Loading...</p>
+  <p>Loading...</p>
 </div>
 
 <ng-template #Content>
 
-    <div class="artist-detail" *ngIf="artist">
+  <div class="container" *ngIf="artist">
 
-        <div class="cover" *ngIf="artist.image.url">
-            <picture>
-                <source [srcset]="artist.image.size['medium']" media="(max-width: 424px)">
-                <source [srcset]="artist.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-                <source [srcset]="artist.image.size['2048x2048']" media="(min-width: 640px)">
-                <img [src]="artist.image.size['medium_large']" [alt]="artist.image.alt" />
-            </picture>
+    <!-- For future use -->
 
-            <section class="profile">
+    <!-- <ng-container *ngIf="artist.image.url; else GenericImage">
+      <picture>
+        <source appLazyLoad [attr.data-srcset]="artist.image.size['medium']" media="(max-width: 424px)">
+        <source appLazyLoad [attr.data-srcset]="artist.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source appLazyLoad [attr.data-srcset]="artist.image.size['2048x2048']" media="(min-width: 640px)">
+        <img appLazyLoad [attr.data-src]="artist.image.size['medium_large']" [alt]="artist.image.alt" />
+      </picture>
+    </ng-container>
 
-                <h1>Name: {{artist.name}}</h1>
-                <p>Id: {{artist.id}}</p>
-                <p>Slug: {{artist.slug}}</p>
-                <p>Description: {{artist.description}}</p>
-
-            </section>
-        </div>
-
-        <!-- Relate Episodes -->
-
-        <!-- <app-episode-related-list 
-        [episodes]="relatedEpisodes"
-        [currentOnDemandStream$]="currentOnDemandStream$"
-        [onDemandStreamLoading$]="onDemandStreamLoading$"
-        [onDemandStreamPlaying$]="onDemandStreamPlaying$">
-        </app-episode-related-list> -->
-
-        <app-episode-related-list 
-        [currentOnDemandStream$]="currentOnDemandStream$"
-        [onDemandStreamLoading$]="onDemandStreamLoading$"
-        [onDemandStreamPlaying$]="onDemandStreamPlaying$"
-        [episodes]="relatedEpisodes">
-        </app-episode-related-list>
+    <ng-template #GenericImage>
+      <picture>
+        <img appLazyLoad data-src="https://kocmoc.cc/images/assets/identity_s.jpg" alt="Generic Artist Image" />
+      </picture>    
+    </ng-template> -->
     
+    <div class="content">
+      <h1 class="title">{{artist.name}}</h1>
 
+      <div class="description" *ngIf="relatedEpisodes && relatedEpisodes.length > 0">
+        <p>{{artist.name}} has been played on KOCMOC shows including
+          <ng-container *ngFor="let episode of relatedEpisodes; let isLast=last">
+            <span *ngFor="let show of episode.shows">
+              {{show.name}}
+              <ng-container *ngIf="!isLast">, </ng-container>
+            </span>
+          </ng-container>
+        </p>
+
+        <ng-container *ngIf="lastFmArtist; else ArtistDescription">
+          <p>{{ expandedDescription ? lastFmArtist.bio.content : (lastFmArtist.bio.content | slice:0:600) }}
+            <span *ngIf="!expandedDescription && lastFmArtist.bio.content.length > 600">...</span></p>
+          <div *ngIf="lastFmArtist.bio.content.length > 600" (click)="toggleDescription()">
+              {{ expandedDescription ? 'Read less' : 'Read more' }}
+          </div>
+          <a [href]="lastFmArtist.url" target="_blank">More on Last.fm</a>
+        </ng-container>
+
+        <ng-template #ArtistDescription>
+          <p *ngIf="artist.description">{{ expandedDescription ? artist.description : (artist.description | slice:0:600) }}
+              <span *ngIf="!expandedDescription && artist.description.length > 600">...</span></p>
+          <div *ngIf="artist.description.length > 600" (click)="toggleDescription()">
+              {{ expandedDescription ? 'Read less' : 'Read more' }}
+          </div>
+        </ng-template>
+      
+      </div>
     </div>
+
+  </div>
+
+  <section class="related-episodes" *ngIf="relatedEpisodes">
+    <div class="container">
+      <h2 class="title">Tracks recently featured on</h2>
+      <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+        [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+        [episodes]="relatedEpisodes">
+      </app-episode-related-list>
+    </div>
+  </section>
+
 </ng-template>

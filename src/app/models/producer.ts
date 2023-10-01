@@ -1,4 +1,5 @@
 import { Episode } from "./episode";
+import { Show } from "./show";
 
 export class Producer {
     id: number;
@@ -17,7 +18,9 @@ export class Producer {
 
     episodeId: number;
 
-    episodes?: Episode[]; 
+    episodes?: Episode[];
+
+    shows?: Show[]; 
 
     constructor(data: any) {
         this.id = data.id;

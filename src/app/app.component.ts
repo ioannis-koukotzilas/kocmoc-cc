@@ -16,8 +16,5 @@ export class AppComponent implements OnInit {
   constructor(private wpService: WPService) { }
 
   ngOnInit(): void {
-    this.wpService.fetchPosts().subscribe(data => {
-      this.posts = data;
-    });
   }
 }

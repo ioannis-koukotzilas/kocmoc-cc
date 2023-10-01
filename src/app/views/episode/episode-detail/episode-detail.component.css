@@ -1,6 +1,6 @@
 .episode {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr var(--max-w-md);
 }
 
 .episode picture img {
@@ -13,7 +13,6 @@
 }
 
 .episode .content {
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
 }
@@ -72,7 +71,7 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 /*--------------------------------------------------------------

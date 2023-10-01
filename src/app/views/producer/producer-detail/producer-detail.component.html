@@ -1,10 +1,14 @@
-<div *ngIf="loading; else Content">
+<!-- <div *ngIf="loading; else Content">
   <p>Loading...</p>
 </div>
 
 <ng-template #Content>
 
   <div class="artist-detail" *ngIf="producer">
+
+      <ng-container *ngFor="let show of producer.shows; let last = last">
+        <a class="underline" [routerLink]="['/show', show.id]">{{ show.name }}<ng-container *ngIf="!last">,</ng-container></a>
+      </ng-container>
 
       <div class="cover" >
           <picture *ngIf="producer.image.url">
@@ -33,4 +37,59 @@
   
 
   </div>
+</ng-template> -->
+
+
+
+
+
+
+
+
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
+</div>
+
+<ng-template #Content>
+
+  <div class="producer" *ngIf="producer">
+
+    <div class="container">
+
+      <picture *ngIf="producer.image.url">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
+        <img appLazyLoad [attr.data-src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+      </picture>
+    
+      <div class="content">
+
+        <div class="main">
+          <h1 class="title">{{ producer.name }}</h1>
+          <div class="description" *ngIf="producer.description" [innerHTML]="producer.description"></div>
+        </div>
+
+        <ng-container *ngFor="let show of producer.shows; let last = last">
+          <a class="underline" [routerLink]="['/show', show.id]">{{ show.name }}<ng-container *ngIf="!last">,</ng-container></a>
+        </ng-container>
+
+        <div class="footer">
+          <button (click)="back()">Back</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <section class="related-episodes" *ngIf="producerEpisodes">
+    <div class="container">
+      <h2 class="title">Recent Episodes</h2>
+      <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+      [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+      [episodes]="producerEpisodes">
+    </app-episode-related-list>
+    </div>
+  </section>
+
 </ng-template>

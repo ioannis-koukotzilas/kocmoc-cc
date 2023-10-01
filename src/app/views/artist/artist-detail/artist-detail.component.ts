@@ -1,11 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUntil, tap } from "rxjs";
+import { Observable, Subject, catchError, concatMap, forkJoin, map, of, switchMap, takeUntil, tap } from "rxjs";
 import { WPService } from "src/app/core/services/wp/wp.service";
 
 import { Artist } from "src/app/models/artist";
 import { Episode } from "src/app/models/episode";
 import { AudioPlayerService } from "../../audio-player/audio-player.service";
+import { LastFmService } from "src/app/core/services/last-fm.service";
+import { LastFmArtist } from "src/app/models/lastFmArtist";
 
 @Component({
   selector: 'app-artist-detail',
@@ -25,6 +27,8 @@ export class ArtistDetailComponent implements OnInit {
 
   artist: Artist | null = null;
 
+  lastFmArtist: LastFmArtist | null = null;
+
   relatedEpisodes: Episode[] = [];
 
   page: number = 1;
@@ -33,7 +37,10 @@ export class ArtistDetailComponent implements OnInit {
   hasMore: boolean = true;
   loadingMore: boolean = false;
 
-  constructor(private route: ActivatedRoute, private audioPlayerService: AudioPlayerService, private wpService: WPService) { }
+  expandedDescription: boolean = false;
+  truncatedDescription: string = '';
+
+  constructor(private route: ActivatedRoute, private audioPlayerService: AudioPlayerService, private wpService: WPService, private lastFmService: LastFmService) { }
 
   ngOnInit(): void {
     this.getArtist();
@@ -52,27 +59,46 @@ export class ArtistDetailComponent implements OnInit {
         return this.wpService.getArtist(id).pipe(
           catchError(error => {
             console.error('Error getting artist from WPService:', error);
-            return of(null);  // Continue the stream by emitting null.
+            return of(null); 
           })
         );
       }),
-      tap(artist => {
-        if (artist) this.artist = new Artist(artist);
+      concatMap(artist => {
+        if (artist) {
+          this.artist = new Artist(artist);
+          return this.lastFmService.getArtistMetadata(this.artist.name).pipe(
+            map((data) => {
+              this.lastFmArtist = new LastFmArtist(data);
+              return this.lastFmArtist;
+            }),
+            catchError(error => {
+              console.log('Error getting artist metadata from Last.fm:', error);
+              return of(artist);  // If there's an error, continue with the original artist
+            })
+          );
+        } else {
+          return of(null);
+        }
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe({
-      next: () => {
-        this.loading = false;
-        this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0);
+      next: (artist) => {
+        if (artist) {
+          this.loading = false;
+          this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0);
+        }
       },
       error: (error) => {
-        console.error('Main observable error while processing episode:', error);
+        console.error('Main observable error:', error);
       },
       complete: () => {
         console.log('Episode detail component unsubscription completed.');
       }
     });
   }
+  
+
+
 
   getRelatedArtistEpisodes(page: number, perPage: number, id: number) {
     this.wpService.getRelatedArtistEpisodes(page, perPage, [id]).pipe(
@@ -125,4 +151,43 @@ export class ArtistDetailComponent implements OnInit {
     });
   }
 
+  
+
+    toggleDescription() {
+      this.expandedDescription = !this.expandedDescription;
+  }
+
 }
+
+
+
+
+  // getArtist() {
+  //   this.route.paramMap.pipe(
+  //     switchMap(params => {
+  //       const id = Number(params.get('id') || '0');
+  //       this.loading = true;
+  //       return this.wpService.getArtist(id).pipe(
+  //         catchError(error => {
+  //           console.error('Error getting artist from WPService:', error);
+  //           return of(null);  // Continue the stream by emitting null.
+  //         })
+  //       );
+  //     }),
+  //     tap(artist => {
+  //       if (artist) this.artist = new Artist(artist);
+  //     }),
+  //     takeUntil(this.unsubscribe$),
+  //   ).subscribe({
+  //     next: () => {
+  //       this.loading = false;
+  //       this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0);
+  //     },
+  //     error: (error) => {
+  //       console.error('Main observable error while processing episode:', error);
+  //     },
+  //     complete: () => {
+  //       console.log('Episode detail component unsubscription completed.');
+  //     }
+  //   });
+  // }
