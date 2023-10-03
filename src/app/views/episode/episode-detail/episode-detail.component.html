@@ -31,15 +31,21 @@
 
           <div class="meta">
             <div class="location-date">
-              <span *ngIf="episode.location">{{ episode.location }}, </span><span class="date">{{ episode.date | date}}</span>
+              <span *ngIf="episode.location">{{ episode.location }}, </span><span class="date">{{ episode.date | date:'dd.MM.yy'}}</span>
             </div>
 
             <div class="producers" *ngIf="episode.producers">
-              <span>With: </span>
+              <span>With </span>
               <ng-container *ngFor="let producer of episode.producers; let last = last">
-                <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
+                <a [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
               </ng-container>
             </div>
+
+            <div class="show" *ngIf="episode.shows && episode.shows.length > 0">
+              Host on
+              <a [routerLink]="['/show', episode.shows[0].id]">{{episode.shows[0].name}}</a>
+            </div>
+
           </div>
 
           <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$"
@@ -53,10 +59,6 @@
               <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
             </li>
           </ul>
-
-          <div class="show" *ngIf="episode.shows && episode.shows.length > 0">
-            <a [routerLink]="['/show', episode.shows[0].id]">Find more {{episode.shows[0].name}}</a>
-          </div>
 
         </div>
 
@@ -74,7 +76,9 @@
         </div>
 
         <div class="footer">
-          <button (click)="goBack()">Back</button>
+          <div class="cta">
+            <div class="back" (click)="goBack()">Back</div>
+          </div>
         </div>
 
       </div>

@@ -27,6 +27,14 @@
   margin-bottom: 1.5rem;
 }
 
+.show > .container > .content .main > .meta {
+  margin-bottom: 1.5rem;
+}
+
+.show > .container > .content .main > .meta a {
+  font-weight: 700;
+}
+
 .show > .container > .content .footer {
   flex-grow: 1;
   padding: 24px;

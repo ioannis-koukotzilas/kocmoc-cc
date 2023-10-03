@@ -18,7 +18,7 @@
 }
 
 .episode .content .main {
-  padding: 24px;
+  padding: 20px;
   background-color: rgb(var(--color-primary-900));
 }
 
@@ -30,6 +30,18 @@
 
 .episode .content .main .meta {
   margin-bottom: 1.5rem;
+}
+
+.episode .content .main .meta .location-date {
+  margin-bottom: 1.5rem;
+}
+
+.episode .content .main .meta .producers a {
+  font-weight: 700;
+}
+
+.episode .content .main .meta .show a {
+  font-weight: 700;
 }
 
 .episode .content .main .genres {
@@ -50,16 +62,16 @@
 }
 
 .episode .content .tracklist {
-  padding: 24px;
+  padding: 20px;
 }
 
 .episode .content .tracklist > .title {
-  font-size: var(--font-2xl);
+  font-size: var(--font-3xl);
   margin-bottom: 1.5rem;
 }
 
 .episode .content .tracklist .track {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .episode .content .tracklist .track .artist a {

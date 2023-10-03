@@ -265,23 +265,29 @@ app-episode-detail
 
 @media (min-width: 768px) {
   .episodes-loop {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
   .episodes-loop {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1280px) {
   .episodes-loop {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1536px) {
+  .episodes-loop {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1920px) {
   .episodes-loop {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -445,7 +451,6 @@ app-episode-detail
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 1.5rem;
-  border-top: 1px solid;
 }
 
 /* Logo

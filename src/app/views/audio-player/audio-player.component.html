@@ -26,7 +26,7 @@
     </div>
 
     <div class="live-stream-expandable-panel" *ngIf="liveStreamExpandablePanelActive" [@expandablePanelAnimation]="liveStreamExpandablePanelActive ? 'expanded' : 'collapsed'">
-      <ng-container *ngIf="producer; else noProducer">
+      <!-- <ng-container *ngIf="producer; else noProducer">
         <picture *ngIf="producer.image">
           <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
           <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
@@ -40,7 +40,11 @@
         <p>No producer found</p>
       </ng-template>
 
-      <schedule></schedule>
+      <schedule></schedule> -->
+
+      <div class="container">
+        Live stream data.
+      </div>
 
     </div>
   </ng-container>
@@ -73,42 +77,49 @@
 
     <div class="on-demand-stream-expandable-panel" *ngIf="onDemandStreamExpandablePanelActive" [@expandablePanelAnimation]="onDemandStreamExpandablePanelActive ? 'expanded' : 'collapsed'">
       <ng-container *ngIf="episode">
+
         <div class="grid">
-          <picture *ngIf="episode.image">
-            <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-            <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-            <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
-            <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
-          </picture>
-          <div class="content">
-            <div class="wrapper">
-              <h1 class="title">{{ episode.title }}</h1>
-              <p>{{ episode.date | date:'dd.MM.yy' }} | {{ episode.location }}</p>
-              <div class="description" [innerHTML]="episode.content"></div>
+          <div class="col">
 
-              <div>{{ episode.date | date:'dd.MM.yy' }}</div>
-
-              <ng-container *ngIf="episode.producers?.length">
-                <div class="producers">
-                  <h2>Producers</h2>
-                  <ul>
-                    <li *ngFor="let producer of episode.producers">
-                      <h1>{{ producer.name }}</h1>
-                      <p>{{ producer.description }}</p>
-                      <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}</a>
-                      <picture *ngIf="producer.image">
-                        <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
-                        <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-                        <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
-                        <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
-                      </picture>
-                    </li>
-                  </ul>
-                </div>
-              </ng-container>
-
+            <div class="episode-data">
+              <picture *ngIf="episode.image">
+                <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
+                <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+                <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
+                <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+              </picture>
+              
+              <div class="content">
+                <h1 class="title">Playing now: {{ episode.title }}</h1>
+                <div class="location-date">{{ episode.date | date:'dd.MM.yy' }} | {{ episode.location }}</div>
+                <div class="description" [innerHTML]="episode.content"></div>
+              </div>
             </div>
+
           </div>
+          <div class="col">
+            <schedule></schedule>
+          </div>
+          
+          <!-- <ng-container *ngIf="episode.producers?.length">
+            <div class="producers">
+              <h2>Producers</h2>
+              <ul>
+                <li *ngFor="let producer of episode.producers">
+                  <h1>{{ producer.name }}</h1>
+                  <p>{{ producer.description }}</p>
+                  <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}</a>
+                  <picture *ngIf="producer.image">
+                    <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+                    <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+                    <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
+                    <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+                  </picture>
+                </li>
+              </ul>
+            </div>
+          </ng-container> -->
+
         </div>
       </ng-container>
 

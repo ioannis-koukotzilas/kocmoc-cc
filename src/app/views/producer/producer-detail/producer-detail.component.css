@@ -27,6 +27,14 @@
   margin-bottom: 1.5rem;
 }
 
+.producer > .container > .content .main > .meta {
+  margin-bottom: 1.5rem;
+}
+
+.producer > .container > .content .main > .meta a {
+  font-weight: 700;
+}
+
 .producer > .container > .content .footer {
   flex-grow: 1;
   padding: 24px;

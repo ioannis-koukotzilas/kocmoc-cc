@@ -22,7 +22,7 @@ export class EpisodeListComponent implements OnInit {
   loading: boolean = true;
 
   page: number = 1;
-  perPage: number = 4;
+  perPage: number = 6;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;

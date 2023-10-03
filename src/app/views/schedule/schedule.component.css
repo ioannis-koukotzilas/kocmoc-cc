@@ -1,0 +1,19 @@
+.container {
+  padding: 20px;
+}
+
+h2 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
+  margin-bottom: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgb(var(--color-primary-200));
+}
+
+.summary {
+  font-weight: 700;
+}

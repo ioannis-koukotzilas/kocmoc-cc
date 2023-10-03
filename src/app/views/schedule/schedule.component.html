@@ -1,17 +1,23 @@
-<div *ngIf="scheduleEvents && scheduleEvents.length > 0; else noEvents">
-  <ul>
-    <li *ngFor="let event of scheduleEvents">
-      <h3>{{ event.summary }}</h3>
-      <p><strong>Start:</strong> {{ event.start | date:'medium' }}</p>
-      <p><strong>End:</strong> {{ event.end | date:'medium' }}</p>
-      <p><strong>Description:</strong> {{ event.description }}</p>
-      <p><strong>Location:</strong> {{ event.location }}</p>
-    </li>
-  </ul>
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
 </div>
 
-<ng-template #noEvents>
-  <p>No upcoming events at the moment.</p>
-</ng-template>
+<ng-template #Content>
 
-<p>Schedule Component is here!</p>
+  <div class="container" *ngIf="scheduleEvents && scheduleEvents.length > 0; else noEvents">
+    <h2>Upcoming shows</h2>
+    <ul>
+      <li *ngFor="let event of scheduleEvents">
+        <div class="date">{{ event.start | date:'medium' }} - {{ event.end | date:'medium' }}</div>
+        <div class="summary">{{ event.summary }}</div>
+        <div class="description">{{ event.description }}</div>
+        <!-- <div class="location">{{ event.location }}</div> -->
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noEvents>
+    <p>No upcoming events at the moment.</p>
+  </ng-template>
+
+</ng-template>

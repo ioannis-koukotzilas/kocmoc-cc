@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'genre/:id', component: GenreDetailComponent },
   { path: 'audio-player', component: AudioPlayerComponent },
   { path: 'artist/:id', component: ArtistDetailComponent },
-  { path: '**', redirectTo: '/404' }
+  // { path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

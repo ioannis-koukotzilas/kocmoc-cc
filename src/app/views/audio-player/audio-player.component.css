@@ -115,8 +115,8 @@
 /* On Demand Stream
 --------------------------------------------- */
 
-.audio-player .on-demand-stream {
-}
+/* .audio-player .on-demand-stream {
+} */
 
 .audio-player .on-demand-stream > .container {
   display: flex;
@@ -237,11 +237,21 @@
 
 .on-demand-stream-expandable-panel .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
 }
 
-.on-demand-stream-expandable-panel img {
+@media (min-width: 1280px) {
+  .on-demand-stream-expandable-panel .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+.on-demand-stream-expandable-panel .episode-data {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.on-demand-stream-expandable-panel .episode-data img {
   object-fit: cover;
   max-height: 50vh;
   width: 100%;
@@ -251,11 +261,21 @@
   padding: 24px;
 } */
 
-.on-demand-stream-expandable-panel .content .title {
+.on-demand-stream-expandable-panel .episode-data .content {
+  padding: 20px;
+}
+
+.on-demand-stream-expandable-panel .episode-data .content .title {
   font-size: var(--font-2xl);
   font-weight: var(--font-bold);
   margin-bottom: 1.5rem;
 }
+
+.on-demand-stream-expandable-panel .episode-data .content .location-date {
+  margin-bottom: 1.5rem;
+}
+
+
 
 .live-stream-expandable-panel {
   position: absolute;
@@ -267,26 +287,8 @@
   color: rgb(var(--color-primary-950));
 }
 
-.live-stream-expandable-panel .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.live-stream-expandable-panel img {
-  object-fit: cover;
-  max-height: 50vh;
-  width: 100%;
-}
-
-.live-stream-expandable-panel .content > .wrapper {
-  padding: 24px;
-}
-
-.live-stream-expandable-panel .content .title {
-  font-size: var(--font-2xl);
-  font-weight: var(--font-bold);
-  margin-bottom: 1.5rem;
+.live-stream-expandable-panel > .container {
+  padding: 20px;
 }
 
 /* Progress Bar

@@ -19,15 +19,20 @@
 
         <div class="main">
           <h1 class="title">{{ show.name }}</h1>
+
+          <ng-container *ngFor="let producer of show.producers; let last = last">
+            <div class="meta">With
+              <a [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
+            </div>
+          </ng-container>
+
           <div class="description" *ngIf="show.description" [innerHTML]="show.description"></div>
         </div>
 
-        <ng-container *ngFor="let producer of show.producers; let last = last">
-          <a class="underline" [routerLink]="['/producer', producer.id]">{{ producer.name }}<ng-container *ngIf="!last">,</ng-container></a>
-        </ng-container>
-
         <div class="footer">
-          <button (click)="back()">Back</button>
+          <div class="cta">
+            <div class="back" (click)="back()">Back</div>
+          </div>
         </div>
 
       </div>

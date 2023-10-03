@@ -3,36 +3,42 @@
 </div>
 
 <ng-template #Content>
-
-  <div class="container">
-
-    <h1>Producers</h1>
-
-    <ul class="producers">
-      <li class="producer" *ngFor="let producer of producers">
-
-        <picture class="image" *ngIf="producer.image.url">
-          <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
-          <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-          <source [srcset]="producer.image.size['large']" media="(min-width: 640px)">
-          <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
-        </picture>
-
-        <p>Id: {{producer.id}}</p>
-        <h2>Name: {{producer.name}}</h2>
-        <p>Slug: {{producer.slug}}</p>
-        <p>Description: {{producer.description}}</p>
-        <a [routerLink]="['/producer', producer.id]">{{producer.name}}</a>
-
-      </li>
-    </ul>
-
-    <button *ngIf="hasMore" (click)="loadMore()">Load More</button>
-
-    <div *ngIf="loadingMore">
-      <p>Loading more producers...</p>
+  
+    <header class="header">
+      <div class="container">
+      <h1 class="title">Producers</h1>
     </div>
+    </header>
 
-  </div>
+    <details class="producer" *ngFor="let producer of producers">
+      <summary>{{producer.name}}</summary>
+      <div class="content">
+          <picture class="image" *ngIf="producer.image.url">
+            <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
+            <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+            <source [srcset]="producer.image.size['large']" media="(min-width: 640px)">
+            <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+          </picture>
+          <div class="info">
+              <div class="cv">
+                  <p>{{producer.description}}</p>
+                  <p>Thessaloniki, Greece</p>
+              </div>
+              <div class="radio-show-frequency">
+                  <p>2 per month, 1h</p>
+              </div>
+              <div class="links">
+                <a [routerLink]="['/producer', producer.id]">Find more</a>
+              </div>
+          </div>
+      </div>
+    </details>
+
+    <div class="pagination">
+      <div *ngIf="hasMore && !loadingMore" (click)="loadMore()">Load More</div>
+      <div class="loader" *ngIf="loadingMore">
+        <div class="spinner"></div>
+      </div>
+    </div>
 
 </ng-template>
