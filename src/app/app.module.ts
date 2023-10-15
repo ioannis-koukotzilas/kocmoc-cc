@@ -19,6 +19,8 @@ import { ScheduleComponent } from './views/schedule/schedule.component';
 import { HttpErrorInterceptor } from './core/services/http-error.interceptor.service';
 import { ShowDetailComponent } from './views/show/show-detail/show-detail.component';
 import { ShowListComponent } from './views/show/show-list/show-list.component';
+import { GenreListComponent } from './views/genre/genre-list/genre-list.component';
+import { HomeComponent } from './views/home/home.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { ShowListComponent } from './views/show/show-list/show-list.component';
     ScheduleComponent,
     ShowDetailComponent,
     ShowListComponent,
+    GenreListComponent,
+    HomeComponent,
     
   ],
   imports: [

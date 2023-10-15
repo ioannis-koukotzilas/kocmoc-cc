@@ -24,7 +24,8 @@
 
 .episode .content .main > .title {
   font-size: var(--font-4xl);
-  font-weight: 600;
+  font-weight: var(--font-bold);
+  font-family: var(--font-sans-condensed);
   margin-bottom: 1.5rem;
 }
 
@@ -97,4 +98,18 @@
 .related-episodes > .container > .title {
   font-size: var(--font-4xl);
   margin-bottom: 1.5rem;
+}
+
+
+
+
+
+
+
+
+.logo svg {
+  display: block;
+  width: 10rem;
+  height: auto;
+  fill: rgba(var(--color-primary-100), 1);
 }

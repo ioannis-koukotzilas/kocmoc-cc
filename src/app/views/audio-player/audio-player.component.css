@@ -2,10 +2,9 @@
 # Audio Player
 --------------------------------------------------------------*/
 
-/* .audio-player {
+.audio-player {
   position: relative;
-  z-index: 3;
-} */
+}
 
 /* Stream
 --------------------------------------------- */
@@ -79,6 +78,8 @@
 .audio-player .live-stream .side-actions {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .audio-player .live-stream .side-actions > div {
@@ -181,6 +182,8 @@
 .audio-player .on-demand-stream .side-actions {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .audio-player .on-demand-stream .side-actions > div {
@@ -220,62 +223,82 @@
   transform: rotate(180deg);
 }
 
-/* Progress Bar
+/* Exp Panel
 --------------------------------------------- */
 
 
 
 .on-demand-stream-expandable-panel {
   position: absolute;
-  top: 100%;
+  top: 0;
   left: 0;
   width: 100%;
-  z-index: -1;
-  background-color: rgb(var(--color-primary-100));
-  color: rgb(var(--color-primary-950));
+  /* z-index: -1; */
+  background-color: rgb(var(--color-primary-900));
 }
 
-.on-demand-stream-expandable-panel .grid {
+.on-demand-stream-expandable-panel .wrapper {
+  position: relative;
   display: grid;
 }
 
 @media (min-width: 1280px) {
-  .on-demand-stream-expandable-panel .grid {
+  .on-demand-stream-expandable-panel > .wrapper {
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
   }
 }
 
-.on-demand-stream-expandable-panel .episode-data {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.on-demand-stream-expandable-panel .episode-data img {
+.on-demand-stream-expandable-panel > .wrapper > picture > img {
   object-fit: cover;
   max-height: 50vh;
   width: 100%;
+  opacity: 0.5;
 }
 
-/* .on-demand-stream-expandable-panel .content > .wrapper {
-  padding: 24px;
-} */
+.on-demand-stream-expandable-panel > .wrapper > .channel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgb(var(--color-primary-50));
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+}
 
-.on-demand-stream-expandable-panel .episode-data .content {
+.on-demand-stream-expandable-panel > .wrapper > .channel:after {
+  display: inline-block;
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: orange;
+  border-radius: 50%;
+  animation: onDemandStreamChannel 2s ease-in-out infinite both;
+}
+
+.on-demand-stream-expandable-panel > .wrapper > .content {
   padding: 20px;
 }
 
-.on-demand-stream-expandable-panel .episode-data .content .title {
-  font-size: var(--font-2xl);
+.on-demand-stream-expandable-panel > .wrapper > .content .title {
+  margin-bottom: 1.5rem;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+  font-size: var(--font-3xl);
+}
+
+.on-demand-stream-expandable-panel > .wrapper > .content .location-date {
+  margin-bottom: 1.5rem;
+}
+
+.on-demand-stream-expandable-panel > .wrapper > .content .producers a,
+.on-demand-stream-expandable-panel > .wrapper > .content .shows a {
   font-weight: var(--font-bold);
-  margin-bottom: 1.5rem;
 }
 
-.on-demand-stream-expandable-panel .episode-data .content .location-date {
-  margin-bottom: 1.5rem;
-}
-
-
+/* live */
 
 .live-stream-expandable-panel {
   position: absolute;
@@ -312,70 +335,69 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  background-color: rgb(var(--color-primary-200));
   outline: none;
-  transition: background 0.15s ease-in-out;
+  background-color: transparent;
+  height: 9px;
+  cursor: pointer;
 }
 
 /* The thumb (slider) */
 .progress-bar input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 8px;
-  height: 6px;
-  background-color: rgb(var(--color-primary-700));
+  width: 16px;
+  height: 3px;
+  background-color: rgb(var(--color-primary-50));
   border-radius: 0;
   border: none;
-  cursor: pointer;
-  transition: background 0.15s ease-in-out;
 }
 
 .progress-bar input[type="range"]::-moz-range-thumb {
-  width: 8px;
-  height: 6px;
-  background-color: rgb(var(--color-primary-700));
+  width: 16px;
+  height: 3px;
+  background-color: rgb(var(--color-primary-50));
   border-radius: 0;
   border: none;
-  cursor: pointer;
 }
 
 /* Active portion of the track */
 .progress-bar input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 6px;
+  height: 3px;
   cursor: pointer;
   background: linear-gradient(
     to right,
-    rgb(var(--color-primary-500)) 0%,
+    rgb(var(--color-primary-100)) 0%,
+    rgb(var(--color-primary-100)) var(--slider-percentage),
     rgb(var(--color-primary-500)) var(--slider-percentage),
-    rgb(var(--color-primary-200)) var(--slider-percentage),
-    rgb(var(--color-primary-200)) 100%
+    rgb(var(--color-primary-500)) 100%
   );
 }
 
 .progress-bar input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 6px;
+  height: 3px;
   cursor: pointer;
   background: linear-gradient(
     to right,
-    rgb(var(--color-primary-500)) 0%,
+    rgb(var(--color-primary-100)) 0%,
+    rgb(var(--color-primary-100)) var(--slider-percentage),
     rgb(var(--color-primary-500)) var(--slider-percentage),
-    rgb(var(--color-primary-200)) var(--slider-percentage),
-    rgb(var(--color-primary-200)) 100%
+    rgb(var(--color-primary-500)) 100%
   );
 }
 
 .progress-bar input[type="range"]::-moz-range-progress {
-  background-color: rgb(var(--color-primary-500));
+  background-color: rgb(var(--color-primary-300));
 }
 
 /* Hover effect for better UX */
 .progress-bar input[type="range"]:hover::-webkit-slider-thumb {
-  background-color: rgb(var(--color-primary-900));
+  background-color: rgb(var(--color-primary-50));
+  height: 5px;
 }
 
 .progress-bar input[type="range"]:hover::-moz-range-thumb {
-  background-color: rgb(var(--color-primary-900));
+  background-color: rgb(var(--color-primary-50));
+  height: 5px;
 }

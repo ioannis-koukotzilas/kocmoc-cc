@@ -190,6 +190,49 @@ export class WPService {
     );
   }
 
+  // Genre
+
+  getGenres(page: number, perPage: number): Observable<{ genres: Genre[], headers: HttpHeaders }> {
+    return this.http.get<Genre[]>(`${this.wpJsonBaseUrl}/genre`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString()
+      },
+      observe: 'response'
+    }).pipe(
+      map(({ body, headers }) => ({ genres: body as Genre[], headers })),
+      catchError(this.handleError<{ genres: Genre[], headers: HttpHeaders }>('getGenres', {
+        genres: [],
+        headers: new HttpHeaders()
+      }))
+    );
+  }
+
+  getGenre(id: number): Observable<Genre> {
+    return this.http.get<Genre>(`${this.wpJsonBaseUrl}/genre/${id}`).pipe(
+      catchError(this.handleError<Genre>(`getGenre id=${id}`))
+    );
+  }
+
+  getGenreEpisodes(page: number, perPage: number, id: number[]): Observable<{ episodes: Episode[], headers: HttpHeaders }> {
+    return this.http.get<Episode[]>(`${this.wpJsonBaseUrl}/episode`, {
+      params: {
+        page: page.toString(),
+        per_page: perPage.toString(),
+        genre: id
+      },
+      observe: 'response'
+    }).pipe(
+      map((response: HttpResponse<Episode[]>) => {
+        return { episodes: response.body as Episode[], headers: response.headers };
+      }),
+      catchError(this.handleError<{ episodes: Episode[], headers: HttpHeaders }>('getGenreEpisodes', {
+        episodes: [],
+        headers: new HttpHeaders()
+      }))
+    );
+  }
+
   // Artists
 
   getArtists(perPage: number, page: number): Observable<{ artists: Artist[], headers: HttpHeaders }> {
@@ -257,18 +300,13 @@ export class WPService {
       );
   }
 
-  getGenres(): Observable<Genre[]> {
-    return this.http.get<Genre[]>(`${this.wpJsonBaseUrl}/genre`)
-      .pipe(
-        catchError(this.handleError<Genre[]>('getGenres', []))
-      );
-  }
+  // getGenres(): Observable<Genre[]> {
+  //   return this.http.get<Genre[]>(`${this.wpJsonBaseUrl}/genre`)
+  //     .pipe(
+  //       catchError(this.handleError<Genre[]>('getGenres', []))
+  //     );
+  // }
 
-  getGenre(id: number): Observable<Genre> {
-    return this.http.get<Genre>(`${this.wpJsonBaseUrl}/genre/${id}`)
-      .pipe(
-        catchError(this.handleError<Genre>(`getGenere id=${id}`))
-      );
-  }
+
 
 }

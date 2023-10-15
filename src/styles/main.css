@@ -95,6 +95,7 @@ picture {
 /* Links
 --------------------------------------------- */
 a {
+  cursor: pointer;
   display: inline-block;
   color: rgb(var(--color-primary-50));
   text-decoration: none;
@@ -299,6 +300,7 @@ app-episode-detail
 .episodes-loop .episode {
   display: flex;
   flex-direction: column;
+  border: 1px solid;
 }
 
 /* Episode Header
@@ -306,6 +308,7 @@ app-episode-detail
 
 .episodes-loop .episode .header {
   position: relative;
+  padding: 6px;
 }
 
 .episodes-loop .episode .header img {
@@ -371,10 +374,10 @@ app-episode-detail
 .episodes-loop .episode .body {
   flex-grow: 1;
   padding: 20px;
-  background-color: rgba(var(--color-primary-900), 1);
+  /* background-color: rgba(var(--color-primary-900), 1); */
 }
 
-.episodes-loop .episode.loading .body,
+/* .episodes-loop .episode.loading .body,
 .episodes-loop .episode.playing .body {
   background-color: rgba(var(--color-primary-50), 1);
   color: rgba(var(--color-primary-950), 1);
@@ -382,7 +385,7 @@ app-episode-detail
 
 .episodes-loop .episode.active:not(.loading):not(.playing) .body {
   background-color: rgba(var(--color-primary-800), 1);
-}
+} */
 
 .episodes-loop .episode .body .meta {
   display: flex;
@@ -395,7 +398,9 @@ app-episode-detail
 
 .episodes-loop .episode .body .title {
   font-size: var(--font-2xl);
-  font-weight: 600;
+  font-weight: var(--font-bold);
+  font-family: var(--font-sans-condensed);
+  line-height: var(--leading-tight);
 }
 
 /* Episode Footer
@@ -403,23 +408,23 @@ app-episode-detail
 
 .episodes-loop .episode .footer {
   padding: 20px;
-  background-color: rgba(var(--color-primary-900), 1);
+  /* background-color: rgba(var(--color-primary-900), 1); */
 }
 
-.episodes-loop .episode.loading .footer,
+/* .episodes-loop .episode.loading .footer,
 .episodes-loop .episode.playing .footer {
   background-color: rgba(var(--color-primary-50), 1);
   color: rgba(var(--color-primary-950), 1);
-}
+} */
 
-.episodes-loop .episode.loading .footer a,
+/* .episodes-loop .episode.loading .footer a,
 .episodes-loop .episode.playing .footer a {
   color: rgba(var(--color-primary-950), 1);
 }
 
 .episodes-loop .episode.active:not(.loading):not(.playing) .footer {
   background-color: rgba(var(--color-primary-800), 1);
-}
+} */
 
 .episodes-loop .episode .footer .genres {
   display: flex;
@@ -477,4 +482,33 @@ app-episode-detail
 
 .site-footer .cc {
   font-size: var(--font-size-sm);
+}
+
+/*--------------------------------------------------------------
+# Utilities
+--------------------------------------------------------------*/
+
+/* Pagination
+--------------------------------------------- */
+
+.pagination > .load-more {
+  cursor: pointer;
+  border: 1px solid;
+  padding: 0.25rem 0.75rem;
+  font-weight: var(--font-medium);
+}
+
+.pagination > .load-more:hover,
+.pagination > .load-more.loading-more {
+  color: rgb(var(--color-primary-200));
+}
+
+.test {
+  background: rgb(var(--color-primary-950));
+  position: fixed;
+  width: 100%;
+  height: calc(100vh - 3rem - 2.65rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

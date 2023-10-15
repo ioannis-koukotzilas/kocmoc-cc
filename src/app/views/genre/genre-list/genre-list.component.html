@@ -1,0 +1,38 @@
+<div *ngIf="loading; else Content">
+  <p>Loading...</p>
+</div>
+
+<ng-template #Content>
+
+  <div class="genres">
+    <div class="container">
+
+      <header class="header">
+        <h1 class="title">Explore</h1>
+        <div class="description">Tune in live or listen back to our music archive.</div>
+      </header>
+
+      <ul class="genres-parent" *ngIf="parentGenres && parentGenres.length > 0">
+        <li class="genre" *ngFor="let genre of parentGenres">
+          <div class="wrapper">
+            <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+
+            <div class="toggle-children" [class.active]="showChildren.includes(genre.id) ? true : false" *ngIf="genre.children && genre.children.length" (click)="toggleChildren(genre.id)">
+              <span class="symbol">expand_more</span>
+            </div>
+          </div>
+
+          <ng-container *ngIf="showChildren.includes(genre.id)">
+            <ul class="genres-child">
+              <li class="genre" *ngFor="let childGenre of genre.children">
+                <a [routerLink]="['/genre', childGenre.id]">{{ childGenre.name }}</a>
+              </li>
+            </ul>
+          </ng-container>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</ng-template>

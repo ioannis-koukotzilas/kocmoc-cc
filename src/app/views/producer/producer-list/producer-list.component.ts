@@ -18,10 +18,14 @@ export class ProducerListComponent {
   loading: boolean = true;
 
   page: number = 1;
-  perPage: number = 4;
+  perPage: number = 1;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;
+
+  filteredProducers: Producer[] = [];
+  filter: 'resident' | 'guest' = 'resident';
+
 
   constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService) { }
 
@@ -37,8 +41,15 @@ export class ProducerListComponent {
   getProducers(page: number, perPage: number) {
     this.wpService.getProducers(page, perPage).pipe(
       map(data => {
-        const producers = data.producers.map(producer => new Producer(producer));
+        let producers = data.producers.map(producer => new Producer(producer));
+
+        // producers = producers.filter(producer => producer.producerType === 'resident' && producer.producerStatus === 'active');
+
+        producers = producers.filter(producer => producer.producerStatus === 'active');
+
         this.producers = [...this.producers, ...producers];
+
+        this.filterProducers();
 
         const totalPages = Number(data.headers.get('X-WP-TotalPages'));
         if (page >= totalPages) {
@@ -63,6 +74,15 @@ export class ProducerListComponent {
         console.log('Get producers completed.');
       }
     });
+  }
+
+  filterProducers() {
+    this.filteredProducers = this.producers.filter(producer => producer.producerType === this.filter);
+  }
+
+  setFilter(filterType: 'resident' | 'guest') {
+    this.filter = filterType;
+    this.filterProducers();
   }
 
   loadMore() {

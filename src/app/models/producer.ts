@@ -6,6 +6,8 @@ export class Producer {
     slug: string;
     name: string;
     description: string;
+    producerType: string;
+    producerStatus: string;
     image: {
         url: string,
         alt: string,
@@ -27,6 +29,8 @@ export class Producer {
         this.slug = data.slug;
         this.name = data.name;
         this.description = data.description;
+        this.producerType = data.acf.producer_type;
+        this.producerStatus = data.acf.producer_status;
         this.image = {
             url: data.image.url,
             alt: data.image.alt,

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: 'img[appLazyLoad], source[appLazyLoad]'
@@ -21,5 +21,13 @@ export class LazyLoadDirective {
       });
     });
     obs.observe(this.el.nativeElement);
+  }
+
+  @HostListener('load', ['$event'])
+  onLoad(event: Event) {
+    const img = this.el.nativeElement.tagName === 'IMG';
+    if (img) {
+      this.renderer.setStyle(this.el.nativeElement, 'filter', 'none');
+    }
   }
 }

@@ -9,6 +9,7 @@ import { ProducerListComponent } from './views/producer/producer-list/producer-l
 import { ProducerDetailComponent } from './views/producer/producer-detail/producer-detail.component';
 import { ShowListComponent } from './views/show/show-list/show-list.component';
 import { ShowDetailComponent } from './views/show/show-detail/show-detail.component';
+import { GenreListComponent } from './views/genre/genre-list/genre-list.component';
 
 const routes: Routes = [
   { path: 'producers', component: ProducerListComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'episode/:id', component: EpisodeDetailComponent },
   { path: 'shows', component: ShowListComponent },
   { path: 'show/:id', component: ShowDetailComponent },
+  { path: 'genres', component: GenreListComponent },
   { path: 'genre/:id', component: GenreDetailComponent },
   { path: 'audio-player', component: AudioPlayerComponent },
   { path: 'artist/:id', component: ArtistDetailComponent },

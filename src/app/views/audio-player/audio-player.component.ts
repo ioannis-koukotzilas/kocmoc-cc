@@ -7,6 +7,7 @@ import { StreamInfoService } from 'src/app/core/services/stream-info.service';
 import { Producer } from 'src/app/models/producer';
 import { WPService } from 'src/app/core/services/wp/wp.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { Router } from '@angular/router';
 
 const STREAM_TYPE_LIVE = 'liveStream';
 
@@ -26,10 +27,10 @@ const STREAM_TYPE_LIVE = 'liveStream';
         style({
           transform: 'translateY(-100%)'
         }),
-        animate('200ms ease-in-out')
+        animate('300ms ease-in-out')
       ]),
       transition('expanded => void', [
-        animate('200ms ease-in-out', style({
+        animate('300ms ease-in-out', style({
           transform: 'translateY(-100%)'
         }))
       ])
@@ -60,7 +61,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
   @ViewChild('audioPlayer') audioPlayer: ElementRef = {} as ElementRef;
 
-  constructor(public audioPlayerService: AudioPlayerService, private streamInfoService: StreamInfoService, private wpService: WPService) { }
+  constructor(public audioPlayerService: AudioPlayerService, private streamInfoService: StreamInfoService, private wpService: WPService, private router: Router) { }
 
   ngOnInit() {
     this.subscriptions.add(
@@ -190,6 +191,19 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
       this.liveStreamExpandablePanelActive = false;
       this.onDemandStreamExpandablePanelActive = false;
     }
+  }
+
+  closePanel() {
+    this.liveStreamExpandablePanelActive = false;
+    this.onDemandStreamExpandablePanelActive = false;
+  }
+
+  navigateAfterClosePanel(route: any[]): void {
+    this.closePanel();
+  
+    setTimeout(() => {
+      this.router.navigate(route);
+    }, 300);
   }
 
   private matchProducerWithCentovaArtist() {

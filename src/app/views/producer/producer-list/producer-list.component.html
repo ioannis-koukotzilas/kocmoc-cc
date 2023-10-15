@@ -10,7 +10,12 @@
     </div>
     </header>
 
-    <details class="producer" *ngFor="let producer of producers">
+    <div class="filter">
+      <div (click)="setFilter('resident')" [class.active]="filter === 'resident'">Residents</div>
+      <div (click)="setFilter('guest')" [class.active]="filter === 'guest'">Guests</div>
+    </div>
+
+    <details class="producer" *ngFor="let producer of filteredProducers">
       <summary>{{producer.name}}</summary>
       <div class="content">
           <picture class="image" *ngIf="producer.image.url">
