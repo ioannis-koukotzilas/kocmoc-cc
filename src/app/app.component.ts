@@ -1,20 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-
-import { WPService } from './core/services/wp/wp.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  templateUrl: './app.component.html'
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-  title = 'KOCMOC.CC';
-  posts: any[] = [];
+  constructor() { }
 
-  constructor(private wpService: WPService) { }
-
-  ngOnInit(): void {
-  }
 }

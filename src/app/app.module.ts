@@ -21,6 +21,8 @@ import { ShowDetailComponent } from './views/show/show-detail/show-detail.compon
 import { ShowListComponent } from './views/show/show-list/show-list.component';
 import { GenreListComponent } from './views/genre/genre-list/genre-list.component';
 import { HomeComponent } from './views/home/home.component';
+import { HeaderComponent } from './views/header/header.component';
+import { FooterComponent } from './views/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,8 @@ import { HomeComponent } from './views/home/home.component';
     ShowListComponent,
     GenreListComponent,
     HomeComponent,
-    
+    HeaderComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

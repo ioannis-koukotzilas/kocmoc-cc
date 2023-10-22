@@ -1,3 +1,56 @@
-<p>home works!</p>
+<div class="swiper">
+  <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="content">
+          <div class="wrapper">
+            <div class="title">LXXXVIII w/ Source W78</div>
+            <div class="subtitle">100% new original material.</div>
+          </div>
+        </div>
+        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Darius_Jones.jpg" alt="">
+      </div>
+      <div class="swiper-slide">
+        <div class="content">
+          <div class="wrapper">
+            <div class="title">LXXXVIII w/ Source W78</div>
+            <div class="subtitle">100% new original material.</div>
+          </div>
+        </div>
+        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Idris_Afro1.jpg" alt="">
+      </div>
+      <div class="swiper-slide">
+        <div class="content">
+          <div class="wrapper">
+            <div class="title">Art Ensemble of Chicago with Fontella Bass</div>
+            <div class="subtitle">The music works very much like a film, in sequences.</div>
+          </div>
+        </div>
+        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Marshall.jpg" alt="">
+      </div>
+      <div class="swiper-slide">
+        <div class="content">
+          <div class="wrapper">
+            <div class="title">LXXXVIII w/ Source W78</div>
+            <div class="subtitle">100% new original material.</div>
+          </div>
+        </div>
+        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/07/Jantra.jpg" alt="">
+      </div>
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+
+</div>
+
+
+{{homePage?.id}}
+
+{{homePage?.content}}
+
+<div *ngFor="let highlight of homePage?.highlights">
+  <img *ngIf="highlight.highlightImage" [src]="highlight.highlightImage.url" alt="Highlight Image">
+  <h2>{{ highlight.highlightTitle }}</h2>
+</div>
 
 <schedule></schedule>
+

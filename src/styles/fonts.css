@@ -13,50 +13,179 @@
   src: url('../assets/fonts/material-symbols/material-symbols-outlined.woff2') format('woff2');
 }
 
-/* Lars
+/* GT-America Standard
 --------------------------------------------- */
 
 @font-face {
-  font-family: 'Lars';
+  font-family: 'GT-America Standard';
   font-style: normal;
   font-weight: 400;
-  src: url('../assets/fonts/lars/LarsGreek-Regular.woff2') format('woff2');
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Regular.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Regular.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Lars';
+  font-family: 'GT-America Standard';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Regular-Italic.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Regular-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Standard';
   font-style: normal;
   font-weight: 500;
-  src: url('../assets/fonts/lars/LarsGreek-Medium.woff2') format('woff2');
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Medium.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Medium.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Lars';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../assets/fonts/lars/LarsGreek-Bold.woff2') format('woff2');
+  font-family: 'GT-America Standard';
+  font-style: italic;
+  font-weight: 500;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Medium-Italic.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Medium-Italic.woff2') format('woff2');
 }
 
-/* Lars Condensed
+@font-face {
+  font-family: 'GT-America Standard';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Bold.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Standard';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Bold-Italic.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Bold-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Standard';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Black.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Black.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Standard';
+  font-style: italic;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Black-Italic.woff') format('woff'), url('../assets/fonts/gt-america/standard/GT-America-LCGV-Standard-Black-Italic.woff2') format('woff2');
+}
+
+/* GT-America Condenesed
 --------------------------------------------- */
 
 @font-face {
-  font-family: 'Lars Condensed';
+  font-family: 'GT-America Condensed';
   font-style: normal;
   font-weight: 400;
-  src: url('../assets/fonts/lars/LarsGreek-RegularCondensed.woff2') format('woff2');
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Regular.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Regular.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Lars Condensed';
+  font-family: 'GT-America Condensed';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Regular-Italic.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Regular-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Condensed';
   font-style: normal;
   font-weight: 500;
-  src: url('../assets/fonts/lars/LarsGreek-MediumCondensed.woff2') format('woff2');
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Medium.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Medium.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Lars Condensed';
+  font-family: 'GT-America Condensed';
+  font-style: italic;
+  font-weight: 500;
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Medium-Italic.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Medium-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Condensed';
   font-style: normal;
   font-weight: 700;
-  src: url('../assets/fonts/lars/LarsGreek-BoldCondensed.woff2') format('woff2');
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Bold.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Condensed';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Bold-Italic.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Bold-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Condensed';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Black.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Black.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Condensed';
+  font-style: italic;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Black-Italic.woff') format('woff'), url('../assets/fonts/gt-america/condensed/GT-America-LCGV-Condensed-Black-Italic.woff2') format('woff2');
+}
+
+/* GT-America Mono
+--------------------------------------------- */
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Regular.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Regular-Italic.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Regular-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Medium.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: italic;
+  font-weight: 500;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Medium-Italic.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Medium-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Bold.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Bold-Italic.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Bold-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Black.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Black.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America Mono';
+  font-style: italic;
+  font-weight: 900;
+  src: url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Black-Italic.woff') format('woff'), url('../assets/fonts/gt-america/mono/GT-America-LCGV-Mono-Black-Italic.woff2') format('woff2');
 }

@@ -10,8 +10,10 @@ import { ProducerDetailComponent } from './views/producer/producer-detail/produc
 import { ShowListComponent } from './views/show/show-list/show-list.component';
 import { ShowDetailComponent } from './views/show/show-detail/show-detail.component';
 import { GenreListComponent } from './views/genre/genre-list/genre-list.component';
+import { HomeComponent } from './views/home/home.component';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: 'producers', component: ProducerListComponent },
   { path: 'producer/:id', component: ProducerDetailComponent },
   { path: 'episodes', component: EpisodeListComponent },

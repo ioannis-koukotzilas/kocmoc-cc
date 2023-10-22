@@ -8,6 +8,7 @@ import { Artist } from 'src/app/models/artist';
 import { Show } from 'src/app/models/show';
 import { Tracklist } from 'src/app/models/tracklist';
 import { Producer } from 'src/app/models/producer';
+import { HomePage } from 'src/app/models/homePage';
 
 @Injectable({
   providedIn: 'root'
@@ -286,6 +287,14 @@ export class WPService {
       }
     }).pipe(
       catchError(this.handleError<Genre[]>('getActiveGenres', []))
+    );
+  }
+
+  // Pages
+
+  getHomePage(id: number): Observable<HomePage> {
+    return this.http.get<HomePage>(`${this.wpJsonBaseUrl}/pages/${id}`).pipe(
+      catchError(this.handleError<HomePage>(`getPage id=${id}`))
     );
   }
 
