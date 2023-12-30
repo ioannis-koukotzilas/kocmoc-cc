@@ -13,6 +13,68 @@
   src: url('../assets/fonts/material-symbols/material-symbols-outlined.woff2') format('woff2');
 }
 
+/* Graphik Standard
+--------------------------------------------- */
+
+@font-face {
+  font-family: 'Graphik Standard';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/graphik/standard/Graphik-Regular-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Standard';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/graphik/standard/Graphik-Medium-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Standard';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../assets/fonts/graphik/standard/Graphik-Semibold-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Standard';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../assets/fonts/graphik/standard/Graphik-Bold-Cy-Gr-Web.woff2') format('woff2');
+}
+
+/* Graphik Condensed
+--------------------------------------------- */
+
+@font-face {
+  font-family: 'Graphik Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/graphik/condensed/GraphikCondensed-Regular-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Condensed';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../assets/fonts/graphik/condensed/GraphikCondensed-Medium-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Condensed';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../assets/fonts/graphik/condensed/GraphikCondensed-Semibold-Cy-Gr-Web.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Graphik Condensed';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../assets/fonts/graphik/condensed/GraphikCondensed-Bold-Cy-Gr-Web.woff2') format('woff2');
+}
+
 /* GT-America Standard
 --------------------------------------------- */
 

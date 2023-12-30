@@ -3,5 +3,5 @@
   <div class="loader" *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamLoading$ | async)">
     <div class="spinner"></div>
   </div>
-  <div class="symbol" *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)">pause</div>
+  <div class="symbol" *ngIf="(currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async) && !(onDemandStreamLoading$ | async)">pause</div>
 </div>

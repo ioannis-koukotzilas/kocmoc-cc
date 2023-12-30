@@ -23,6 +23,7 @@ import { GenreListComponent } from './views/genre/genre-list/genre-list.componen
 import { HomeComponent } from './views/home/home.component';
 import { HeaderComponent } from './views/header/header.component';
 import { FooterComponent } from './views/footer/footer.component';
+import { IdentityLoaderComponent } from './views/identity-loader/identity-loader.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { FooterComponent } from './views/footer/footer.component';
     HomeComponent,
     HeaderComponent,
     FooterComponent,
+    IdentityLoaderComponent,
   ],
   imports: [
     BrowserModule,

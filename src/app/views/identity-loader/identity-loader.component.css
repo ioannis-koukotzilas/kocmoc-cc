@@ -1,0 +1,16 @@
+.identity-loader {
+  background: rgb(var(--color-primary-950));
+  position: fixed;
+  width: 100%;
+  height: calc(100vh - 3rem - 2.65rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.identity-loader .logo svg {
+  display: block;
+  width: clamp(4.236rem, calc(4.236rem + ((1vw - 0.2rem) * 1.87)), 6.854rem);
+  height: auto;
+  fill: rgba(var(--color-primary-100), 1);
+}

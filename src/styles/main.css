@@ -35,6 +35,7 @@ textarea {
   font-weight: var(--font-normal);
   line-height: var(--leading-base);
   color: rgb(var(--color-primary-50));
+  font-feature-settings: 'pnum' 1,'kern' 1,'ss01' 1,'ss03' 1;
 }
 
 h1,
@@ -465,12 +466,3 @@ app-episode-detail
   color: rgb(var(--color-primary-200));
 }
 
-.test {
-  background: rgb(var(--color-primary-950));
-  position: fixed;
-  width: 100%;
-  height: calc(100vh - 3rem - 2.65rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

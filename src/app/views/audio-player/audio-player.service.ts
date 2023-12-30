@@ -38,7 +38,7 @@ export class AudioPlayerService {
 
   // Random Play
   private randomPlayCount: number = 0;
-  private readonly MAX_RANDOM_PLAYS = 2;
+  private readonly MAX_RANDOM_PLAYS = 6;
   private playedEpisodes: number[] = [];
 
   constructor(private cloudStorageService: CloudStorageService, private wpService: WPService) {
@@ -47,10 +47,10 @@ export class AudioPlayerService {
 
     this.onDemandStreamAudio.addEventListener('ended', () => {
       if (this.randomPlayCount < this.MAX_RANDOM_PLAYS) {
-        this.playRandomTrackFromSameGenre();
+        this.onDemandStreamPlayRandomTrackFromTheSameGenre();
       } else {
-        this.randomPlayCount = 0; // Reset the play count
-        this.liveStreamPlay();  // Play the live stream
+        this.randomPlayCount = 0;
+        this.liveStreamPlay();
       }
     });
   }
@@ -160,7 +160,6 @@ export class AudioPlayerService {
       }
     }, LOAD_DELAY_MS);
 
-    // Listeners for time update and duration change
     const stopListening = new Subject<void>();
     this.onDemandStreamAudio.addEventListener('timeupdate', () => {
       this.onDemandStreamCurrentTime.next(this.onDemandStreamAudio.currentTime);
@@ -192,21 +191,33 @@ export class AudioPlayerService {
     }
   }
 
-  // Progress b
+  onDemandStreamUpdateFromScrub(time: number) {
+    const streamPlaying = !this.onDemandStreamAudio.paused;
 
-  onDemandStreamSetCurrentTime(time: number) {
     this.onDemandStreamAudio.currentTime = time;
-  }
-
-  onDemandStreamUpdateCurrentTime(time: number) {
     this.onDemandStreamCurrentTime.next(time);
+
+    if (streamPlaying) {
+      this.onDemandStreamLoading.next(true);
+      const resumePlayback = () => {
+        this.onDemandStreamAudio.play();
+        this.onDemandStreamLoading.next(false);
+        this.onDemandStreamAudio.removeEventListener('canplaythrough', resumePlayback);
+      };
+      this.onDemandStreamAudio.addEventListener('canplaythrough', resumePlayback);
+    }
   }
 
-  private playRandomTrackFromSameGenre = () => {
+  private onDemandStreamPlayRandomTrackFromTheSameGenre = () => {
     const currentEpisodeId = this.currentOnDemandStream.value?.id;
     const currentGenreIds = this.currentOnDemandStream.value?.genre;
 
-    if (!currentGenreIds || !currentGenreIds.length) return;
+    if (!currentGenreIds || !currentGenreIds.length) {
+      this.randomPlayCount = 0;
+      this.playedEpisodes = [];
+      this.liveStreamPlay();
+      return;
+    }
 
     this.wpService.getActiveGenres(1, 100)
       .pipe(
@@ -221,7 +232,7 @@ export class AudioPlayerService {
           }
         }),
         map(episodes => episodes.filter(episode =>
-          episode.id !== currentEpisodeId && 
+          episode.id !== currentEpisodeId &&
           !this.playedEpisodes.includes(episode.id) &&  // Exclude already played episodes
           episode.genre && episode.genre.some(genreId => currentGenreIds.includes(genreId))
         )),
@@ -235,28 +246,14 @@ export class AudioPlayerService {
         if (matchingEpisodes && matchingEpisodes.length) {
           const randomEpisode = matchingEpisodes[Math.floor(Math.random() * matchingEpisodes.length)];
           console.log('Randomly Selected Episode:', randomEpisode);
-          this.playedEpisodes.push(randomEpisode.id);  // Add the episode to the played list
+          this.playedEpisodes.push(randomEpisode.id);
           this.randomPlayCount++;
           this.onDemandStreamPlay(randomEpisode);
         } else {
           this.randomPlayCount = 0;
-          this.playedEpisodes = [];  // Reset the list if no more matching episodes are available
+          this.playedEpisodes = [];
           this.liveStreamPlay();
         }
       });
   };
-
-  cleanup() {
-    this.onDestroy.next();
-    this.onDestroy.complete();
-  }
-
-
-
- 
-  
-
-
-  
-
 }

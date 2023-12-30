@@ -11,6 +11,7 @@ import { ShowListComponent } from './views/show/show-list/show-list.component';
 import { ShowDetailComponent } from './views/show/show-detail/show-detail.component';
 import { GenreListComponent } from './views/genre/genre-list/genre-list.component';
 import { HomeComponent } from './views/home/home.component';
+import { ScheduleComponent } from './views/schedule/schedule.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'genre/:id', component: GenreDetailComponent },
   { path: 'audio-player', component: AudioPlayerComponent },
   { path: 'artist/:id', component: ArtistDetailComponent },
+  { path: 'schedule', component: ScheduleComponent },
   // { path: '**', redirectTo: '/404' }
 ];
 

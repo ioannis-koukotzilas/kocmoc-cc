@@ -107,9 +107,3 @@
 
 
 
-.logo svg {
-  display: block;
-  width: 10rem;
-  height: auto;
-  fill: rgba(var(--color-primary-100), 1);
-}

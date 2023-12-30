@@ -1,9 +1,13 @@
+import { Producer } from "./producer";
+
 export class ScheduleEvent {
   summary: string;
   start: Date;
   end: Date;
   description: string;
   location: string;
+
+  producers?: Producer[];
 
   constructor(data: any) {
     this.summary = data.summary;

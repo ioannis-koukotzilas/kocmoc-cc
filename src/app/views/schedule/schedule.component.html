@@ -1,23 +1,40 @@
-<div *ngIf="loading; else Content">
-  <p>Loading...</p>
-</div>
+<ng-container *ngIf="loading; else Content">
+  <identity-loader></identity-loader>
+</ng-container>
 
 <ng-template #Content>
+  <div class="container" *ngIf="scheduleEvents && scheduleEvents.length > 0; else noData">
 
-  <div class="container" *ngIf="scheduleEvents && scheduleEvents.length > 0; else noEvents">
-    <h2>Upcoming shows</h2>
-    <ul>
-      <li *ngFor="let event of scheduleEvents">
-        <div class="date">{{ event.start | date:'medium' }} - {{ event.end | date:'medium' }}</div>
-        <div class="summary">{{ event.summary }}</div>
+    <header class="header">
+      <h1 class="title">Schedule</h1>
+      <div class="meta">Time Zone: {{ timeZone }} | Last Updated: {{ updated }}</div>
+    </header>
+
+    <ul class="events">
+      <li class="event" *ngFor="let event of scheduleEvents">
+        <time class="date">
+          {{ event.start | date:'EEE MMM d, y, HH:mm' }} - 
+          {{ event.end | date:'EEE MMM d, y, HH:mm' }}
+      </time>      
+
+        <div class="producer" *ngIf="event.producers && event.producers.length > 0; else eventSummary">
+          <ng-container *ngFor="let producer of event.producers; let isLast = last">
+            <strong><a [routerLink]="['/producer', producer.id]">{{ producer.name }}</a><ng-container *ngIf="!isLast">, </ng-container></strong>
+          </ng-container>
+        </div>
+
+        <ng-template #eventSummary>
+          <div class="producer">{{ event.summary }}</div>
+        </ng-template>
+
+        <div class="location">{{ event.location }}</div>
+
         <div class="description">{{ event.description }}</div>
-        <!-- <div class="location">{{ event.location }}</div> -->
       </li>
     </ul>
   </div>
 
-  <ng-template #noEvents>
-    <p>No upcoming events at the moment.</p>
+  <ng-template #noData>
+    <div class="no-data">No data available at the moment.</div>
   </ng-template>
-
 </ng-template>

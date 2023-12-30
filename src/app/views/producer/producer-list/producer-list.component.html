@@ -1,6 +1,6 @@
-<div *ngIf="loading; else Content">
-  <p>Loading...</p>
-</div>
+<ng-container *ngIf="loading; else Content">
+  <identity-loader></identity-loader>
+</ng-container>
 
 <ng-template #Content>
   

@@ -14,7 +14,7 @@
             <div class="symbol">{{ (liveStreamPlaying$ | async) ? 'stop' : 'play_arrow' }}</div>
           </ng-template>
 
-          <div class="stream-info">{{liveStreamEpisode?.artist}} - {{liveStreamEpisode?.title}}</div>
+          <div class="stream-info">{{liveStreamEpisode?.title}}</div>
         </div>
 
         <div class="side-actions">
@@ -26,25 +26,47 @@
     </div>
 
     <div class="live-stream-expandable-panel" *ngIf="liveStreamExpandablePanelActive" [@expandablePanelAnimation]="liveStreamExpandablePanelActive ? 'expanded' : 'collapsed'">
-      <!-- <ng-container *ngIf="producer; else noProducer">
+      <ng-container *ngIf="producer; else noProducer">
+
+        <div class="wrapper">
+
+        <div class="channel">Live Now</div>
+
         <picture *ngIf="producer.image">
           <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
           <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
           <source [srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
           <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
         </picture>
-        <h1>{{ producer.name }}</h1>
-        <p>{{ producer.description }}</p>
+
+        <div class="content">
+          <div class="title"><a (click)="navigateAfterClosePanel(['/producer', producer.id])"> {{ producer.name }}</a></div>
+          
+          <div class="shows" *ngIf="producer.shows && producer.shows.length">
+            <span>Resident host on </span>
+            <ng-container *ngFor="let show of producer.shows; let last = last">
+              <strong><a (click)="navigateAfterClosePanel(['/show', show.id])">{{ show.name }}<ng-container *ngIf="!last">, </ng-container></a></strong>
+            </ng-container>
+          </div>
+
+          <div class="description">{{ producer.description }}</div>
+
+          <a class="symbol-hyperlink" (click)="navigateAfterClosePanel(['/producer', producer.id])">More <span class="symbol">navigate_next</span></a>
+
+        </div>
+
+        </div>
+
       </ng-container>
       <ng-template #noProducer>
         <p>No producer found</p>
       </ng-template>
 
-      <schedule></schedule> -->
+      <!-- <schedule></schedule>
 
       <div class="container">
         Live stream data.
-      </div>
+      </div> -->
 
     </div>
   </ng-container>
@@ -80,12 +102,21 @@
       <ng-container *ngIf="episode">
         
         <div class="wrapper">
+
+          
+          
       
           <picture *ngIf="episode.image">
             <source [srcset]="episode.image.size['medium']" media="(max-width: 424px)">
             <source [srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
             <source [srcset]="episode.image.size['2048x2048']" media="(min-width: 640px)">
             <img [src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+
+            <div class="loader-wrapper">
+              <div class="loader" *ngIf="(onDemandStreamLoading$ | async)">
+                <div class="spinner"></div>
+              </div>
+            </div>
           </picture>
 
           <div class="channel">Archive</div>
