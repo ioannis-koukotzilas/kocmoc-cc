@@ -3,6 +3,7 @@ import { Observable, Subject, catchError, map, mergeMap, of, takeUntil } from 'r
 import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Genre } from 'src/app/models/genre';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-genre-list',
@@ -14,6 +15,7 @@ export class GenreListComponent {
   private unsubscribe$ = new Subject<void>();
 
   genres: Genre[] = [];
+  parentGenres: Genre[] = [];
 
   loading: boolean = true;
 
@@ -22,11 +24,7 @@ export class GenreListComponent {
 
   hasMore: boolean = true;
 
-  parentGenres: Genre[] = [];
-
-  showChildren: number[] = [];
-
-  constructor(private wpService: WPService) { }
+  constructor(private wpService: WPService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.getGenres(this.page);
@@ -86,11 +84,7 @@ export class GenreListComponent {
     });
   }
 
-  toggleChildren(genreId: number) {
-    if (this.showChildren.includes(genreId)) {
-      this.showChildren = this.showChildren.filter(id => id !== genreId);
-    } else {
-      this.showChildren.push(genreId);
-    }
+  activeRoute(route: string): boolean {
+    return this.router.url.includes(route);
   }
 }

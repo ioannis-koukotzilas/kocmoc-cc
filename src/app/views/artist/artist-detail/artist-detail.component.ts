@@ -38,7 +38,6 @@ export class ArtistDetailComponent implements OnInit {
   loadingMore: boolean = false;
 
   expandedDescription: boolean = false;
-  truncatedDescription: string = '';
 
   constructor(private route: ActivatedRoute, private audioPlayerService: AudioPlayerService, private wpService: WPService, private lastFmService: LastFmService) { }
 
@@ -59,7 +58,7 @@ export class ArtistDetailComponent implements OnInit {
         return this.wpService.getArtist(id).pipe(
           catchError(error => {
             console.error('Error getting artist from WPService:', error);
-            return of(null); 
+            return of(null);
           })
         );
       }),
@@ -73,7 +72,7 @@ export class ArtistDetailComponent implements OnInit {
             }),
             catchError(error => {
               console.log('Error getting artist metadata from Last.fm:', error);
-              return of(artist);  // If there's an error, continue with the original artist
+              return of(artist);
             })
           );
         } else {
@@ -84,23 +83,20 @@ export class ArtistDetailComponent implements OnInit {
     ).subscribe({
       next: (artist) => {
         if (artist) {
+          this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0, () => {
+            this.loading = false;
+          });
+        } else {
           this.loading = false;
-          this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0);
         }
       },
       error: (error) => {
         console.error('Main observable error:', error);
-      },
-      complete: () => {
-        console.log('Episode detail component unsubscription completed.');
       }
     });
   }
-  
 
-
-
-  getRelatedArtistEpisodes(page: number, perPage: number, id: number) {
+  getRelatedArtistEpisodes(page: number, perPage: number, id: number, operationCompleted: () => void): void {
     this.wpService.getRelatedArtistEpisodes(page, perPage, [id]).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
@@ -129,65 +125,67 @@ export class ArtistDetailComponent implements OnInit {
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);
-            return of(null);  // Emit null to let outer stream continue.
+            return of(null);
           })
         );
       }),
       catchError(error => {
         console.error('WPService observable error while getting the related episodes list:', error);
-        return of(null); // Emit null to let outer stream continue.
+        return of(null);
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
         this.loadingMore = false;
+        operationCompleted();
       },
       error: (error) => {
         console.error('Main observable error:', error);
-      },
-      complete: () => {
-        console.log('Get related episodes completed.');
+        operationCompleted();
       }
     });
   }
 
-  
-
-    toggleDescription() {
-      this.expandedDescription = !this.expandedDescription;
+  toggleDescription() {
+    this.expandedDescription = !this.expandedDescription;
   }
 
+  formatShow(episodes: Episode[]): { name: string, id: number }[] {
+    return episodes.flatMap(episode => 
+      episode.shows?.map(show => ({ name: show.name, id: show.id })) || []
+    );
+  }
+
+  get totalPlays(): number {
+    return this.relatedEpisodes.length;
+  }
+
+  get firstEpisodeDate(): string | null {
+    if (this.relatedEpisodes.length === 0) return null;
+    const firstEpisode = this.relatedEpisodes[0];
+    return firstEpisode.date;
+  }
+
+  get uniqueShowCount(): number {
+    const uniqueShows = new Set(this.relatedEpisodes.flatMap(episode => episode.shows?.map(show => show.id) || []));
+    return uniqueShows.size;
+  }
+
+  get artistStatistics(): string {
+    if (!this.relatedEpisodes || this.relatedEpisodes.length === 0) return '';
+  
+    const artistName = this.artist?.name || 'Artist';
+    const playedTimes = this.totalPlays === 1 ? 'once' : `over ${this.totalPlays - 1} times`;
+    const firstDate = this.firstEpisodeDate ? `first on ${new Date(this.firstEpisodeDate).toDateString()}` : '';
+    const showList = this.formatShow(this.relatedEpisodes).map(show => show.name).join(', ').replace(/, ([^,]*)$/, ', and $1');
+    
+    let description = `${artistName} has been played ${playedTimes} on KOCMOC.CC, ${firstDate}.`;
+    if (this.uniqueShowCount > 1) {
+      description += ` ${artistName}'s music has been featured on ${this.uniqueShowCount} shows, including ${showList}.`;
+    } else if (this.uniqueShowCount === 1) {
+      description += ` ${artistName}'s music has been featured on the show ${showList}.`;
+    }
+  
+    return description;
+  }
 }
-
-
-
-
-  // getArtist() {
-  //   this.route.paramMap.pipe(
-  //     switchMap(params => {
-  //       const id = Number(params.get('id') || '0');
-  //       this.loading = true;
-  //       return this.wpService.getArtist(id).pipe(
-  //         catchError(error => {
-  //           console.error('Error getting artist from WPService:', error);
-  //           return of(null);  // Continue the stream by emitting null.
-  //         })
-  //       );
-  //     }),
-  //     tap(artist => {
-  //       if (artist) this.artist = new Artist(artist);
-  //     }),
-  //     takeUntil(this.unsubscribe$),
-  //   ).subscribe({
-  //     next: () => {
-  //       this.loading = false;
-  //       this.getRelatedArtistEpisodes(this.page, this.perPage, this.artist?.id || 0);
-  //     },
-  //     error: (error) => {
-  //       console.error('Main observable error while processing episode:', error);
-  //     },
-  //     complete: () => {
-  //       console.log('Episode detail component unsubscription completed.');
-  //     }
-  //   });
-  // }

@@ -24,6 +24,7 @@ import { HomeComponent } from './views/home/home.component';
 import { HeaderComponent } from './views/header/header.component';
 import { FooterComponent } from './views/footer/footer.component';
 import { IdentityLoaderComponent } from './views/identity-loader/identity-loader.component';
+import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { IdentityLoaderComponent } from './views/identity-loader/identity-loader
     HeaderComponent,
     FooterComponent,
     IdentityLoaderComponent,
+    ArtistListComponent,
   ],
   imports: [
     BrowserModule,

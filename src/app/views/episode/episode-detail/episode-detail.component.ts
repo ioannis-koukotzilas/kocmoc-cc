@@ -50,7 +50,7 @@ export class EpisodeDetailComponent implements OnInit {
         return this.wpService.getEpisode(id).pipe(
           catchError(error => {
             console.error('Error getting episode from WPService:', error);
-            return of(null);  // Continue the stream by emitting null.
+            return of(null);
           })
         );
       }),
@@ -58,7 +58,7 @@ export class EpisodeDetailComponent implements OnInit {
         if (episode) this.episode = new Episode(episode);
       }),
       switchMap(episode => {
-        if (!episode) return of({ producers: [], shows: [], genres: [], artists: [], tracklists: [] });  // If episode retrieval failed, continue with empty data.
+        if (!episode) return of({ producers: [], shows: [], genres: [], artists: [], tracklists: [] });
         return forkJoin({
           producers: this.wpService.getEpisodeProducer([episode.id]),
           shows: this.wpService.getEpisodeShow([episode.id]),
@@ -68,7 +68,7 @@ export class EpisodeDetailComponent implements OnInit {
         }).pipe(
           catchError(error => {
             console.error('ForkJoin error getting episode details:', error);
-            return of(null);  // Continue the stream by emitting null.
+            return of(null);
           })
         );
       }),
@@ -87,22 +87,23 @@ export class EpisodeDetailComponent implements OnInit {
       takeUntil(this.unsubscribe$),
     ).subscribe({
       next: () => {
-        this.loading = false;
         const shows = this.episode?.shows?.map(show => show.id);
         if (shows && shows.length > 0) {
-          this.getRelatedShowEpisodes(this.page, this.perPage, shows);
+          this.getRelatedShowEpisodes(this.page, this.perPage, shows, () => {
+            this.loading = false;
+          });
+        } else {
+          this.loading = false;
         }
       },
       error: (error) => {
         console.error('Main observable error while processing episode:', error);
-      },
-      complete: () => {
-        console.log('Episode detail component unsubscription completed.');
+        this.loading = false;
       }
     });
   }
 
-  getRelatedShowEpisodes(page: number, perPage: number, id: number[]) {
+  getRelatedShowEpisodes(page: number, perPage: number, id: number[], operationCompleted: () => void): void {
     this.wpService.getRelatedShowEpisodes(page, perPage, id).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
@@ -134,24 +135,23 @@ export class EpisodeDetailComponent implements OnInit {
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);
-            return of(null);  // Emit null to let outer stream continue.
+            return of(null);
           })
         );
       }),
       catchError(error => {
         console.error('WPService observable error while getting the related episodes list:', error);
-        return of(null); // Emit null to let outer stream continue.
+        return of(null);
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
         this.loadingMore = false;
+        operationCompleted();
       },
       error: (error) => {
         console.error('Main observable error:', error);
-      },
-      complete: () => {
-        console.log('Get related episodes completed.');
+        operationCompleted();
       }
     });
   }

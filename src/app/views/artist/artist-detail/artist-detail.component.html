@@ -1,61 +1,24 @@
-<div *ngIf="loading; else Content">
-  <p>Loading...</p>
-</div>
+<ng-container *ngIf="loading; else Content">
+  <identity-loader></identity-loader>
+</ng-container>
 
 <ng-template #Content>
 
   <div class="container" *ngIf="artist">
 
-    <!-- For future use -->
-
-    <!-- <ng-container *ngIf="artist.image.url; else GenericImage">
-      <picture>
-        <source appLazyLoad [attr.data-srcset]="artist.image.size['medium']" media="(max-width: 424px)">
-        <source appLazyLoad [attr.data-srcset]="artist.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-        <source appLazyLoad [attr.data-srcset]="artist.image.size['2048x2048']" media="(min-width: 640px)">
-        <img appLazyLoad [attr.data-src]="artist.image.size['medium_large']" [alt]="artist.image.alt" />
-      </picture>
-    </ng-container>
-
-    <ng-template #GenericImage>
-      <picture>
-        <img appLazyLoad data-src="https://kocmoc.cc/images/assets/identity_s.jpg" alt="Generic Artist Image" />
-      </picture>    
-    </ng-template> -->
-    
-    <div class="content">
-      <h1 class="title">{{artist.name}}</h1>
-
-      <div class="description" *ngIf="relatedEpisodes && relatedEpisodes.length > 0">
-        <p>{{artist.name}} has been played on KOCMOC shows including
-          <ng-container *ngFor="let episode of relatedEpisodes; let isLast=last">
-            <span *ngFor="let show of episode.shows">
-              {{show.name}}
-              <ng-container *ngIf="!isLast">, </ng-container>
-            </span>
-          </ng-container>
-        </p>
-
-        <ng-container *ngIf="lastFmArtist; else ArtistDescription">
-          <p>{{ expandedDescription ? lastFmArtist.bio.content : (lastFmArtist.bio.content | slice:0:600) }}
-            <span *ngIf="!expandedDescription && lastFmArtist.bio.content.length > 600">...</span></p>
-          <div *ngIf="lastFmArtist.bio.content.length > 600" (click)="toggleDescription()">
-              {{ expandedDescription ? 'Read less' : 'Read more' }}
-          </div>
-          <a [href]="lastFmArtist.url" target="_blank">More on Last.fm</a>
-        </ng-container>
-
-        <ng-template #ArtistDescription>
-          <p *ngIf="artist.description">{{ expandedDescription ? artist.description : (artist.description | slice:0:600) }}
-              <span *ngIf="!expandedDescription && artist.description.length > 600">...</span></p>
-          <div *ngIf="artist.description.length > 600" (click)="toggleDescription()">
-              {{ expandedDescription ? 'Read less' : 'Read more' }}
-          </div>
-        </ng-template>
-      
+    <header class="header">
+      <div class="wrapper">
+        <h1 class="title">{{artist.name}}</h1>
       </div>
-    </div>
+    </header>
 
+    <div class="statistics" *ngIf="relatedEpisodes && relatedEpisodes.length" [innerHTML]="artistStatistics"></div>
+    
+    <div class="description" *ngIf="lastFmArtist">
+      <div>{{ expandedDescription ? lastFmArtist.bio.content : (lastFmArtist.bio.content | slice:0:600) }} <span *ngIf="!expandedDescription && lastFmArtist.bio.content.length > 600">...</span></div>
+      <div class="expand" *ngIf="lastFmArtist.bio.content.length > 600"><span class="underline" (click)="toggleDescription()">{{ expandedDescription ? 'Less' : 'More' }}</span></div>
+    </div>
+     
   </div>
 
   <section class="related-episodes" *ngIf="relatedEpisodes">

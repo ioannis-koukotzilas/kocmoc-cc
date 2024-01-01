@@ -236,11 +236,11 @@ export class WPService {
 
   // Artists
 
-  getArtists(perPage: number, page: number): Observable<{ artists: Artist[], headers: HttpHeaders }> {
+  getArtists(page: number, perPage: number): Observable<{ artists: Artist[], headers: HttpHeaders }> {
     return this.http.get<Artist[]>(`${this.wpJsonBaseUrl}/artist`, {
       params: {
-        per_page: perPage.toString(),
-        page: page.toString()
+        page: page.toString(),
+        per_page: perPage.toString()
       },
       observe: 'response'
     }).pipe(
@@ -316,6 +316,32 @@ export class WPService {
   //     );
   // }
 
+  // nEW
 
+  getActiveResidentProducers(): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/producers/?type=resident&status=active`).pipe(
+      catchError(this.handleError<Producer[]>('getActiveResidentProducers', []))
+    );
+  }
+
+  getActiveGuestProducers(): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/producers/?type=guest&status=active`).pipe(
+      catchError(this.handleError<Producer[]>('getActiveGuestProducers', []))
+    );
+  }
+
+  getInactiveResidentProducers(): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/producers/?type=resident&status=inactive`).pipe(
+      catchError(this.handleError<Producer[]>('getInactiveResidentProducers', []))
+    );
+  }
+
+  getInactiveGuestProducers(): Observable<Producer[]> {
+    return this.http.get<Producer[]>(`${this.customWpJsonBaseUrl}/producers/?type=guest&status=inactive`).pipe(
+      catchError(this.handleError<Producer[]>('getInactiveGuestProducers', []))
+    );
+  }
+
+  
 
 }

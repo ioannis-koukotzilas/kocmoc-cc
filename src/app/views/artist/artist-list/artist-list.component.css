@@ -17,24 +17,23 @@
 }
 
 @media (min-width: 540px) {
-  .parent-genres {
+  .artists {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1.5rem;
   }
 }
 
-.child-genre {
-  margin-left: 0.75rem;
-}
-
-.parent-genre,
-.child-genre {
+.artist {
   font-family: var(--font-sans-condensed);
   font-size: var(--font-lg);
   font-weight: var(--font-bold);
 }
 
+.pagination {
+  margin: 1.5rem 0 0;
+  font-weight: var(--font-medium);
+}
 
 
 

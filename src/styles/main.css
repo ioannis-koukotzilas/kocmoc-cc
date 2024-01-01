@@ -15,6 +15,19 @@ html {
   box-sizing: border-box;
 }
 
+/* App
+--------------------------------------------- */
+
+app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex-grow: 1;
+}
+
 /* Typography
 --------------------------------------------- */
 
@@ -34,7 +47,7 @@ textarea {
   font-size: var(--font-base);
   font-weight: var(--font-normal);
   line-height: var(--leading-base);
-  color: rgb(var(--color-primary-50));
+  color: rgb(var(--color-primary-200));
   font-feature-settings: 'pnum' 1,'kern' 1,'ss01' 1,'ss03' 1;
 }
 
@@ -98,7 +111,7 @@ picture {
 a {
   cursor: pointer;
   display: inline-block;
-  color: rgb(var(--color-primary-50));
+  color: rgb(var(--color-primary-200));
   text-decoration: none;
 }
 
@@ -108,7 +121,7 @@ a:visited {
 
 a:hover,
 a:focus {
-  color: rgb(var(--color-primary-200));
+  color: rgb(var(--color-primary-50));
 }
 
 a:focus,
@@ -118,10 +131,15 @@ a:active {
 }
 
 .underline {
+  cursor: pointer;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25rem;
   text-decoration-color: rgb(var(--color-accent-150));
+}
+
+.underline:hover {
+  color: rgb(var(--color-primary-50));
 }
 
 /* Buttons
@@ -130,9 +148,9 @@ a:active {
 button {
   background-color: transparent;
   border: none;
-  color: rgb(var(--color-primary-500));
-  line-height: 1;
+  color: rgb(var(--color-primary-200));
   cursor: pointer;
+  padding: 0;
 }
 
 /* button:hover {

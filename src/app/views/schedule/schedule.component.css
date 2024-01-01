@@ -3,7 +3,7 @@
 }
 
 .header {
-  margin: 1.5rem 0 0.75rem;
+  margin: 1.5rem 0;
   padding-bottom: 0.75rem;
   border-bottom: 3px solid rgb(var(--color-primary-900));
 }
@@ -16,7 +16,6 @@
 
 .header .meta {
   margin-top: 0.75rem;
-  font-weight: var(--font-medium);
 }
 
 .event {

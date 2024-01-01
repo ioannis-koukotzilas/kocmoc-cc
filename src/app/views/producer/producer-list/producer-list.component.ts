@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUntil } from 'rxjs';
-import { Episode } from 'src/app/models/episode';
+import { Subject, catchError, map, of, takeUntil } from 'rxjs';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Producer } from 'src/app/models/producer';
@@ -15,22 +14,19 @@ export class ProducerListComponent {
 
   producers: Producer[] = [];
 
-  loading: boolean = true;
+  loading: boolean = false;
+
+  initialLoading: boolean = true;
 
   page: number = 1;
-  perPage: number = 1;
+  perPage: number = 6;
 
-  hasMore: boolean = true;
-  loadingMore: boolean = false;
-
-  filteredProducers: Producer[] = [];
-  filter: 'resident' | 'guest' = 'resident';
-
+  activeBtn: 'activeResidents' | 'activeGuests' | 'inactiveResidents' = 'activeResidents';
 
   constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService) { }
 
   ngOnInit() {
-    this.getProducers(this.page, this.perPage);
+    this.getActiveResidentProducers();
   }
 
   ngOnDestroy() {
@@ -38,56 +34,95 @@ export class ProducerListComponent {
     this.unsubscribe$.complete();
   }
 
-  getProducers(page: number, perPage: number) {
-    this.wpService.getProducers(page, perPage).pipe(
-      map(data => {
-        let producers = data.producers.map(producer => new Producer(producer));
-
-        // producers = producers.filter(producer => producer.producerType === 'resident' && producer.producerStatus === 'active');
-
-        producers = producers.filter(producer => producer.producerStatus === 'active');
-
-        this.producers = [...this.producers, ...producers];
-
-        this.filterProducers();
-
-        const totalPages = Number(data.headers.get('X-WP-TotalPages'));
-        if (page >= totalPages) {
-          this.hasMore = false;
-        }
-        return producers;
+  getActiveResidentProducers() {
+    this.producers = [];
+    this.activeBtn = 'activeResidents';
+    this.loading = true;
+    this.wpService.getActiveResidentProducers().pipe(
+      map((producers: Producer[]) => {
+        console.log('Received producers:', producers); // Log raw data
+        const producerObjects = producers.map(producer => new Producer(producer));
+        this.producers = [...this.producers, ...producerObjects];
+        return producerObjects;
       }),
       catchError(error => {
         console.error('WPService observable error while getting the producers list:', error);
-        return of(null); // Emit null to let outer stream continue.
+        this.loading = false;
+        return of(null);
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
         this.loading = false;
-        this.loadingMore = false;
+        this.initialLoading = false;
       },
       error: (error) => {
         console.error('Main observable error:', error);
+        this.loading = false;
       },
       complete: () => {
-        console.log('Get producers completed.');
+        console.log('getActiveResidentProducers completed.');
       }
     });
   }
 
-  filterProducers() {
-    this.filteredProducers = this.producers.filter(producer => producer.producerType === this.filter);
+  getActiveGuestProducers() {
+    this.producers = [];
+    this.activeBtn = 'activeGuests';
+    this.loading = true;
+    this.wpService.getActiveGuestProducers().pipe(
+      map((producers: Producer[]) => {
+        const producerObjects = producers.map(producer => new Producer(producer));
+        this.producers = [...this.producers, ...producerObjects];
+        return producerObjects;
+      }),
+      catchError(error => {
+        console.error('WPService observable error while getting the producers list:', error);
+        this.loading = false;
+        return of(null);
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: () => {
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Main observable error:', error);
+        this.loading = false;
+      },
+      complete: () => {
+        console.log('getActiveGuestProducers completed.');
+      }
+    });
   }
 
-  setFilter(filterType: 'resident' | 'guest') {
-    this.filter = filterType;
-    this.filterProducers();
-  }
-
-  loadMore() {
-    this.loadingMore = true;
-    this.page += 1;
-    this.getProducers(this.page, this.perPage);
+  getInactiveResidentProducers() {
+    this.producers = [];
+    this.activeBtn = 'inactiveResidents';
+    this.loading = true;
+    this.wpService.getInactiveResidentProducers().pipe(
+      map((producers: Producer[]) => {
+        const producerObjects = producers.map(producer => new Producer(producer));
+        this.producers = [...this.producers, ...producerObjects];
+        return producerObjects;
+      }),
+      catchError(error => {
+        console.error('WPService observable error while getting the producers list:', error);
+        this.loading = false;
+        return of(null);
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: () => {
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Main observable error:', error);
+        this.loading = false;
+      },
+      complete: () => {
+        console.log('getInactiveResidentProducers completed.');
+      }
+    });
   }
 }

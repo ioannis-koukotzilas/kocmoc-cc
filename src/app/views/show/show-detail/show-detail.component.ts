@@ -60,9 +60,12 @@ export class ShowDetailComponent {
       takeUntil(this.unsubscribe$),
     ).subscribe({
       next: () => {
-        this.loading = false;
-        this.getShowProducers(this.show?.id || 0);
-        this.getShowEpisodes(this.page, this.perPage, this.show?.id || 0);
+        this.getShowProducers(this.show?.id || 0, () => {
+          this.loading = false;
+        });
+        this.getShowEpisodes(this.page, this.perPage, this.show?.id || 0, () => {
+          this.loading = false;
+        });
       },
       error: (error) => {
         console.error('Main observable error while processing show:', error);
@@ -73,7 +76,7 @@ export class ShowDetailComponent {
     });
   }
 
-  getShowProducers(id: number) {
+  getShowProducers(id: number, operationCompleted: () => void): void {
     this.wpService.getShowProducers([id]).pipe(
       tap(producers => {
         if (this.show && producers) {
@@ -88,24 +91,20 @@ export class ShowDetailComponent {
     ).subscribe({
       next: () => {
         console.log('Successfully fetched producers for the show.');
+        operationCompleted();
       },
       error: (error) => {
         console.error('Main observable error while fetching show producers:', error);
-      },
-      complete: () => {
-        console.log('Fetching show producers completed.');
+        operationCompleted();
       }
     });
   }
 
-
-  getShowEpisodes(page: number, perPage: number, id: number) {
+  getShowEpisodes(page: number, perPage: number, id: number, operationCompleted: () => void): void {
     this.wpService.getShowEpisodes(page, perPage, [id]).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
-
         this.relatedEpisodes = [...episodes];
-
         const id = episodes.map(episode => episode.id);
 
         const totalPages = Number(data.headers.get('X-WP-TotalPages'));
@@ -142,13 +141,12 @@ export class ShowDetailComponent {
     ).subscribe({
       next: () => {
         this.loadingMore = false;
+        operationCompleted();
       },
       error: (error) => {
         console.error('Main observable error:', error);
+        operationCompleted();
       },
-      complete: () => {
-        console.log('Get related episodes completed.');
-      }
     });
   }
 

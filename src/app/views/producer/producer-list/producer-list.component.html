@@ -1,49 +1,38 @@
-<ng-container *ngIf="loading; else Content">
+<ng-container *ngIf="initialLoading; else Content">
   <identity-loader></identity-loader>
 </ng-container>
 
 <ng-template #Content>
+
+    <div class="container">
   
-    <header class="header">
-      <div class="container">
-      <h1 class="title">Producers</h1>
-    </div>
-    </header>
+      <header class="header">
+        <div class="wrapper">
+          <h1 class="title">Producers</h1>
+        </div>
+      </header>
 
-    <div class="filter">
-      <div (click)="setFilter('resident')" [class.active]="filter === 'resident'">Residents</div>
-      <div (click)="setFilter('guest')" [class.active]="filter === 'guest'">Guests</div>
-    </div>
-
-    <details class="producer" *ngFor="let producer of filteredProducers">
-      <summary>{{producer.name}}</summary>
-      <div class="content">
-          <picture class="image" *ngIf="producer.image.url">
-            <source [srcset]="producer.image.size['medium']" media="(max-width: 424px)">
-            <source [srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-            <source [srcset]="producer.image.size['large']" media="(min-width: 640px)">
-            <img [src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
-          </picture>
-          <div class="info">
-              <div class="cv">
-                  <p>{{producer.description}}</p>
-                  <p>Thessaloniki, Greece</p>
-              </div>
-              <div class="radio-show-frequency">
-                  <p>2 per month, 1h</p>
-              </div>
-              <div class="links">
-                <a [routerLink]="['/producer', producer.id]">Find more</a>
-              </div>
-          </div>
+      <div class="filter">
+        <div class="wrapper">
+          <button [class.active]="activeBtn === 'activeResidents'" (click)="getActiveResidentProducers()">Residents</button>
+          <button [class.active]="activeBtn === 'activeGuests'" (click)="getActiveGuestProducers()">Guests</button>
+          <button [class.active]="activeBtn === 'inactiveResidents'" (click)="getInactiveResidentProducers()">Past Residents</button>
+        </div>
       </div>
-    </details>
 
-    <div class="pagination">
-      <div *ngIf="hasMore && !loadingMore" (click)="loadMore()">Load More</div>
-      <div class="loader" *ngIf="loadingMore">
-        <div class="spinner"></div>
-      </div>
+      <ul class="producers" *ngIf="producers && producers.length; else noData">
+        <li class="producer" *ngFor="let producer of producers">
+          <div class="name"><a [routerLink]="['/producer', producer.id]">{{ producer.name }}</a></div>
+          <div class="last-active" *ngIf="producer.lastActive">Last active on <span>{{ producer.lastActive }}</span></div>
+        </li>
+      </ul>
+      
+      <ng-template #noData>
+        <div class="no-data" *ngIf="!loading">
+          No data available.
+        </div>
+      </ng-template>
+
     </div>
 
 </ng-template>

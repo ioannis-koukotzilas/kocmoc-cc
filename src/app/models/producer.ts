@@ -17,11 +17,9 @@ export class Producer {
             [key: string]: string | number;
         },
     };
-
+    lastActive?: string;
     episodeId: number;
-
     episodes?: Episode[];
-
     shows?: Show[]; 
 
     constructor(data: any) {
@@ -38,6 +36,7 @@ export class Producer {
             description: data.image.description,
             size: data.image.size,
         };
+        this.lastActive = data.last_active;
         this.episodeId = data.episodeId;
     }
 }

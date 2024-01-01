@@ -4,35 +4,36 @@
 
 <ng-template #Content>
 
-  <div class="genres">
-    <div class="container">
+  <div class="container">
 
-      <header class="header">
+    <header class="header">
+      <div class="wrapper">
         <h1 class="title">Explore</h1>
-        <div class="description">Tune in live or listen back to our music archive.</div>
-      </header>
+        <div class="description">Browse genres, listed alphabetically, featured in KOCMOC episodes.</div>
+      </div>
+    </header>
 
-      <ul class="genres-parent" *ngIf="parentGenres && parentGenres.length > 0">
-        <li class="genre" *ngFor="let genre of parentGenres">
-          <div class="wrapper">
-            <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+    <div class="filter">
+      <div class="wrapper">
+        <a routerLink="/genres" [class.active]="activeRoute('/genres')">Genres</a>
+        <a routerLink="/artists" [class.active]="activeRoute('/artists')">Artists</a>
+      </div>
+    </div>
 
-            <div class="toggle-children" [class.active]="showChildren.includes(genre.id) ? true : false" *ngIf="genre.children && genre.children.length" (click)="toggleChildren(genre.id)">
-              <span class="symbol">expand_more</span>
-            </div>
-          </div>
-
-          <ng-container *ngIf="showChildren.includes(genre.id)">
-            <ul class="genres-child">
-              <li class="genre" *ngFor="let childGenre of genre.children">
+    <ul class="parent-genres" *ngIf="parentGenres && parentGenres.length">
+      <li class="parent-genre" *ngFor="let genre of parentGenres">
+          <a [routerLink]="['/genre', genre.id]">{{ genre.name }}</a>
+       
+          <ng-container *ngIf="genre.children && genre.children.length">
+            <ul class="child-genres">
+              <li class="child-genre" *ngFor="let childGenre of genre.children">
                 <a [routerLink]="['/genre', childGenre.id]">{{ childGenre.name }}</a>
               </li>
             </ul>
           </ng-container>
-        </li>
-      </ul>
-
-    </div>
+      </li>
+    </ul>
+    
   </div>
-
+ 
 </ng-template>

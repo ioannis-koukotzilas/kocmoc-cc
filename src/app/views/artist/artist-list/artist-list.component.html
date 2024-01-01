@@ -1,0 +1,41 @@
+<ng-container *ngIf="loading; else Content">
+  <identity-loader></identity-loader>
+</ng-container>
+
+<ng-template #Content>
+
+    <div class="container">
+  
+      <header class="header">
+        <div class="wrapper">
+          <h1 class="title">Explore</h1>
+          <div class="description">Browse artists, listed alphabetically, whose music has been showcased in KOCMOC episodes.</div>
+        </div>
+      </header>
+
+      <div class="filter">
+        <div class="wrapper">
+          <a routerLink="/genres" [class.active]="activeRoute('/genres')">Genres</a>
+          <a routerLink="/artists" [class.active]="activeRoute('/artists')">Artists</a>
+        </div>
+      </div>
+
+      <ul class="artists" *ngIf="artists && artists.length; else noData">
+        <li class="artist" *ngFor="let artist of artists">
+          <div class="name"><a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a></div>
+        </li>
+      </ul>
+      
+      <ng-template #noData>
+        <div class="no-data" *ngIf="!loading">
+          No data available.
+        </div>
+      </ng-template>
+
+      <div class="pagination" *ngIf="hasMore">
+        <span class="underline" (click)="loadMore()">Load More</span>
+      </div>
+
+    </div>
+
+</ng-template>

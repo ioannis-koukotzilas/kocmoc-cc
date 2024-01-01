@@ -6,7 +6,7 @@
 .symbol-hyperlink {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 .symbol-text > .symbol,
