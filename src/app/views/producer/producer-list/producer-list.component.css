@@ -15,7 +15,6 @@
 .filter > .wrapper {
   margin-bottom: 1.5rem;
   padding: 0.75rem 0;
-  border-top: 1px solid rgb(var(--color-primary-900));
   border-bottom: 3px solid rgb(var(--color-primary-900));
   display: flex;
   flex-wrap: wrap;
@@ -24,7 +23,8 @@
 }
 
 .filter button {
-  text-transform: uppercase;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
 }
 
 .filter button:hover {

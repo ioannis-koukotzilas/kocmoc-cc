@@ -21,13 +21,26 @@
 
 .audio-player .live-stream .channel {
   padding: 0 20px;
-  font-size: var(--font-sm);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   background-color: rgb(var(--color-primary-100));
   color: rgb(var(--color-accent-950));
   border-right: 1px solid;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+  font-size: var(--font-sm);
+  text-transform: uppercase;
+}
+
+.audio-player .live-stream .channel > span {
+  display: none;
+}
+
+@media(min-width: 720px) {
+  .audio-player .live-stream .channel > span {
+    display: block;
+  }
 }
 
 .audio-player .live-stream .channel:after {
@@ -52,6 +65,8 @@
   }
 }
 
+
+
 .audio-player .live-stream .toggle-play {
   flex-grow: 1;
   display: flex;
@@ -62,6 +77,7 @@
   color: rgb(var(--color-primary-200));
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  min-width: 0;
 }
 
 .audio-player .live-stream .toggle-play:hover {
@@ -73,6 +89,12 @@
 .audio-player .live-stream .toggle-play.playing {
   background-color: rgb(var(--color-primary-100));
   color: rgb(var(--color-primary-950));
+}
+
+.audio-player .live-stream .toggle-play .stream-info {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .audio-player .live-stream .side-actions {
@@ -87,7 +109,7 @@
   display: flex;
   align-items: center;
   padding: 0 16.5px;
-  background-color: rgb(var(--color-primary-600));
+  background-color: rgb(var(--color-primary-950));
   cursor: pointer;
 }
 
@@ -101,8 +123,7 @@
 
 .audio-player .live-stream .side-actions .toggle-expandable-panel:hover,
 .audio-player .live-stream .side-actions .toggle-expandable-panel.active {
-  background-color: rgb(var(--color-primary-200));
-  color: rgb(var(--color-primary-950));
+  background-color: rgb(var(--color-primary-900));
 }
 
 .audio-player .live-stream .side-actions .toggle-expandable-panel .symbol {
@@ -120,22 +141,32 @@
 /* On Demand Stream
 --------------------------------------------- */
 
-/* .audio-player .on-demand-stream {
-} */
-
 .audio-player .on-demand-stream > .container {
   display: flex;
 }
 
 .audio-player .on-demand-stream .channel {
   padding: 0 20px;
-  font-size: var(--font-sm);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   background-color: rgb(var(--color-primary-100));
   color: rgb(var(--color-accent-950));
   border-right: 1px solid;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+  font-size: var(--font-sm);
+  text-transform: uppercase;
+}
+
+.audio-player .on-demand-stream .channel > span {
+  display: none;
+}
+
+@media(min-width: 720px) {
+  .audio-player .on-demand-stream .channel > span {
+    display: block;
+  }
 }
 
 .audio-player .on-demand-stream .channel:after {
@@ -170,6 +201,7 @@
   color: rgb(var(--color-primary-200));
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  min-width: 0;
 }
 
 .audio-player .on-demand-stream .toggle-play:hover {
@@ -181,6 +213,12 @@
 .audio-player .on-demand-stream .toggle-play.playing {
   background-color: rgb(var(--color-primary-100));
   color: rgb(var(--color-primary-950));
+}
+
+.audio-player .on-demand-stream .toggle-play .stream-info {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .audio-player .on-demand-stream .side-actions {
@@ -195,12 +233,12 @@
   display: flex;
   align-items: center;
   padding: 0 16.5px;
-  background-color: rgb(var(--color-primary-600));
+  background-color: rgb(var(--color-primary-950));
   cursor: pointer;
 }
 
 .audio-player .on-demand-stream .side-actions > div:not(:last-child) {
-  border-right: 1px solid rgb(var(--color-primary-500));
+  border-right: 1px solid rgb(var(--color-primary-900));
 }
 
 .audio-player .on-demand-stream .side-actions .back-to-live-stream,
@@ -211,15 +249,14 @@
 .audio-player .on-demand-stream .side-actions .back-to-live-stream:hover,
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel:hover,
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel.active {
-  background-color: rgb(var(--color-primary-200));
-  color: rgb(var(--color-primary-950));
+  background-color: rgb(var(--color-primary-900));
 }
 
 .audio-player
   .on-demand-stream
   .side-actions
   .toggle-expandable-panel.active:hover {
-  background-color: rgb(var(--color-primary-100));
+    background-color: rgb(var(--color-primary-900));
 }
 
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel .symbol {
@@ -234,10 +271,10 @@
   transform: rotate(180deg);
 }
 
-/* Exp Panel
+/* Expandable Panels
 --------------------------------------------- */
 
-/* live */
+/* Live Stream Expandable Panel */
 
 .live-stream-expandable-panel {
   position: absolute;
@@ -259,10 +296,17 @@
   }
 }
 
+.live-stream-expandable-panel > .wrapper > picture {
+  position: relative;
+  background-color: rgb(var(--color-primary-950));
+}
+
 .live-stream-expandable-panel > .wrapper > picture > img {
   object-fit: cover;
   width: 100%;
+  height: 100%;
   max-height: 50vh;
+  opacity: 0.5;
 }
 
 .live-stream-expandable-panel > .wrapper > .channel {
@@ -270,16 +314,14 @@
   top: 0;
   left: 0;
   z-index: 1;
-  padding: 0 20px;
-  height: 2.65rem;
+  padding: 20px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: rgb(var(--color-primary-100));
-  color: rgb(var(--color-primary-950));
-  font-size: var(--font-sm);
-  /* font-family: var(--font-sans-condensed); */
-  /* font-weight: var(--font-medium); */
+  color: rgb(var(--color-primary-50));
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+  text-transform: uppercase;
 }
 
 .live-stream-expandable-panel > .wrapper > .channel:after {
@@ -319,7 +361,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* on dmnd */
+/* On Demand Stream Expandable Panel */
 
 .on-demand-stream-expandable-panel {
   position: absolute;
@@ -343,6 +385,7 @@
 
 .on-demand-stream-expandable-panel > .wrapper > picture {
   position: relative;
+  background-color: rgb(var(--color-primary-950));
 }
 
 .on-demand-stream-expandable-panel > .wrapper > picture > .loader-wrapper {
@@ -364,8 +407,9 @@
 
 .on-demand-stream-expandable-panel > .wrapper > picture > img {
   object-fit: cover;
-  max-height: 50vh;
   width: 100%;
+  height: 100%;
+  max-height: 50vh;
   opacity: 0.5;
 }
 
@@ -373,13 +417,15 @@
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   padding: 20px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   color: rgb(var(--color-primary-50));
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
+  text-transform: uppercase;
 }
 
 .on-demand-stream-expandable-panel > .wrapper > .channel:after {

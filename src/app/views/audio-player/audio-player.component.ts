@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Observable, Subscription, interval, startWith, switchMap } from 'rxjs';
+import { Observable, Subscription, filter, interval, of, startWith, switchMap, tap } from 'rxjs';
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { Episode } from 'src/app/models/episode';
 import { LiveStreamEpisode } from 'src/app/models/liveStreamEpisode';
@@ -62,25 +62,16 @@ const STREAM_TYPE_LIVE = 'liveStream';
 export class AudioPlayerComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
+  public liveStreamLoading$: Observable<boolean> = this.audioPlayerService.liveStreamLoading$;
+  public liveStreamPlaying$: Observable<boolean> = this.audioPlayerService.liveStreamPlaying$;
+  public onDemandStreamLoading$: Observable<boolean> = this.audioPlayerService.onDemandStreamLoading$;
+  public onDemandStreamPlaying$: Observable<boolean> = this.audioPlayerService.onDemandStreamPlaying$;
+  public streamTypeSelected$: Observable<string> = this.audioPlayerService.streamTypeSelected$;
+
+  public onDemandStreamCurrentTime$: Observable<number> = this.audioPlayerService.onDemandStreamCurrentTime.asObservable();
+  public onDemandStreamDuration$: Observable<number> = this.audioPlayerService.onDemandStreamDuration.asObservable();
+
   public episode: Episode | null = null;
-
-  public liveStreamLoading$: Observable<boolean> =
-    this.audioPlayerService.liveStreamLoading$;
-  public liveStreamPlaying$: Observable<boolean> =
-    this.audioPlayerService.liveStreamPlaying$;
-  public onDemandStreamLoading$: Observable<boolean> =
-    this.audioPlayerService.onDemandStreamLoading$;
-  public onDemandStreamPlaying$: Observable<boolean> =
-    this.audioPlayerService.onDemandStreamPlaying$;
-  public streamTypeSelected$: Observable<string> =
-    this.audioPlayerService.streamTypeSelected$;
-
-  // Progress
-  public onDemandStreamCurrentTime$: Observable<number> =
-    this.audioPlayerService.onDemandStreamCurrentTime.asObservable();
-  public onDemandStreamDuration$: Observable<number> =
-    this.audioPlayerService.onDemandStreamDuration.asObservable();
-
   public liveStreamEpisode: LiveStreamEpisode | null = null;
   public producer: Producer | null = null;
 
@@ -88,6 +79,8 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   public onDemandStreamExpandablePanelActive: boolean = false;
 
   @ViewChild('audioPlayer') audioPlayer: ElementRef = {} as ElementRef;
+
+  currentMirrorStream: String | null = null;
 
   constructor(
     public audioPlayerService: AudioPlayerService,
@@ -97,6 +90,8 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.audioPlayerService.initializeLiveStream();
+
     this.subscriptions.add(
       this.audioPlayerService.currentOnDemandStream$.subscribe({
         next: (data) => {
@@ -105,47 +100,51 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading on demand stream:', error);
-        },
-        complete: () => {
-          console.log('onDemandStream$ completed');
-        },
+        }
       })
     );
 
-    const pollingInterval = 10000;
+    const pollingInterval = 150000; // 2.5 Min
     this.subscriptions.add(
       interval(pollingInterval).pipe(
         startWith(0),
-        switchMap(() => this.streamInfoService.getStreamInfo())
+        tap(() => {
+           this.audioPlayerService.liveStreamSet(true);
+        }),
+        switchMap(() => {
+          const currentLiveStreamUrl = this.audioPlayerService.getCurrentLiveStreamUrl();
+          if (currentLiveStreamUrl === this.audioPlayerService.getDefaultLiveStreamUrl()) {
+            this.currentMirrorStream = null;
+            return this.streamInfoService.getStreamInfo();
+          } else {
+            this.currentMirrorStream = this.audioPlayerService.findStreamNameByUrl(currentLiveStreamUrl);
+            return of(null); // Skip if not default stream
+          }
+        })
       ).subscribe({
         next: (data) => {
-          this.liveStreamEpisode = data[0];
-          this.matchProducerWithCentovaArtist();
+          if (data) {
+            this.liveStreamEpisode = data[0];
+            this.matchProducerWithCentovaArtist();
+          } else {
+            this.liveStreamEpisode = null;
+          }
         },
         error: (error) => {
           console.error('Error loading stream info:', error);
-        },
-        complete: () => {
-          console.log('getStreamInfo$ completed');
-        },
+        }
       })
     );
 
     this.subscriptions.add(
       this.onDemandStreamCurrentTime$.subscribe({
         next: (time) => {
-          // console.log('Current Time:', time);
-          const inputRange = document.querySelector(
-            'input[type="range"]'
-          ) as HTMLInputElement;
+          const inputRange = document.querySelector('input[type="range"]') as HTMLInputElement;
           if (inputRange && inputRange.max) {
             const maxTime = parseFloat(inputRange.max);
             this.updateSliderPercentage(time, maxTime, inputRange);
           }
-        },
-        complete: () => {
-          console.log('onDemandStreamCurrentTime$ completed');
-        },
+        }
       })
     );
 
@@ -153,10 +152,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
       this.onDemandStreamDuration$.subscribe({
         next: (duration) => {
           console.log('Duration:', duration);
-        },
-        complete: () => {
-          console.log('onDemandStreamDuration$ completed');
-        },
+        }
       })
     );
   }

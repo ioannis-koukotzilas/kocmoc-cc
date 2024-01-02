@@ -41,6 +41,13 @@ export class AudioPlayerService {
   private readonly MAX_RANDOM_PLAYS = 6;
   private playedEpisodes: number[] = [];
 
+  private mirrorLiveStreamUrls = [
+    { url: 'https://wkcr.streamguys1.com/live', start: '16:00', end: '17:00', name: 'WKCR' },
+    { url: 'https://stream.resonance.fm/resonance-extra', start: '18:00', end: '19:51', name: 'Resonance Extra' },
+  ];
+  
+  private defaultLiveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
+
   constructor(private cloudStorageService: CloudStorageService, private wpService: WPService) {
     this.liveStreamAudio.preload = 'auto';
     this.onDemandStreamAudio.preload = 'auto';
@@ -55,20 +62,88 @@ export class AudioPlayerService {
     });
   }
 
+  getCurrentLiveStreamUrl(): string {
+    const currentLiveStreamUrl = new URL(this.liveStreamAudio.src);
+    return currentLiveStreamUrl.origin + currentLiveStreamUrl.pathname;
+  }
+  
+  getDefaultLiveStreamUrl(): string {
+    return this.defaultLiveStreamUrl;
+  }
+
+  findStreamNameByUrl(url: string): string {
+    const stream = this.mirrorLiveStreamUrls.find(stream => url.includes(stream.url));
+    return stream ? stream.name : 'Unknown';
+  }
+
+  initializeLiveStream() {
+    const now = new Date();
+    const currentTimeUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes()));
+
+    let selectedStreamUrl = this.defaultLiveStreamUrl;
+
+    for (const stream of this.mirrorLiveStreamUrls) {
+      const [startHour, startMin] = stream.start.split(':').map(Number);
+      const [endHour, endMin] = stream.end.split(':').map(Number);
+      const startTime = new Date(Date.UTC(currentTimeUtc.getUTCFullYear(), currentTimeUtc.getUTCMonth(), currentTimeUtc.getUTCDate(), startHour, startMin));
+      const endTime = new Date(Date.UTC(currentTimeUtc.getUTCFullYear(), currentTimeUtc.getUTCMonth(), currentTimeUtc.getUTCDate(), endHour, endMin));
+
+      if (currentTimeUtc >= startTime && currentTimeUtc < endTime) {
+        selectedStreamUrl = stream.url;
+        break;
+      }
+    }
+
+    this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+  }
+
   liveStreamPlay() {
     if (this.onDemandStreamPlaying.value) {
       this.onDemandStreamStop();
     }
     this.streamTypeSelected.next(STREAM_TYPE_LIVE);
-    this.liveStreamSet();
+    this.liveStreamSet(false);
     this.liveStreamAudio.addEventListener('canplay', this.liveStreamCanPlayListener);
     this.liveStreamAudio.addEventListener('playing', this.liveStreamPlayingListener);
   }
 
-  liveStreamSet() {
-    this.liveStreamLoading.next(true);
-    this.liveStreamPlaying.next(false);
-    this.liveStreamAudio.src = 'https://kocmoc1-gecko.radioca.st/stream' + '?nocache=' + new Date().getTime();
+  liveStreamSet(checkUrlChange: boolean) {
+    const now = new Date();
+    const currentTimeUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes()));
+  
+    let selectedStreamUrl = this.defaultLiveStreamUrl;
+  
+    for (const stream of this.mirrorLiveStreamUrls) {
+      const [startHour, startMin] = stream.start.split(':').map(Number);
+      const [endHour, endMin] = stream.end.split(':').map(Number);
+      const startTime = new Date(Date.UTC(currentTimeUtc.getUTCFullYear(), currentTimeUtc.getUTCMonth(), currentTimeUtc.getUTCDate(), startHour, startMin));
+      const endTime = new Date(Date.UTC(currentTimeUtc.getUTCFullYear(), currentTimeUtc.getUTCMonth(), currentTimeUtc.getUTCDate(), endHour, endMin));
+  
+      if (currentTimeUtc >= startTime && currentTimeUtc < endTime) {
+        selectedStreamUrl = stream.url;
+        break;
+      }
+    }
+  
+    if (checkUrlChange) {
+      const currentSrcBaseUrl = this.getBaseUrl(this.liveStreamAudio.src);
+      const selectedStreamBaseUrl = this.getBaseUrl(selectedStreamUrl);
+  
+      if (currentSrcBaseUrl !== selectedStreamBaseUrl) {
+        this.liveStreamLoading.next(true);
+        this.liveStreamPlaying.next(false);
+        this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+      }
+    } else {
+      this.liveStreamLoading.next(true);
+      this.liveStreamPlaying.next(false);
+      this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+    }
+  }  
+
+  getBaseUrl(url: string): string {
+    const parsedUrl = new URL(url);
+    return parsedUrl.origin + parsedUrl.pathname;
   }
 
   liveStreamPause() {
