@@ -35,7 +35,7 @@ export class Episode {
         this.id = data.id;
         this.slug = data.slug;
         this.date = data.date;
-        this.title = data.title.rendered;
+        this.title = data.acf.title;
         this.excerpt = data.excerpt.rendered;
         this.content = data.content.rendered;
         this.image = {

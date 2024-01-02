@@ -47,11 +47,8 @@
       </li>
     </ul>
 
-    <div class="pagination">
-      <div *ngIf="hasMore && !loadingMore" (click)="loadMore()">Load More</div>
-      <div class="loader" *ngIf="loadingMore">
-        <div class="spinner"></div>
-      </div>
+    <div class="pagination" *ngIf="hasMore">
+      <span class="underline" (click)="loadMore()">Load More</span>
     </div>
 
   </div>

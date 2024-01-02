@@ -38,8 +38,8 @@
   font-size: var(--font-size-sm);
 }
 
-.site-footer .cc > div {
+.site-footer .cc .identity {
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
-  font-size: var(--font-4xl);
+  font-size: var(--font-2xl);
 }

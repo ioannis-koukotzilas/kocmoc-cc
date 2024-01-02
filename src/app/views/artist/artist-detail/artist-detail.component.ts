@@ -50,7 +50,7 @@ export class ArtistDetailComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  getArtist() {
+  private getArtist(): void {
     this.route.paramMap.pipe(
       switchMap(params => {
         const id = Number(params.get('id') || '0');
@@ -96,7 +96,7 @@ export class ArtistDetailComponent implements OnInit {
     });
   }
 
-  getRelatedArtistEpisodes(page: number, perPage: number, id: number, operationCompleted: () => void): void {
+  private getRelatedArtistEpisodes(page: number, perPage: number, id: number, operationCompleted: () => void): void {
     this.wpService.getRelatedArtistEpisodes(page, perPage, [id]).pipe(
       switchMap(data => {
         const episodes = data.episodes.map(episode => new Episode(episode));
@@ -146,11 +146,11 @@ export class ArtistDetailComponent implements OnInit {
     });
   }
 
-  toggleDescription() {
+  toggleDescription(): void {
     this.expandedDescription = !this.expandedDescription;
   }
 
-  formatShow(episodes: Episode[]): { name: string, id: number }[] {
+  private formatShow(episodes: Episode[]): { name: string, id: number }[] {
     return episodes.flatMap(episode => 
       episode.shows?.map(show => ({ name: show.name, id: show.id })) || []
     );

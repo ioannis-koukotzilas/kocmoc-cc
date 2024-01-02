@@ -29,8 +29,7 @@
               "src/styles/variables.css",
               "src/styles/symbols.css",
               "src/styles/normalize.css",
-              "src/styles/main.css",
-              "src/styles/swiper.css"
+              "src/styles/main.css"
             ],
             "scripts": []
           },

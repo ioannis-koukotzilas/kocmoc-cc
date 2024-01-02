@@ -1,56 +1,60 @@
-<div class="swiper">
-  <div class="swiper-wrapper">
-      <div class="swiper-slide">
+<ng-container *ngIf="loading; else Content">
+  <identity-loader></identity-loader>
+</ng-container>
+
+<ng-template #Content>
+
+  <swiper-container class="highlights" speed="500" autoplay-delay="15000" autoplay-disable-on-interaction="false">
+    <ng-container *ngFor="let highlight of homePage?.highlights">
+      <swiper-slide>
+        <picture *ngIf="highlight.image.url">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['medium']" media="(max-width: 424px)">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['2048x2048']" media="(min-width: 640px)">
+          <img appLazyLoad [attr.data-src]="highlight.image.size['medium_large']" [alt]="highlight.image.alt" />
+        </picture>
+
         <div class="content">
           <div class="wrapper">
-            <div class="title">LXXXVIII w/ Source W78</div>
-            <div class="subtitle">100% new original material.</div>
+            <ng-container *ngIf="highlight.title && highlight.link">
+              <ng-container *ngIf="highlight.linkType === 'episode'">
+                <a [routerLink]="['/episode', highlight.link]">
+                  <h2 class="title">{{ highlight.title }}</h2>
+                </a>
+              </ng-container>
+            
+              <ng-container *ngIf="highlight.linkType === 'page'">
+                <a [routerLink]="['/page', highlight.link]">
+                  <h2 class="title">{{ highlight.title }}</h2>
+                </a>
+              </ng-container>
+            
+              <ng-container *ngIf="highlight.linkType === 'post'">
+                <a [routerLink]="['/post', highlight.link]">
+                  <h2 class="title">{{ highlight.title }}</h2>
+                </a>
+              </ng-container>
+            </ng-container>
+            
+            <ng-container *ngIf="!highlight.link && highlight.title">
+              <h2 class="title">{{ highlight.title }}</h2>
+            </ng-container>            
+
+            <div class="description" *ngIf="highlight.description">{{ highlight.description }}</div>
           </div>
         </div>
-        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Darius_Jones.jpg" alt="">
-      </div>
-      <div class="swiper-slide">
-        <div class="content">
-          <div class="wrapper">
-            <div class="title">LXXXVIII w/ Source W78</div>
-            <div class="subtitle">100% new original material.</div>
-          </div>
-        </div>
-        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Idris_Afro1.jpg" alt="">
-      </div>
-      <div class="swiper-slide">
-        <div class="content">
-          <div class="wrapper">
-            <div class="title">Art Ensemble of Chicago with Fontella Bass</div>
-            <div class="subtitle">The music works very much like a film, in sequences.</div>
-          </div>
-        </div>
-        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/09/Marshall.jpg" alt="">
-      </div>
-      <div class="swiper-slide">
-        <div class="content">
-          <div class="wrapper">
-            <div class="title">LXXXVIII w/ Source W78</div>
-            <div class="subtitle">100% new original material.</div>
-          </div>
-        </div>
-        <img src="https://eligoaudioculture.com/wp-content/uploads/2023/07/Jantra.jpg" alt="">
-      </div>
-  </div>
-  <div class="swiper-button-next"></div>
-  <div class="swiper-button-prev"></div>
+      </swiper-slide>
+    </ng-container>
+  </swiper-container>
 
-</div>
-
-
-{{homePage?.id}}
-
-{{homePage?.content}}
-
-<div *ngFor="let highlight of homePage?.highlights">
-  <img *ngIf="highlight.highlightImage" [src]="highlight.highlightImage.url" alt="Highlight Image">
-  <h2>{{ highlight.highlightTitle }}</h2>
-</div>
-
-<schedule></schedule>
-
+  <section class="recent-episodes" *ngIf="recentEpisodes && recentEpisodes.length">
+    <div class="container">
+      <h2 class="title">Recent Episodes</h2>
+      <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
+        [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"
+        [episodes]="recentEpisodes">
+      </app-episode-related-list>
+    </div>
+  </section>
+  
+</ng-template>

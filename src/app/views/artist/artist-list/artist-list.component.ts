@@ -18,7 +18,7 @@ export class ArtistListComponent implements OnInit {
   loading: boolean = true;
 
   page: number = 1;
-  perPage: number = 20;
+  perPage: number = 100;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;
@@ -39,12 +39,10 @@ export class ArtistListComponent implements OnInit {
       map(data => {
         const artists = data.artists.map(artist => new Artist(artist));
         this.artists = [...this.artists, ...artists];
-
         const totalPages = Number(data.headers.get('X-WP-TotalPages'));
         if (page >= totalPages) {
           this.hasMore = false;
         }
-
         return artists;
       }),
       catchError(error => {
