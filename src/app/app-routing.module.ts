@@ -13,6 +13,7 @@ import { GenreListComponent } from './views/genre/genre-list/genre-list.componen
 import { HomeComponent } from './views/home/home.component';
 import { ScheduleComponent } from './views/schedule/schedule.component';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
+import { PageDetailComponent } from './views/page/page-detail/page-detail.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'artists', component: ArtistListComponent },
   { path: 'artist/:id', component: ArtistDetailComponent },
   { path: 'schedule', component: ScheduleComponent },
+  { path: 'page/:id', component: PageDetailComponent },
   // { path: '**', redirectTo: '/404' }
 ];
 

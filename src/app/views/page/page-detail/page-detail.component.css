@@ -1,0 +1,23 @@
+.container {
+  max-width: var(--max-w-md);
+  margin: 0 auto;
+  padding: 1.5rem 20px;
+}
+
+.header {
+  margin: 0 0 1.5rem;
+}
+
+.header > .title {
+  font-size: var(--font-4xl);
+  font-weight: var(--font-medium);
+  font-family: var(--font-sans-condensed);
+}
+
+.header > .content {
+  margin-top: 0.75rem;
+}
+
+p {
+  margin-bottom: 4rem;
+}

@@ -48,6 +48,10 @@
   font-weight: var(--font-bold);
 }
 
+.producer .last-active {
+  font-size: var(--font-sm);
+}
+
 .producer .last-active span {
   font-weight: var(--font-medium);
 }

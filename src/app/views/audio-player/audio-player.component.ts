@@ -96,7 +96,6 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
       this.audioPlayerService.currentOnDemandStream$.subscribe({
         next: (data) => {
           this.episode = data;
-          console.log('Received new data:', data);
         },
         error: (error) => {
           console.error('Error loading on demand stream:', error);
@@ -144,14 +143,6 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
             const maxTime = parseFloat(inputRange.max);
             this.updateSliderPercentage(time, maxTime, inputRange);
           }
-        }
-      })
-    );
-
-    this.subscriptions.add(
-      this.onDemandStreamDuration$.subscribe({
-        next: (duration) => {
-          console.log('Duration:', duration);
         }
       })
     );
@@ -219,13 +210,11 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   liveStreamToggleExpandablePanel() {
-    this.liveStreamExpandablePanelActive =
-      !this.liveStreamExpandablePanelActive;
+    this.liveStreamExpandablePanelActive = !this.liveStreamExpandablePanelActive;
   }
 
   onDemandStreamToggleExpandablePanel() {
-    this.onDemandStreamExpandablePanelActive =
-      !this.onDemandStreamExpandablePanelActive;
+    this.onDemandStreamExpandablePanelActive = !this.onDemandStreamExpandablePanelActive;
   }
 
   @HostListener('document:click', ['$event'])
@@ -265,10 +254,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Error get producer by name:', error);
-          },
-          complete: () => {
-            console.log('Match Producer with Centova Artist completed. Next polling interval in 300000ms.');
-          },
+          }
         })
       );
     }

@@ -42,8 +42,8 @@ export class AudioPlayerService {
   private playedEpisodes: number[] = [];
 
   private mirrorLiveStreamUrls = [
-    { url: 'https://wkcr.streamguys1.com/live', start: '16:00', end: '17:00', name: 'WKCR' },
-    { url: 'https://stream.resonance.fm/resonance-extra', start: '18:00', end: '19:51', name: 'Resonance Extra' },
+    { url: 'http://wkcr.streamguys1.com/live', start: '00:00', end: '08:00', name: 'WKCR' },
+    { url: 'https://stream.resonance.fm/resonance-extra', start: '12:00', end: '16:00', name: 'Resonance Extra' }
   ];
   
   private defaultLiveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
@@ -130,9 +130,13 @@ export class AudioPlayerService {
       const selectedStreamBaseUrl = this.getBaseUrl(selectedStreamUrl);
   
       if (currentSrcBaseUrl !== selectedStreamBaseUrl) {
-        this.liveStreamLoading.next(true);
-        this.liveStreamPlaying.next(false);
-        this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+        if (this.liveStreamPlaying.value) {
+          this.liveStreamLoading.next(true);
+          this.liveStreamPlaying.next(false);
+          this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+        } else {
+          this.liveStreamAudio.src = selectedStreamUrl + '?nocache=' + new Date().getTime();
+        }
       }
     } else {
       this.liveStreamLoading.next(true);

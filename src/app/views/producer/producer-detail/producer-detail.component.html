@@ -9,10 +9,11 @@
     <div class="container">
 
       <picture *ngIf="producer.image.url">
-        <source appLazyLoad [attr.data-srcset]="producer.image.size['medium']" media="(max-width: 424px)">
-        <source appLazyLoad [attr.data-srcset]="producer.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-        <source appLazyLoad [attr.data-srcset]="producer.image.size['2048x2048']" media="(min-width: 640px)">
-        <img appLazyLoad [attr.data-src]="producer.image.size['medium_large']" [alt]="producer.image.alt" />
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['medium_large']" media="(max-width: 539px)">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['large']" media="(min-width: 540px) and (max-width: 719px)">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['1536x1536']" media="(min-width: 720px) and (max-width: 1319px)">
+        <source appLazyLoad [attr.data-srcset]="producer.image.size['2048x2048']" media="(min-width: 1320px)">
+        <img appLazyLoad [attr.data-src]="producer.image.url" [alt]="producer.image.alt" />
       </picture>
     
       <div class="content">
@@ -20,18 +21,19 @@
         <div class="main">
           <h1 class="title">{{ producer.name }}</h1>
 
-          <ng-container *ngFor="let show of producer.shows; let last = last">
-            <div class="meta">Resident host on
-              <a [routerLink]="['/show', show.id]">{{ show.name }}<ng-container *ngIf="!last">,</ng-container></a>
-            </div>
-          </ng-container>
+          <div class="shows" *ngIf="producer.shows && producer.shows.length">
+            <span>Resident host on </span>
+            <ng-container *ngFor="let show of producer.shows; let last = last">
+              <a [routerLink]="['/show', show.id]">{{ show.name }}</a> <ng-container *ngIf="!last">, </ng-container>
+            </ng-container>
+          </div>
 
           <div class="description" *ngIf="producer.description" [innerHTML]="producer.description"></div>
         </div>
 
         <div class="footer">
           <div class="cta">
-            <div class="back" (click)="back()">Back</div>
+            <div class="back symbol-text" (click)="back()"><span class="symbol">arrow_back_ios_new</span> Back</div>
           </div>
         </div>
 

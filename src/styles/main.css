@@ -119,10 +119,11 @@ a {
   display: inline-block;
   color: rgb(var(--color-primary-200));
   text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 a:visited {
-  color: rgb(var(--color-primary-50));
+  color: rgb(var(--color-primary-200));
 }
 
 a:hover,
@@ -439,7 +440,10 @@ app-episode-detail
 
 .episodes-loop .episode .footer .genres .genre a {
   padding: 0.25rem 0.5rem;
-  border: 1px solid;
+  background-color: rgb(var(--color-primary-900));
+  border-radius: 3px;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
   font-size: var(--font-sm);
 }
 
@@ -470,3 +474,37 @@ app-episode-detail
   color: rgb(var(--color-primary-200));
 }
 
+
+
+/*--------------------------------------------------------------
+# Page Inner HTML
+--------------------------------------------------------------*/
+
+.page .content ul {
+  list-style: disc;
+  margin: 0 0 1.5rem;
+  padding: 0 0 0 1rem;
+}
+
+.page .content a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25rem;
+}
+
+.page .content a[target='_blank']::after {
+  font-family: var(--font-symbol);
+  content: '\e89e';
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+
+
+/*--------------------------------------------------------------
+# Location Back
+--------------------------------------------------------------*/
+
+.back {
+  cursor: pointer;
+  font-weight: var(--font-medium);
+}

@@ -9,6 +9,7 @@ import { Show } from 'src/app/models/show';
 import { Tracklist } from 'src/app/models/tracklist';
 import { Producer } from 'src/app/models/producer';
 import { HomePage } from 'src/app/models/homePage';
+import { Page } from 'src/app/models/page';
 
 @Injectable({
   providedIn: 'root'
@@ -294,7 +295,13 @@ export class WPService {
 
   getHomePage(id: number): Observable<HomePage> {
     return this.http.get<HomePage>(`${this.wpJsonBaseUrl}/pages/${id}`).pipe(
-      catchError(this.handleError<HomePage>(`getPage id=${id}`))
+      catchError(this.handleError<HomePage>(`getHomePage id=${id}`))
+    );
+  }
+
+  getPage(id: number): Observable<Page> {
+    return this.http.get<Page>(`${this.wpJsonBaseUrl}/pages/${id}`).pipe(
+      catchError(this.handleError<Page>(`getPage id=${id}`))
     );
   }
 
@@ -342,6 +349,6 @@ export class WPService {
     );
   }
 
-  
+
 
 }

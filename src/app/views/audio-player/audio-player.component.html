@@ -139,7 +139,10 @@
           <div class="content">
             <div class="title"><a (click)="navigateAfterClosePanel(['/episode', episode.id])"> {{ episode.title }}</a></div>
 
-            <div class="location-date">{{ episode.location }}, {{ episode.date | date:'dd.MM.yy' }}</div>
+            <div class="meta">
+              <span class="location" *ngIf="episode.location">{{ episode.location }}, </span>
+              <span class="date">{{ episode.date | date:'dd.MM.yy' }}</span>
+            </div>
 
             <div class="shows" *ngIf="episode.shows && episode.shows.length">
               <span>Hosted on </span>

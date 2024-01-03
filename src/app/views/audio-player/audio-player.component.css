@@ -9,7 +9,7 @@
 /* Stream
 --------------------------------------------- */
 .audio-player .stream > .container {
-  height: 2.65rem;
+  height: 33px;
 }
 
 /* Live Stream
@@ -20,27 +20,15 @@
 }
 
 .audio-player .live-stream .channel {
-  padding: 0 20px;
+  padding: 0 10px 0 20px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: rgb(var(--color-primary-100));
-  color: rgb(var(--color-accent-950));
-  border-right: 1px solid;
+  background-color: rgb(var(--color-primary-500));
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   text-transform: uppercase;
-}
-
-.audio-player .live-stream .channel > span {
-  display: none;
-}
-
-@media(min-width: 720px) {
-  .audio-player .live-stream .channel > span {
-    display: block;
-  }
 }
 
 .audio-player .live-stream .channel:after {
@@ -65,14 +53,12 @@
   }
 }
 
-
-
 .audio-player .live-stream .toggle-play {
   flex-grow: 1;
   display: flex;
   align-items: center;
-  padding: 0 20px 0 18px;
-  gap: 0.75rem;
+  padding: 0 10px 0 9px;
+  gap: 9px;
   background-color: rgb(var(--color-primary-900));
   color: rgb(var(--color-primary-200));
   cursor: pointer;
@@ -108,7 +94,7 @@
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 16.5px;
+  padding: 0 9px;
   background-color: rgb(var(--color-primary-950));
   cursor: pointer;
 }
@@ -146,27 +132,15 @@
 }
 
 .audio-player .on-demand-stream .channel {
-  padding: 0 20px;
+  padding: 0 10px 0 20px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: rgb(var(--color-primary-100));
-  color: rgb(var(--color-accent-950));
-  border-right: 1px solid;
+  background-color: rgb(var(--color-primary-500));
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   text-transform: uppercase;
-}
-
-.audio-player .on-demand-stream .channel > span {
-  display: none;
-}
-
-@media(min-width: 720px) {
-  .audio-player .on-demand-stream .channel > span {
-    display: block;
-  }
 }
 
 .audio-player .on-demand-stream .channel:after {
@@ -195,8 +169,8 @@
   flex-grow: 1;
   display: flex;
   align-items: center;
-  padding: 0 20px 0 18px;
-  gap: 0.75rem;
+  padding: 0 10px 0 9px;
+  gap: 9px;
   background-color: rgb(var(--color-primary-900));
   color: rgb(var(--color-primary-200));
   cursor: pointer;
@@ -232,7 +206,7 @@
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 16.5px;
+  padding: 0 9px;
   background-color: rgb(var(--color-primary-950));
   cursor: pointer;
 }
@@ -449,7 +423,7 @@
   font-size: var(--font-3xl);
 }
 
-.on-demand-stream-expandable-panel > .wrapper > .content .location-date {
+.on-demand-stream-expandable-panel > .wrapper > .content .meta {
   margin-bottom: 1.5rem;
 }
 

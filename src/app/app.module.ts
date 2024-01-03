@@ -25,6 +25,7 @@ import { HeaderComponent } from './views/header/header.component';
 import { FooterComponent } from './views/footer/footer.component';
 import { IdentityLoaderComponent } from './views/identity-loader/identity-loader.component';
 import { ArtistListComponent } from './views/artist/artist-list/artist-list.component';
+import { PageDetailComponent } from './views/page/page-detail/page-detail.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { ArtistListComponent } from './views/artist/artist-list/artist-list.comp
     FooterComponent,
     IdentityLoaderComponent,
     ArtistListComponent,
+    PageDetailComponent,
   ],
   imports: [
     BrowserModule,

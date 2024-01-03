@@ -9,10 +9,11 @@
     <div class="container">
 
       <picture *ngIf="show.image.url">
-        <source appLazyLoad [attr.data-srcset]="show.image.size['medium']" media="(max-width: 424px)">
-        <source appLazyLoad [attr.data-srcset]="show.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-        <source appLazyLoad [attr.data-srcset]="show.image.size['2048x2048']" media="(min-width: 640px)">
-        <img appLazyLoad [attr.data-src]="show.image.size['medium_large']" [alt]="show.image.alt" />
+        <source appLazyLoad [attr.data-srcset]="show.image.size['medium_large']" media="(max-width: 539px)">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['large']" media="(min-width: 540px) and (max-width: 719px)">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['1536x1536']" media="(min-width: 720px) and (max-width: 1319px)">
+        <source appLazyLoad [attr.data-srcset]="show.image.size['2048x2048']" media="(min-width: 1320px)">
+        <img appLazyLoad [attr.data-src]="show.image.url" [alt]="show.image.alt" />
       </picture>
     
       <div class="content">
@@ -31,7 +32,7 @@
 
         <div class="footer">
           <div class="cta">
-            <div class="back" (click)="back()">Back</div>
+            <div class="back symbol-text" (click)="back()"><span class="symbol">arrow_back_ios_new</span> Back</div>
           </div>
         </div>
 

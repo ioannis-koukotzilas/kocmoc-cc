@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
     this.unsubscribe$.complete();
   }
 
-  getHomePage() {
+  private getHomePage(): void {
     const id = 35;
     this.loading = true;
 
@@ -74,13 +74,17 @@ export class HomeComponent implements OnInit {
         this.recentEpisodes = [...this.recentEpisodes, ...episodes];
         const id = episodes.map(episode => episode.id);
         return forkJoin([
-          this.wpService.getEpisodeGenre(id),
+          this.wpService.getEpisodeProducer(id),
+          this.wpService.getEpisodeShow(id),
+          this.wpService.getEpisodeGenre(id)
         ]).pipe(
-          map(([genres]) => {
+          map(([producers, shows, genres]) => {
             episodes.forEach(episode => {
+              episode.producers = producers.filter(producer => producer.episodeId === episode.id),
+              episode.shows = shows.filter(show => show.episodeId === episode.id),
               episode.genres = genres.filter(genre => genre.episodeId === episode.id)
             });
-            return [genres];
+            return [producers, shows, genres];
           }),
           catchError(error => {
             console.error('ForkJoin observable error while getting details):', error);
@@ -104,35 +108,3 @@ export class HomeComponent implements OnInit {
     });
   }
 }
-
-
-// default pages
-
-// getPage() {
-//   this.route.paramMap.pipe(
-//     switchMap(params => {
-//       const id = Number(params.get('id') || '0');
-//       this.loading = true;
-//       return this.wpService.getPage(id).pipe(
-//         catchError(error => {
-//           console.error('Error getting home page:', error);
-//           return of(null);
-//         })
-//       );
-//     }),
-//     tap(page => {
-//       if (page) this.homePage = new HomePage(page);
-//     }),
-//     takeUntil(this.unsubscribe$),
-//   ).subscribe({
-//     next: () => {
-//       this.loading = false;
-//     },
-//     error: (error) => {
-//       console.error('Main observable error:', error);
-//     },
-//     complete: () => {
-//       console.log('Unsubscription completed.');
-//     }
-//   });
-// }

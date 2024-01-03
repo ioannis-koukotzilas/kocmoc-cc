@@ -156,7 +156,7 @@ export class EpisodeDetailComponent implements OnInit {
     });
   }
 
-  goBack() {
+  back(): void {
     this.location.back();
   }
 }

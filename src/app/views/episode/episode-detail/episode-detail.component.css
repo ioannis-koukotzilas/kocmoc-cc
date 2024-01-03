@@ -1,15 +1,22 @@
-.episode {
-  display: grid;
-  grid-template-columns: 1fr var(--max-w-md);
+@media (min-width: 1140px) {
+  .episode > .container {
+    display: grid;
+    grid-template-columns: 1fr var(--max-w-sm);
+  }
 }
 
-.episode picture img {
+.episode > .container > picture img {
   object-fit: cover;
   width: 100%;
-  height: 100%;
-  height: calc(100vh - 3rem - 2.65rem);
-  position: sticky;
-  top: calc(3rem + 2.65rem);
+  height: 50vh;
+}
+
+@media (min-width: 1140px) {
+  .episode > .container > picture img {
+    height: calc(100vh - 44px - 33px);
+    position: sticky;
+    top: calc(44px + 33px);
+  }
 }
 
 .episode .content {
@@ -18,15 +25,15 @@
 }
 
 .episode .content .main {
-  padding: 20px;
+  padding: 1.5rem 20px;
   background-color: rgb(var(--color-primary-900));
 }
 
 .episode .content .main > .title {
-  font-size: var(--font-4xl);
-  font-weight: var(--font-bold);
-  font-family: var(--font-sans-condensed);
   margin-bottom: 1.5rem;
+  font-family: var(--font-sans-condensed);
+  font-size: var(--font-4xl);
+  font-weight: var(--font-medium);
 }
 
 .episode .content .main .meta {
@@ -38,24 +45,27 @@
 }
 
 .episode .content .main .meta .producers a {
-  font-weight: 700;
+  font-weight: var(--font-bold);
 }
 
 .episode .content .main .meta .show a {
-  font-weight: 700;
+  font-weight: var(--font-bold);
 }
 
 .episode .content .main .genres {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  font-size: var(--font-sm);
   margin-bottom: 1.5rem;
 }
 
 .episode .content .main .genre a {
   padding: 0.25rem 0.5rem;
   border: 1px solid;
+  border-radius: 3px;
+  font-family: var(--font-sans-condensed);
+  font-weight: var(--font-medium);
+  font-size: var(--font-sm);
 }
 
 .episode .content .main .show {
@@ -63,12 +73,13 @@
 }
 
 .episode .content .tracklist {
-  padding: 20px;
+  padding: 1.5rem 20px;
 }
 
 .episode .content .tracklist > .title {
-  font-size: var(--font-3xl);
   margin-bottom: 1.5rem;
+  font-family: var(--font-sans-condensed);
+  font-size: var(--font-3xl);
 }
 
 .episode .content .tracklist .track {
@@ -81,7 +92,7 @@
 
 .episode .content .footer {
   flex-grow: 1;
-  padding: 24px;
+  padding: 1.5rem 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -91,12 +102,19 @@
 # Relate Episodes
 --------------------------------------------------------------*/
 
+@media (max-width: 1139px) {
+  .related-episodes {
+    border-top: 1px solid rgb(var(--color-primary-900));
+  }
+}
+
 .related-episodes > .container {
   padding: 1.5rem 20px;
 }
 
 .related-episodes > .container > .title {
-  font-size: var(--font-4xl);
+  font-family: var(--font-sans-condensed);
+  font-size: var(--font-3xl);
   margin-bottom: 1.5rem;
 }
 
