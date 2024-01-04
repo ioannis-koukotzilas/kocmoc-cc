@@ -298,27 +298,14 @@
   left: 0;
   z-index: 1;
   padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   color: rgb(var(--color-primary-50));
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
   text-transform: uppercase;
 }
 
-.live-stream-expandable-panel > .wrapper > .channel:after {
-  display: inline-block;
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: aquamarine;
-  border-radius: 50%;
-  animation: onDemandStreamChannel 2s ease-in-out infinite both;
-}
-
 .live-stream-expandable-panel > .wrapper > .content {
-  padding: 20px;
+  padding: 1.5rem 20px;
 }
 
 .live-stream-expandable-panel > .wrapper > .content .title {
@@ -328,19 +315,11 @@
   font-size: var(--font-3xl);
 }
 
-.live-stream-expandable-panel > .wrapper > .content .shows a {
-  display: inline;
+.live-stream-expandable-panel > .wrapper > .content a.title {
+  font-weight: var(--font-bold);
 }
 
 .live-stream-expandable-panel > .wrapper > .content .shows {
-  margin-bottom: 1.5rem;
-}
-
-.live-stream-expandable-panel > .wrapper > .content .shows a {
-  display: inline;
-}
-
-.live-stream-expandable-panel > .wrapper > .content .description {
   margin-bottom: 1.5rem;
 }
 
@@ -402,38 +381,21 @@
   left: 0;
   z-index: 1;
   padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   color: rgb(var(--color-primary-50));
   font-family: var(--font-sans-condensed);
   font-weight: var(--font-medium);
   text-transform: uppercase;
 }
 
-.on-demand-stream-expandable-panel > .wrapper > .channel:after {
-  display: inline-block;
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: orange;
-  border-radius: 50%;
-  animation: onDemandStreamChannel 2s ease-in-out infinite both;
-}
-
 .on-demand-stream-expandable-panel > .wrapper > .content {
-  padding: 20px;
+  padding: 1.5rem 20px;
 }
 
 .on-demand-stream-expandable-panel > .wrapper > .content .title {
   margin-bottom: 1.5rem;
   font-family: var(--font-sans-condensed);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-bold);
   font-size: var(--font-3xl);
-}
-
-.on-demand-stream-expandable-panel > .wrapper > .content .meta {
-  margin-bottom: 1.5rem;
 }
 
 .on-demand-stream-expandable-panel > .wrapper > .content .producers a,

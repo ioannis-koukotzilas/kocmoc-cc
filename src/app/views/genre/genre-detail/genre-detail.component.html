@@ -9,7 +9,6 @@
 
       <header class="header">
         <h1 class="title">{{ genre.name }}</h1>
-        <div class="description">Tune in live or listen back to our music archive.</div>
       </header>
 
       <app-episode-related-list [currentOnDemandStream$]="currentOnDemandStream$"
@@ -17,8 +16,8 @@
         [episodes]="relatedEpisodes">
       </app-episode-related-list>
 
-      <div class="pagination">
-        <div class="load-more" [class.loading-more]="loadingMore" *ngIf="hasMore" (click)="loadMore()">Load More</div>
+      <div class="pagination" *ngIf="hasMore">
+        <span class="load-more-btn" (click)="loadMore()">Load More</span>
       </div>
 
     </div>

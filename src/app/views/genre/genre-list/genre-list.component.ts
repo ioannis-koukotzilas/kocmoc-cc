@@ -4,6 +4,7 @@ import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Genre } from 'src/app/models/genre';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-genre-list',
@@ -24,7 +25,7 @@ export class GenreListComponent {
 
   hasMore: boolean = true;
 
-  constructor(private wpService: WPService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private wpService: WPService, private router: Router, private activatedRoute: ActivatedRoute, private titleService: Title) { }
 
   ngOnInit() {
     this.getGenres(this.page);
@@ -38,12 +39,8 @@ export class GenreListComponent {
   getGenres(page: number) {
     this.wpService.getGenres(page, this.perPage).pipe(
       map(data => {
-        let genres = data.genres
-          // .filter(genre => genre.count > 0)
-          .map(genre => new Genre(genre));
-
+        let genres = data.genres.map(genre => new Genre(genre));
         this.genres = [...this.genres, ...genres];
-
         const totalPages = Number(data.headers.get('X-WP-TotalPages'));
         if (page >= totalPages) {
           this.hasMore = false;
@@ -57,15 +54,14 @@ export class GenreListComponent {
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: (genres) => {
+        this.titleService.setTitle('Genres - KOCMOC');
         this.structureGenres(genres);
-
         if (this.hasMore) {
           this.page += 1;
           this.getGenres(this.page);
         } else {
           this.loading = false;
         }
-
       },
       error: (error) => {
         console.error('Main observable error:', error);

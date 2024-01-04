@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, catchError, of, switchMap, takeUntil, tap } from 'rxjs';
 import { WPService } from 'src/app/core/services/wp/wp.service';
@@ -17,7 +17,7 @@ export class PageDetailComponent implements OnInit {
 
   loading: boolean = true;
 
-  constructor(private route: ActivatedRoute, private wpService: WPService, private titleService: Title, private metaService: Meta) { }
+  constructor(private route: ActivatedRoute, private wpService: WPService, private titleService: Title) { }
 
   ngOnInit(): void {
     this.getPage();
@@ -44,7 +44,6 @@ export class PageDetailComponent implements OnInit {
           if (page) {
             this.page = new Page(page);
             this.titleService.setTitle(`${this.page.title} - KOCMOC`);
-            this.metaService.updateTag({ name: 'description', content: this.page.content });
           }
         }),
         takeUntil(this.unsubscribe$)

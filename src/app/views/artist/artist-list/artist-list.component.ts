@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, catchError, map, of, takeUntil } from "rxjs";
 import { WPService } from "src/app/core/services/wp/wp.service";
@@ -23,7 +24,7 @@ export class ArtistListComponent implements OnInit {
   hasMore: boolean = true;
   loadingMore: boolean = false;
 
-  constructor(private wpService: WPService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private wpService: WPService, private router: Router, private activatedRoute: ActivatedRoute, private titleService: Title) { }
 
   ngOnInit() {
     this.getArtists(this.page, this.perPage);
@@ -54,6 +55,7 @@ export class ArtistListComponent implements OnInit {
       next: () => {
         this.loading = false;
         this.loadingMore = false;
+        this.titleService.setTitle('Artists - KOCMOC');
       },
       error: (error) => {
         console.error('Main observable error:', error);

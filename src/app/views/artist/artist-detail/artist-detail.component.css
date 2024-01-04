@@ -1,5 +1,11 @@
 .container {
-  padding: 1.5rem 20px;
+  padding: 3rem 20px;
+}
+
+@media (min-width: 720px) {
+  .container {
+    padding: 1.5rem 20px 3rem;
+  }
 }
 
 .header > .wrapper {
@@ -19,7 +25,6 @@
 
 .statistics {
   margin-bottom: 1.5rem;
-  font-weight: var(--font-medium);
 }
 
 .description .expand {
@@ -27,7 +32,7 @@
 }
 
 .related-episodes > .container {
-  padding: 1.5rem 20px;
+  padding: 1.5rem 20px 3rem;
 }
 
 .related-episodes > .container > .title {

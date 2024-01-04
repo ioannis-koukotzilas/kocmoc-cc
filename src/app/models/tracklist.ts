@@ -5,7 +5,6 @@ export class Tracklist {
       id: number;
       name: string;
     }[];
-    artistName: string;
     title: string;
   }[];
 

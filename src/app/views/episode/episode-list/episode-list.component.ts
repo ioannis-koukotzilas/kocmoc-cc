@@ -3,6 +3,7 @@ import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUnti
 import { AudioPlayerService } from 'src/app/views/audio-player/audio-player.service';
 import { Episode } from 'src/app/models/episode';
 import { WPService } from 'src/app/core/services/wp/wp.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'episode-list',
@@ -22,12 +23,12 @@ export class EpisodeListComponent implements OnInit {
   loading: boolean = true;
 
   page: number = 1;
-  perPage: number = 2;
+  perPage: number = 18;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;
 
-  constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService) { }
+  constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService, private titleService: Title) { }
 
   ngOnInit() {
     this.getEpisodes(this.page, this.perPage);
@@ -81,6 +82,7 @@ export class EpisodeListComponent implements OnInit {
       next: () => {
         this.loading = false;
         this.loadingMore = false;
+        this.titleService.setTitle('Radio Archive - KOCMOC');
       },
       error: (error) => {
         console.error('Main observable error:', error);

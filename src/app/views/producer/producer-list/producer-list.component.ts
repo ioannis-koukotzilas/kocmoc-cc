@@ -3,6 +3,7 @@ import { Subject, catchError, map, of, takeUntil } from 'rxjs';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Producer } from 'src/app/models/producer';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-producer-list',
@@ -23,7 +24,7 @@ export class ProducerListComponent {
 
   activeBtn: 'activeResidents' | 'activeGuests' | 'inactiveResidents' = 'activeResidents';
 
-  constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService) { }
+  constructor(private wpService: WPService, public audioPlayerService: AudioPlayerService, private titleService: Title) { }
 
   ngOnInit() {
     this.getActiveResidentProducers();
@@ -55,6 +56,7 @@ export class ProducerListComponent {
       next: () => {
         this.loading = false;
         this.initialLoading = false;
+        this.titleService.setTitle('Producers - KOCMOC');
       },
       error: (error) => {
         console.error('Main observable error:', error);

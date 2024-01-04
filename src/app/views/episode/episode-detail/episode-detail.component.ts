@@ -6,6 +6,7 @@ import { Observable, Subject, catchError, forkJoin, map, of, switchMap, takeUnti
 import { Episode } from 'src/app/models/episode';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-episode-detail',
@@ -31,7 +32,7 @@ export class EpisodeDetailComponent implements OnInit {
   hasMore: boolean = true;
   loadingMore: boolean = false;
 
-  constructor(private route: ActivatedRoute, private wpService: WPService, private audioPlayerService: AudioPlayerService, private location: Location) { }
+  constructor(private route: ActivatedRoute, private wpService: WPService, private audioPlayerService: AudioPlayerService, private location: Location, private titleService: Title) { }
 
   ngOnInit() {
     this.getEpisode();
@@ -55,7 +56,10 @@ export class EpisodeDetailComponent implements OnInit {
         );
       }),
       tap(episode => {
-        if (episode) this.episode = new Episode(episode);
+        if (episode) {
+          this.episode = new Episode(episode);
+          this.titleService.setTitle(`${this.episode.title} - KOCMOC`);
+        } 
       }),
       switchMap(episode => {
         if (!episode) return of({ producers: [], shows: [], genres: [], artists: [], tracklists: [] });

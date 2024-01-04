@@ -5,6 +5,7 @@ import { Episode } from 'src/app/models/episode';
 import { HomePage } from 'src/app/models/homePage';
 import { register } from 'swiper/element/bundle';
 import { AudioPlayerService } from '../audio-player/audio-player.service';
+import { Title } from '@angular/platform-browser';
 
 register();
 
@@ -28,7 +29,7 @@ export class HomeComponent implements OnInit {
   episodesPage: number = 1;
   episodesPerPage: number = 10;
 
-  constructor(private wpService: WPService, private audioPlayerService: AudioPlayerService) { }
+  constructor(private wpService: WPService, private audioPlayerService: AudioPlayerService, private titleService: Title) { }
 
   ngOnInit(): void {
     this.getHomePage();
@@ -51,6 +52,7 @@ export class HomeComponent implements OnInit {
       tap(page => {
         if (page) {
           this.homePage = new HomePage(page);
+          this.titleService.setTitle('KOCMOC - Freeform Radio Broadcasting');
         }
       }),
       takeUntil(this.unsubscribe$),

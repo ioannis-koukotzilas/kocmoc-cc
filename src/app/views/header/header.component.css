@@ -32,7 +32,7 @@
 .toggle-sidebar-btn {
   cursor: pointer;
   display: flex;
-  padding-right: 9px;
+  padding-right: 14px;
 }
 
 @media (min-width: 720px) {

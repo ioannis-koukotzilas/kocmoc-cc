@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Subject, catchError, map, of, takeUntil } from 'rxjs';
 import { ScheduleService } from 'src/app/core/services/schedule/schedule.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
@@ -19,7 +20,7 @@ export class ScheduleComponent implements OnInit {
   updated: string | null = null;
   loading = false;
 
-  constructor(private scheduleService: ScheduleService, private wpService: WPService) { }
+  constructor(private scheduleService: ScheduleService, private wpService: WPService, private titleService: Title) { }
 
   ngOnInit(): void {
     this.getScheduledEvents();
@@ -52,6 +53,7 @@ export class ScheduleComponent implements OnInit {
       .subscribe({
         next: (scheduleEvents) => {
           this.scheduleEvents = scheduleEvents.map(event => new ScheduleEvent(event));
+          this.titleService.setTitle('Schedule - KOCMOC');
           this.matchProducerWithCalendarApi(() => {
             this.loading = false;
           });

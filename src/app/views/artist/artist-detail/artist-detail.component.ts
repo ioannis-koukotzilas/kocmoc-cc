@@ -8,6 +8,7 @@ import { Episode } from "src/app/models/episode";
 import { AudioPlayerService } from "../../audio-player/audio-player.service";
 import { LastFmService } from "src/app/core/services/last-fm.service";
 import { LastFmArtist } from "src/app/models/lastFmArtist";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-artist-detail',
@@ -39,7 +40,7 @@ export class ArtistDetailComponent implements OnInit {
 
   expandedDescription: boolean = false;
 
-  constructor(private route: ActivatedRoute, private audioPlayerService: AudioPlayerService, private wpService: WPService, private lastFmService: LastFmService) { }
+  constructor(private route: ActivatedRoute, private audioPlayerService: AudioPlayerService, private wpService: WPService, private lastFmService: LastFmService, private titleService: Title) { }
 
   ngOnInit(): void {
     this.getArtist();
@@ -65,6 +66,7 @@ export class ArtistDetailComponent implements OnInit {
       concatMap(artist => {
         if (artist) {
           this.artist = new Artist(artist);
+          this.titleService.setTitle(`${this.artist.name} - KOCMOC`);
           return this.lastFmService.getArtistMetadata(this.artist.name).pipe(
             map((data) => {
               this.lastFmArtist = new LastFmArtist(data);

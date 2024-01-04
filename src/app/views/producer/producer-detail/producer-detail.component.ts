@@ -6,6 +6,7 @@ import { Episode } from 'src/app/models/episode';
 import { Producer } from 'src/app/models/producer';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
 import { WPService } from 'src/app/core/services/wp/wp.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-producer-detail',
@@ -31,7 +32,7 @@ export class ProducerDetailComponent {
   hasMore: boolean = true;
   loadingMore: boolean = false;
 
-  constructor(private route: ActivatedRoute, private location: Location, private audioPlayerService: AudioPlayerService, private wpService: WPService) { }
+  constructor(private route: ActivatedRoute, private location: Location, private audioPlayerService: AudioPlayerService, private wpService: WPService, private titleService: Title) { }
 
   ngOnInit(): void {
     this.getProducer();
@@ -55,7 +56,10 @@ export class ProducerDetailComponent {
         );
       }),
       tap(producer => {
-        if (producer) this.producer = new Producer(producer);
+        if (producer) {
+          this.producer = new Producer(producer);
+          this.titleService.setTitle(`${this.producer.name} - KOCMOC`);
+        } 
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe({
