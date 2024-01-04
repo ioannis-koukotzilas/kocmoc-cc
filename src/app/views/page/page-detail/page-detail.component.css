@@ -1,7 +1,12 @@
 .container {
   max-width: var(--max-w-md);
-  margin: 0 auto;
-  padding: 1.5rem 20px;
+  padding: 3rem 20px;
+}
+
+@media (min-width: 720px) {
+  .container {
+    padding: 1.5rem 20px 3rem;
+  }
 }
 
 .header {

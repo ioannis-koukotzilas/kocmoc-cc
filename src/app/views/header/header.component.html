@@ -4,30 +4,31 @@
       <h1 class="app-title">KOCMOC.CC</h1>
     </a>
 
-    <ul class="primary-menu">
-      <li><a routerLink="/episodes">Radio Archive</a></li>
-      <li><a routerLink="/schedule">Schedule</a></li>
-      <li><a routerLink="/producers">Producers</a></li>
-      <li><a routerLink="/genres">Explore</a></li>
-    </ul>
+    <div class="actions">
+      <ul class="primary-menu">
+        <li><a routerLink="/episodes">Radio Archive</a></li>
+        <li><a routerLink="/schedule">Schedule</a></li>
+        <li><a routerLink="/producers">Producers</a></li>
+        <li><a routerLink="/genres">Explore</a></li>
+      </ul>
 
-    <div class="toggle-sidebar-btn" #toggleSidebarBtn [class.active]="sidebarActive" (click)="toggleSidebar()">
-      <span class="symbol">expand_more</span>
+      <div class="toggle-sidebar-btn" #toggleSidebarBtn [class.active]="sidebarActive" (click)="toggleSidebar()">
+        <span class="symbol">{{ sidebarActive ? 'close' : 'more_vert' }}</span>
+      </div>
     </div>
   </div>
-
-  
 </nav>
 
 <app-audio-player></app-audio-player>
 
-<aside class="sidebar" #sidebar *ngIf="sidebarActive" [@expandablePanelAnimation]="sidebarActive ? 'expanded' : 'collapsed'">
-  <nav>
+<aside class="sidebar" #sidebar *ngIf="sidebarActive" [@sidebarAnimation]="sidebarActive ? 'expanded' : 'collapsed'">
+  <div class="wrapper">
     <ul class="primary-menu">
-      <li><a routerLink="/episodes">Radio Archive</a></li>
-      <li><a routerLink="/schedule">Schedule</a></li>
-      <li><a routerLink="/producers">Producers</a></li>
-      <li><a routerLink="/genres">Explore</a></li>
+      <li><a (click)="navigateAfterCloseSidebar(['/episodes'])">Radio Archive</a></li>
+      <li><a (click)="navigateAfterCloseSidebar(['/schedule'])">Schedule</a></li>
+      <li><a (click)="navigateAfterCloseSidebar(['/producers'])">Producers</a></li>
+      <li><a (click)="navigateAfterCloseSidebar(['/genres'])">Explore</a></li>
     </ul>
-  </nav>
+  </div>
 </aside>
+

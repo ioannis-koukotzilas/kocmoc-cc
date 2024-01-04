@@ -20,7 +20,7 @@
 }
 
 .audio-player .live-stream .channel {
-  padding: 0 10px 0 20px;
+  padding: 0 14px 0 20px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -83,24 +83,27 @@
   text-overflow: ellipsis;
 }
 
+@media (max-width: 719px) {
+  .audio-player .live-stream .side-actions {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    /* z-index: 1; */
+  }
+}
+
 .audio-player .live-stream .side-actions {
   display: flex;
   align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
 .audio-player .live-stream .side-actions > div {
-  height: 100%;
+  height: 33px;
   display: flex;
   align-items: center;
-  padding: 0 9px;
-  background-color: rgb(var(--color-primary-950));
+  padding: 0 14px;
+  background-color: rgb(var(--color-primary-500));
   cursor: pointer;
-}
-
-.audio-player .live-stream .side-actions > div:not(:last-child) {
-  border-right: 1px solid rgb(var(--color-primary-500));
 }
 
 .audio-player .live-stream .side-actions .toggle-expandable-panel {
@@ -109,7 +112,7 @@
 
 .audio-player .live-stream .side-actions .toggle-expandable-panel:hover,
 .audio-player .live-stream .side-actions .toggle-expandable-panel.active {
-  background-color: rgb(var(--color-primary-900));
+  background-color: rgb(var(--color-primary-400));
 }
 
 .audio-player .live-stream .side-actions .toggle-expandable-panel .symbol {
@@ -132,7 +135,7 @@
 }
 
 .audio-player .on-demand-stream .channel {
-  padding: 0 10px 0 20px;
+  padding: 0 14px 0 20px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -195,19 +198,25 @@
   text-overflow: ellipsis;
 }
 
+@media (max-width: 719px) {
+  .audio-player .on-demand-stream .side-actions {
+    position: absolute;
+    top: 100%;
+    right: 0;
+  }
+}
+
 .audio-player .on-demand-stream .side-actions {
   display: flex;
   align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
 .audio-player .on-demand-stream .side-actions > div {
-  height: 100%;
+  height: 33px;
   display: flex;
   align-items: center;
-  padding: 0 9px;
-  background-color: rgb(var(--color-primary-950));
+  padding: 0 14px;
+  background-color: rgb(var(--color-primary-500));
   cursor: pointer;
 }
 
@@ -223,14 +232,14 @@
 .audio-player .on-demand-stream .side-actions .back-to-live-stream:hover,
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel:hover,
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel.active {
-  background-color: rgb(var(--color-primary-900));
+  background-color: rgb(var(--color-primary-400));
 }
 
 .audio-player
   .on-demand-stream
   .side-actions
   .toggle-expandable-panel.active:hover {
-    background-color: rgb(var(--color-primary-900));
+    background-color: rgb(var(--color-primary-400));
 }
 
 .audio-player .on-demand-stream .side-actions .toggle-expandable-panel .symbol {
@@ -252,10 +261,10 @@
 
 .live-stream-expandable-panel {
   position: absolute;
-  top: 0;
+  z-index: -1;
+  top: 100%;
   left: 0;
   width: 100%;
-  /* z-index: -1; */
   background-color: rgb(var(--color-primary-900));
 }
 
@@ -339,10 +348,10 @@
 
 .on-demand-stream-expandable-panel {
   position: absolute;
-  top: 0;
+  z-index: -1;
+  top: 100%;
   left: 0;
   width: 100%;
-  /* z-index: -1; */
   background-color: rgb(var(--color-primary-900));
 }
 

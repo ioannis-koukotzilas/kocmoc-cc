@@ -4,9 +4,9 @@
   background-color: rgb(var(--color-primary-950));
 }
 
-.main-nav > .wrapper {
+.main-nav>.wrapper {
   height: 44px;
-  padding: 0 20px;
+  padding: 0 0 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,32 +18,54 @@
   font-size: var(--font-lg);
 }
 
-.main-nav .primary-menu {
+.main-nav .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  font-family: var(--font-sans-condensed);
-  font-weight: var(--font-medium);
+  align-items: center;
+  gap: 1.5rem;
 }
 
-aside {
+.main-nav .primary-menu {
+  display: none;
+}
+
+.toggle-sidebar-btn {
+  cursor: pointer;
+  display: flex;
+  padding-right: 9px;
+}
+
+@media (min-width: 720px) {
+  .main-nav .primary-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-family: var(--font-sans-condensed);
+    font-weight: var(--font-medium);
+    padding-right: 20px;
+  }
+
+  .toggle-sidebar-btn {
+    display: none;
+  }
+}
+
+.sidebar {
   position: absolute;
   z-index: 1;
   top: 44px;
   right: 0;
   width: 100%;
   max-width: 320px;
-  
+  background-color: rgb(var(--color-primary-950));
 }
 
-aside nav {
+.sidebar>.wrapper {
   padding: 20px;
-  background-color: blue;
 }
 
 .sidebar .primary-menu {
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
   gap: 0.75rem;
   font-family: var(--font-sans-condensed);
