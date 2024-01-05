@@ -28,7 +28,7 @@ export class GenreDetailComponent implements OnInit {
   relatedEpisodes: Episode[] = [];
 
   page: number = 1;
-  perPage: number = 1;
+  perPage: number = 18;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;

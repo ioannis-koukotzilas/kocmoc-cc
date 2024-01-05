@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
 
   recentEpisodes: Episode[] = [];
   episodesPage: number = 1;
-  episodesPerPage: number = 10;
+  episodesPerPage: number = 6;
 
   constructor(private wpService: WPService, private audioPlayerService: AudioPlayerService, private titleService: Title) { }
 

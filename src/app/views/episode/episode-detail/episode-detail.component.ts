@@ -27,7 +27,7 @@ export class EpisodeDetailComponent implements OnInit {
   loading: boolean = true;
 
   page: number = 1;
-  perPage: number = 9;
+  perPage: number = 6;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;

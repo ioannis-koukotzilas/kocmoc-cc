@@ -27,7 +27,7 @@ export class ProducerDetailComponent {
   producerEpisodes: Episode[] = [];
 
   page: number = 1;
-  perPage: number = 9;
+  perPage: number = 6;
 
   hasMore: boolean = true;
   loadingMore: boolean = false;
