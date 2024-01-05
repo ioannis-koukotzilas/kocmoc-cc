@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class LastFmService {
 
   private readonly API_KEY = '0ee5cc8cc3fbbe19ac56d163609f7840';
-  private readonly BASE_URL = 'http://ws.audioscrobbler.com/2.0/';
+  private readonly BASE_URL = 'https://ws.audioscrobbler.com/2.0/';
 
   constructor(private http: HttpClient) {}
 
