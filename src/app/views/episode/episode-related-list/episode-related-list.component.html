@@ -6,11 +6,12 @@
       'playing': (currentOnDemandStream$ | async)?.id === episode.id && (onDemandStreamPlaying$ | async)}">
 
       <div class="header" *ngIf="episode.image.url">
-        <picture class="image">
-          <source appLazyLoad [attr.data-srcset]="episode.image.size['medium']" media="(max-width: 424px)">
-          <source appLazyLoad [attr.data-srcset]="episode.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-          <source appLazyLoad [attr.data-srcset]="episode.image.size['large']" media="(min-width: 640px)">
-          <img appLazyLoad [attr.data-src]="episode.image.size['medium_large']" [alt]="episode.image.alt" />
+        <picture class="image" *ngIf="episode.image.url">
+          <source appLazyLoad [attr.data-srcset]="episode.image.size['medium_large']" media="(max-width: 539px)">
+          <source appLazyLoad [attr.data-srcset]="episode.image.size['large']" media="(min-width: 540px) and (max-width: 719px)">
+          <source appLazyLoad [attr.data-srcset]="episode.image.size['1536x1536']" media="(min-width: 720px) and (max-width: 1319px)">
+          <source appLazyLoad [attr.data-srcset]="episode.image.size['2048x2048']" media="(min-width: 1320px)">
+          <img appLazyLoad [attr.data-src]="episode.image.url" [alt]="episode.image.alt" />
         </picture>
 
         <app-episode-audio-controls [episode]="episode" [currentOnDemandStream$]="currentOnDemandStream$" [onDemandStreamLoading$]="onDemandStreamLoading$" [onDemandStreamPlaying$]="onDemandStreamPlaying$"></app-episode-audio-controls>

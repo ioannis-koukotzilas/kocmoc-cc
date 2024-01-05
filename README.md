@@ -42,3 +42,5 @@ This project is licensed under the MIT License.
 ## Developers
 
 Currently being developed and maintained by the KOCMOC Collective team.
+
+ng build --configuration production
