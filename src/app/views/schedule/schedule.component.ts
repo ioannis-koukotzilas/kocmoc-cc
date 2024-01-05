@@ -43,8 +43,8 @@ export class ScheduleComponent implements OnInit {
 
           const filteredEvents = data.items
             .filter((event: any) => {
-              const eventStartDate = new Date(event.start.dateTime);
-              return eventStartDate > currentDate;
+              const eventEndDate = new Date(event.end.dateTime);
+              return eventEndDate > currentDate;
             });
           const sortedEvents = filteredEvents.sort((a: any, b: any) => new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime());
           return sortedEvents.slice(0, 8) as ScheduleEvent[];
