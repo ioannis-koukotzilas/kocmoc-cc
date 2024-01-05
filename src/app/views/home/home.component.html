@@ -8,10 +8,11 @@
     <ng-container *ngFor="let highlight of homePage?.highlights">
       <swiper-slide>
         <picture *ngIf="highlight.image.url">
-          <source appLazyLoad [attr.data-srcset]="highlight.image.size['medium']" media="(max-width: 424px)">
-          <source appLazyLoad [attr.data-srcset]="highlight.image.size['medium_large']" media="(min-width: 425px) and (max-width: 639px)">
-          <source appLazyLoad [attr.data-srcset]="highlight.image.size['2048x2048']" media="(min-width: 640px)">
-          <img appLazyLoad [attr.data-src]="highlight.image.size['medium_large']" [alt]="highlight.image.alt" />
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['medium_large']" media="(max-width: 539px)">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['large']" media="(min-width: 540px) and (max-width: 719px)">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['1536x1536']" media="(min-width: 720px) and (max-width: 1319px)">
+          <source appLazyLoad [attr.data-srcset]="highlight.image.size['2048x2048']" media="(min-width: 1320px)">
+          <img appLazyLoad [attr.data-src]="highlight.image.url" [alt]="highlight.image.alt" />
         </picture>
 
         <div class="content">

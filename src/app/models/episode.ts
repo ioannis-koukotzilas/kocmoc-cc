@@ -23,13 +23,16 @@ export class Episode {
     track: string;
     location: string;
 
-    genre: number[]; // Important for random selection
+    producer: number[];
+    show: number[];
+    genre: number[];
+    artist: number[];
 
     producers?: Producer[]; 
     shows?: Show[]; 
     artists?: Artist[]; 
     genres?: Genre[];
-    tracklists?: Tracklist[]; 
+    tracklists?: Tracklist[];
 
     constructor(data: any) {
         this.id = data.id;
@@ -47,6 +50,9 @@ export class Episode {
         };
         this.track = data.acf.track;
         this.location = data.acf.location;
+        this.producer = data.producer;
+        this.show = data.show;
         this.genre = data.genre;
+        this.artist = data.artist;
     }
 }
