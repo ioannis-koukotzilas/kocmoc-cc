@@ -6,6 +6,9 @@ import { WPService } from 'src/app/core/services/wp/wp.service';
 import { Episode } from 'src/app/models/episode';
 import { Genre } from 'src/app/models/genre';
 import { AudioPlayerService } from '../../audio-player/audio-player.service';
+import { Producer } from 'src/app/models/producer';
+import { Show } from 'src/app/models/show';
+import { Artist } from 'src/app/models/artist';
 
 @Component({
   selector: 'app-genre-detail',
@@ -92,10 +95,10 @@ export class GenreDetailComponent implements OnInit {
         ]).pipe(
           map(([producers, shows, genres, artists]) => {
             episodes.forEach(episode => {
-              episode.producers = producers.filter(producer => producer.episodeId === episode.id);
-              episode.shows = shows.filter(show => show.episodeId === episode.id);
-              episode.genres = genres.filter(genre => genre.episodeId === episode.id);
-              episode.artists = artists.filter(artist => artist.episodeId === episode.id);
+              episode.producers = episode.producer.map(producerId => producers.find(producer => producer.id === producerId)).filter(producer => producer) as Producer[];
+              episode.shows = episode.show.map(showId => shows.find(show => show.id === showId)).filter(show => show) as Show[];
+              episode.artists = episode.artist.map(artistId => artists.find(artist => artist.id === artistId)).filter(artist => artist) as Artist[];
+              episode.genres = episode.genre.map(genreId => genres.find(genre => genre.id === genreId)).filter(genre => genre) as Genre[];
             });
             return [producers, shows, genres, artists];
           }),

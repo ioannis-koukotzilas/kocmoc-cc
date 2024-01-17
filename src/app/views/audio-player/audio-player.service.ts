@@ -42,8 +42,9 @@ export class AudioPlayerService {
   private playedEpisodes: number[] = [];
 
   private mirrorLiveStreamUrls = [
-    // { url: 'http://wkcr.streamguys1.com/live', start: '00:00', end: '08:00', name: 'WKCR' },
-    { url: 'https://stream.resonance.fm/resonance-extra', start: '00:00', end: '06:00', name: 'Resonance Extra' }
+    { url: 'https://kocmoc12-gecko.radioca.st/stream', start: '00:00', end: '04:00', name: 'KCNET' },
+    { url: 'https://stream.resonance.fm/resonance-extra', start: '04:00', end: '07:00', name: 'Resonance Extra' },
+    { url: 'https://kocmoc12-gecko.radioca.st/stream', start: '07:00', end: '13:00', name: 'KCNET' }
   ];
   
   private defaultLiveStreamUrl = 'https://kocmoc1-gecko.radioca.st/stream';
