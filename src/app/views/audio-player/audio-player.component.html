@@ -30,7 +30,7 @@
     <div class="live-stream-expandable-panel" *ngIf="liveStreamExpandablePanelActive" [@expandablePanelAnimation]="liveStreamExpandablePanelActive ? 'expanded' : 'collapsed'">
       <ng-container *ngIf="producer; else noProducer">
         <div class="wrapper">
-          <div class="channel">Broadcasting</div>
+          <div class="channel">Chnl 1</div>
 
           <picture *ngIf="producer.image.url">
             <source appLazyLoad [attr.data-srcset]="producer.image.size['medium_large']" media="(max-width: 424px)">
@@ -58,14 +58,14 @@
             <ng-container *ngIf="!currentMirrorStream">Chnl 1</ng-container>
             <ng-container *ngIf="currentMirrorStream === 'WKCR'">New York</ng-container>
             <ng-container *ngIf="currentMirrorStream === 'Resonance Extra'">London</ng-container>
-            <ng-container *ngIf="currentMirrorStream === 'KCNET'">Chnl 2</ng-container>
+            <ng-container *ngIf="currentMirrorStream === 'KOCMOC Extra'">Chnl 2</ng-container>
           </div>
 
           <picture>
               <ng-container *ngIf="!currentMirrorStream"><img appLazyLoad [attr.data-src]="'assets/images/identity/identitySecondary.webp'" alt="KOCMOC Chnl 1 Identity"></ng-container>
               <ng-container *ngIf="currentMirrorStream === 'WKCR'"><img appLazyLoad [attr.data-src]="'assets/images/mirrors/wkcr.webp'" alt="WKCR Identity"></ng-container>
               <ng-container *ngIf="currentMirrorStream === 'Resonance Extra'"><img appLazyLoad [attr.data-src]="'assets/images/mirrors/resonanceExtra.webp'" alt="Resonance Extra Identity"></ng-container>
-              <ng-container *ngIf="currentMirrorStream === 'KCNET'"><img appLazyLoad [attr.data-src]="'assets/images/mirrors/KCNET.webp'" alt="KCNET Identity"></ng-container>
+              <ng-container *ngIf="currentMirrorStream === 'KOCMOC Extra'"><img appLazyLoad [attr.data-src]="'assets/images/mirrors/KocmocExtra.png'" alt="KOCMOC Extra Identity"></ng-container>
           </picture>
 
           <div class="content">
@@ -78,7 +78,7 @@
               <ng-container *ngIf="!currentMirrorStream">Currently on KOCMOC.CC</ng-container>
               <ng-container *ngIf="currentMirrorStream === 'WKCR'">WKCR exists to preserve and share music, the arts, and history with listeners in the New York metro area and beyond, curating programming that pushes boundaries while maintaining an eye to historical and artistic value, regardless of commercial significance.</ng-container>
               <ng-container *ngIf="currentMirrorStream === 'Resonance Extra'">Resonance Extra is the UK's only 24/7 digital broadcasting platform dedicated to sound art, radio art and experimental musics.</ng-container>
-              <ng-container *ngIf="currentMirrorStream === 'KCNET'">Curated by Foukodian Rhythms, Ioannis and Siraistak.</ng-container>
+              <ng-container *ngIf="currentMirrorStream === 'KOCMOC Extra'">Curated by Foukodian Rhythms, Ioannis and Siraistak.</ng-container>
             </div>
           </div>
         </div>
